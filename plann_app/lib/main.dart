@@ -46,6 +46,7 @@ import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 import 'package:provider/provider.dart';
 
 import 'services/purchase/purchase_service.dart';
@@ -54,8 +55,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final dbService = DbService();
-  final purchaseService = PurchaseService();
-  final analyticsService = AnalyticsService();
+  final trackingService = TrackingService();
+  final purchaseService = PurchaseService(trackingService);
+  final analyticsService = AnalyticsService(dbService, trackingService);
 
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -64,13 +66,15 @@ void main() async {
       Provider<PurchaseService>(create: (context) => purchaseService),
       Provider<DbService>(create: (context) => dbService),
       Provider<AnalyticsService>(create: (context) => analyticsService),
+      Provider<TrackingService>(create: (context) => trackingService),
     ],
-    child: App(navigatorKey),
+    child: App(navigatorKey, trackingService),
   ));
 
-  await purchaseService.start();
   await dbService.start();
-  await analyticsService.start(dbService);
+  await trackingService.start();
+  await purchaseService.start();
+  await analyticsService.start();
 //  await Future.delayed(Duration(seconds: 100));
 
   if (await purchaseService.hasAccess()) {
@@ -84,8 +88,9 @@ void main() async {
 
 class App extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
+  final TrackingService trackingService;
 
-  App(this.navigatorKey);
+  App(this.navigatorKey, this.trackingService);
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +112,10 @@ class App extends StatelessWidget {
         ),
         navigatorKey: navigatorKey,
         home: LoadingScreen(),
-        onGenerateRoute: (settings) {
-          print("[main] generate route to " + settings.name);
-          switch (settings.name) {
+        onGenerateRoute: (route) {
+          print("[main] generate route to " + route.name);
+
+          switch (route.name) {
             case MainScreen.routeName:
               return _buildMainPageRoute();
             case BlockScreen.routeName:
@@ -120,39 +126,39 @@ class App extends StatelessWidget {
             case AddIncomeScreen.routeName:
               return _buildAddIncomePageRoute();
             case EditIncomeScreen.routeName:
-              return _buildEditIncomePageRoute(settings.arguments);
+              return _buildEditIncomePageRoute(route.arguments);
             case AddPlannedIncomeScreen.routeName:
               return _buildAddPlannedIncomePageRoute();
             case EditPlannedIncomeScreen.routeName:
-              return _buildEditPlannedIncomePageRoute(settings.arguments);
+              return _buildEditPlannedIncomePageRoute(route.arguments);
 
             case ExpenseMainScreen.routeName:
               return _buildExpenseListPageRoute();
             case AddExpenseScreen.routeName:
               return _buildAddExpensePageRoute();
             case EditExpenseScreen.routeName:
-              return _buildEditExpensePageRoute(settings.arguments);
+              return _buildEditExpensePageRoute(route.arguments);
             case AddPlannedExpenseScreen.routeName:
               return _buildAddPlannedExpensePageRoute();
             case EditPlannedExpenseScreen.routeName:
-              return _buildEditPlannedExpensePageRoute(settings.arguments);
+              return _buildEditPlannedExpensePageRoute(route.arguments);
 
             case IrregularMainScreen.routeName:
               return _buildIrregularMainScreenPageRoute();
             case AddIrregularScreen.routeName:
               return _buildAddIrregularPageRoute();
             case EditIrregularScreen.routeName:
-              return _buildEditIrregularPageRoute(settings.arguments);
+              return _buildEditIrregularPageRoute(route.arguments);
             case AddPlannedIrregularScreen.routeName:
               return _buildAddPlannedIrregularPageRoute();
             case EditPlannedIrregularScreen.routeName:
-              return _buildEditPlannedIrregularPageRoute(settings.arguments);
+              return _buildEditPlannedIrregularPageRoute(route.arguments);
 
             case SubscriptionsScreen.routeName:
               return _buildSubscriptionsPageRoute();
           }
 
-          throw Exception("Undefined view for route=" + settings.name);
+          throw Exception("Undefined view for route=" + route.name);
         });
   }
 
@@ -193,8 +199,10 @@ class App extends StatelessWidget {
     return MaterialPageRoute<bool>(builder: (context) {
       return Provider<AddIncomeBloc>(
           create: (context) => AddIncomeBloc(
-              Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+                Provider.of<DbService>(context, listen: false),
+                Provider.of<AnalyticsService>(context, listen: false),
+                Provider.of<TrackingService>(context, listen: false),
+              ),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddIncomeScreen());
     });
@@ -218,6 +226,7 @@ class App extends StatelessWidget {
           create: (context) => AddPlannedIncomeBloc(
                 Provider.of<DbService>(context, listen: false),
                 Provider.of<AnalyticsService>(context, listen: false),
+                Provider.of<TrackingService>(context, listen: false),
               ),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddPlannedIncomeScreen());
@@ -253,7 +262,8 @@ class App extends StatelessWidget {
       return Provider<AddExpenseBloc>(
           create: (context) => AddExpenseBloc(
               Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+              Provider.of<AnalyticsService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddExpenseScreen());
     });
@@ -275,8 +285,10 @@ class App extends StatelessWidget {
     return MaterialPageRoute<bool>(builder: (context) {
       return Provider<AddPlannedExpenseBloc>(
           create: (context) => AddPlannedExpenseBloc(
-              Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+                Provider.of<DbService>(context, listen: false),
+                Provider.of<AnalyticsService>(context, listen: false),
+                Provider.of<TrackingService>(context, listen: false),
+              ),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddPlannedExpenseScreen());
     });
@@ -311,8 +323,10 @@ class App extends StatelessWidget {
     return MaterialPageRoute<bool>(builder: (context) {
       return Provider<AddIrregularBloc>(
           create: (context) => AddIrregularBloc(
-              Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+                Provider.of<DbService>(context, listen: false),
+                Provider.of<AnalyticsService>(context, listen: false),
+                Provider.of<TrackingService>(context, listen: false),
+              ),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddIrregularScreen());
     });
@@ -334,8 +348,10 @@ class App extends StatelessWidget {
     return MaterialPageRoute<bool>(builder: (context) {
       return Provider<AddPlannedIrregularBloc>(
           create: (context) => AddPlannedIrregularBloc(
-              Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+                Provider.of<DbService>(context, listen: false),
+                Provider.of<AnalyticsService>(context, listen: false),
+                Provider.of<TrackingService>(context, listen: false),
+              ),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddPlannedIrregularScreen());
     });

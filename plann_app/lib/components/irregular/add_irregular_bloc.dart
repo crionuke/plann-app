@@ -7,6 +7,7 @@ import 'package:plann_app/components/irregular/irregular_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 
 class AddIrregularBloc {
   final _controller = StreamController<bool>();
@@ -17,8 +18,9 @@ class AddIrregularBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final TrackingService trackingService;
 
-  AddIrregularBloc(this.dbService, this.analyticsService);
+  AddIrregularBloc(this.dbService, this.analyticsService, this.trackingService);
 
   @override
   void dispose() {
@@ -36,7 +38,8 @@ class AddIrregularBloc {
           state.currency,
           AppTexts.upFirstLetter(state.title),
           state.date));
-      await analyticsService.analyze(dbService);
+      await analyticsService.analyze();
+      trackingService.irregularAdded();
       Navigator.pop(context, true);
     }
   }

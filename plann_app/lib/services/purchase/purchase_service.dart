@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class PurchaseService {
@@ -15,6 +15,10 @@ class PurchaseService {
   final List<PurchaseItem> purchaseList = List();
 
   PurchaseItem _basePurchaseItem;
+
+  TrackingService trackingService;
+
+  PurchaseService(this.trackingService);
 
   Future<void> start() async {
     await Purchases.setDebugLogsEnabled(true);
@@ -81,10 +85,32 @@ class PurchaseService {
     }
   }
 
+  Future<PurchaseResult> makePurchase(PurchaseItem purchaseItem) async {
+    try {
+      PurchaserInfo purchaserInfo =
+          await Purchases.purchasePackage(purchaseItem.package);
+      print("[PurchaseService] purchaserInfo=$purchaserInfo");
+      trackingService.trackPurchase(purchaseItem.package.product.identifier);
+      return PurchaseResult.completed();
+    } on PlatformException catch (e) {
+      if (PurchasesErrorHelper.getErrorCode(e) ==
+          PurchasesErrorCode.purchaseCancelledError) {
+        return PurchaseResult.cancelled();
+      } else {
+        return PurchaseResult.failed(e);
+      }
+    }
+  }
+
   bool _checkAccessEntitlement(PurchaserInfo purchaserInfo) {
     EntitlementInfo result = purchaserInfo.entitlements.all["Access"];
     if (result != null) {
-      return result.isActive;
+      if (result.isActive) {
+        trackingService.setPaying();
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -151,6 +177,8 @@ class PurchaseItem {
     _price = package.product.price;
   }
 
+  Package get package => _package;
+
   String get title => _title;
 
   String get priceString => _priceString;
@@ -196,21 +224,6 @@ class PurchaseItem {
           });
     } else {
       return "";
-    }
-  }
-
-  Future<PurchaseResult> makePurchase() async {
-    try {
-      PurchaserInfo purchaserInfo = await Purchases.purchasePackage(_package);
-      print("[PurchaseService] purchaserInfo=$purchaserInfo");
-      return PurchaseResult.completed();
-    } on PlatformException catch (e) {
-      if (PurchasesErrorHelper.getErrorCode(e) ==
-          PurchasesErrorCode.purchaseCancelledError) {
-        return PurchaseResult.cancelled();
-      } else {
-        return PurchaseResult.failed(e);
-      }
     }
   }
 

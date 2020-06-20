@@ -23,7 +23,8 @@ class SubscriptionsBloc {
 
   void purchase(BuildContext context, PurchaseItem purchaseItem) async {
     _controller.sink.add(SubscriptionsViewState.loading());
-    PurchaseResult purchaseResult = await purchaseItem.makePurchase();
+    PurchaseResult purchaseResult =
+        await purchaseService.makePurchase(purchaseItem);
     print("[SubscriptionsBloc] $purchaseResult");
     _firePurchaseResult(purchaseResult);
   }

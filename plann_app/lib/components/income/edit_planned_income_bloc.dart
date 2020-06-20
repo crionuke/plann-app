@@ -31,7 +31,7 @@ class EditPlannedIncomeBloc {
   void delete(BuildContext context) async {
     _controller.sink.add(true);
     await dbService.deletePlannedIncome(model.id);
-    await analyticsService.analyze(dbService);
+    await analyticsService.analyze();
     Navigator.pop(context, true);
   }
 
@@ -49,7 +49,7 @@ class EditPlannedIncomeBloc {
               state.date,
               state.category,
               AppTexts.upFirstLetter(state.comment)));
-      await analyticsService.analyze(dbService);
+      await analyticsService.analyze();
       Navigator.pop(context, true);
     }
   }

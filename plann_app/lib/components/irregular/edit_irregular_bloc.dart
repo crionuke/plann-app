@@ -31,7 +31,7 @@ class EditIrregularBloc {
   void delete(BuildContext context) async {
     _controller.sink.add(true);
     await dbService.deleteIrregular(model.id);
-    await analyticsService.analyze(dbService);
+    await analyticsService.analyze();
     Navigator.pop(context, true);
   }
 
@@ -43,7 +43,7 @@ class EditIrregularBloc {
           model.id,
           IrregularModel(null, num.parse(AppValues.prepareToParse(state.value)),
               state.currency, AppTexts.upFirstLetter(state.title), state.date));
-      await analyticsService.analyze(dbService);
+      await analyticsService.analyze();
       Navigator.pop(context, true);
     }
   }

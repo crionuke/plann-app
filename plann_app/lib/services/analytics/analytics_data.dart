@@ -28,6 +28,30 @@ class AnalyticsData {
 
   int get currentMonthOffset => _currentMonthIndex - _firstMonthIndex;
 
+  int _actualIncomeCount;
+
+  int get actualIncomeCount => _actualIncomeCount;
+
+  int _plannedIncomeCount;
+
+  int get plannedIncomeCount => _plannedIncomeCount;
+
+  int _actualExpenseCount;
+
+  int get actualExpenseCount => _actualExpenseCount;
+
+  int _plannedExpenseCount;
+
+  int get plannedExpenseCount => _plannedExpenseCount;
+
+  int _actualIrregularCount;
+
+  int get actualIrregularCount => _actualIrregularCount;
+
+  int _plannedIrregularCount;
+
+  int get plannedIrregularCount => _plannedIrregularCount;
+
   AnalyticsData(
       this.actualIncomeList,
       this.plannedIncomeList,
@@ -35,6 +59,13 @@ class AnalyticsData {
       this.plannedExpenseList,
       this.actualIrregularList,
       this.plannedIrregularList) {
+    _actualIncomeCount = actualIncomeList.length;
+    _plannedIncomeCount = plannedIncomeList.length;
+    _actualExpenseCount = actualExpenseList.length;
+    _plannedExpenseCount = plannedExpenseList.length;
+    _actualIrregularCount = actualIrregularList.length;
+    _plannedIrregularCount = plannedIrregularList.length;
+
     _monthList = List();
     DateTime now = DateTime.now();
     _currentMonthIndex = AnalyticsUtils.toAbs(now.year, now.month);

@@ -25,7 +25,9 @@ class BlockBloc {
 
   Future<void> purchase(BuildContext context, PurchaseItem purchaseItem) async {
     _controller.sink.add(BlockScreenState.loading());
-    PurchaseResult purchaseResult = await purchaseItem.makePurchase();
+
+    PurchaseResult purchaseResult =
+        await purchaseService.makePurchase(purchaseItem);
     print("[BlockBloc] $purchaseResult");
     _firePurchaseResult(purchaseResult);
   }

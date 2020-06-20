@@ -7,6 +7,7 @@ import 'package:plann_app/components/expense/planned_expense_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 
 class AddPlannedExpenseBloc {
   final _controller = StreamController<bool>();
@@ -17,8 +18,10 @@ class AddPlannedExpenseBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final TrackingService trackingService;
 
-  AddPlannedExpenseBloc(this.dbService, this.analyticsService);
+  AddPlannedExpenseBloc(
+      this.dbService, this.analyticsService, this.trackingService);
 
   @override
   void dispose() {
@@ -36,7 +39,8 @@ class AddPlannedExpenseBloc {
           state.currency,
           state.category,
           AppTexts.upFirstLetter(state.comment)));
-      await analyticsService.analyze(dbService);
+      await analyticsService.analyze();
+      trackingService.expensePlanned();
       Navigator.pop(context, true);
     }
   }

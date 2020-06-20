@@ -31,7 +31,7 @@ class EditExpenseBloc {
   void delete(BuildContext context) async {
     _controller.sink.add(true);
     await dbService.deleteExpense(model.id);
-    await analyticsService.analyze(dbService);
+    await analyticsService.analyze();
     Navigator.pop(context, true);
   }
 
@@ -48,7 +48,7 @@ class EditExpenseBloc {
               state.date,
               state.category,
               AppTexts.upFirstLetter(state.comment)));
-      await analyticsService.analyze(dbService);
+      await analyticsService.analyze();
       Navigator.pop(context, true);
     }
   }

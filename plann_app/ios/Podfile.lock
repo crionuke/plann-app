@@ -1,4 +1,8 @@
 PODS:
+  - Amplitude (5.1.0)
+  - amplitude_flutter (0.0.1):
+    - Amplitude (= 5.1.0)
+    - Flutter
   - Flutter (1.0.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
@@ -20,6 +24,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - amplitude_flutter (from `.symlinks/plugins/amplitude_flutter/ios`)
   - Flutter (from `Flutter`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
@@ -30,10 +35,13 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Amplitude
     - FMDB
     - Purchases
 
 EXTERNAL SOURCES:
+  amplitude_flutter:
+    :path: ".symlinks/plugins/amplitude_flutter/ios"
   Flutter:
     :path: Flutter
   package_info:
@@ -50,6 +58,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_web/ios"
 
 SPEC CHECKSUMS:
+  Amplitude: 1d3d18f82ba9852011aa7b9a741eac616d78fa82
+  amplitude_flutter: 3341d2e7cf7321353140e2230531be45f5471bb2
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62

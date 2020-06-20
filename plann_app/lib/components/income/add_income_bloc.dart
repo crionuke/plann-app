@@ -7,6 +7,7 @@ import 'package:plann_app/components/income/income_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 
 class AddIncomeBloc {
   final _controller = StreamController<bool>();
@@ -17,8 +18,9 @@ class AddIncomeBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final TrackingService trackingService;
 
-  AddIncomeBloc(this.dbService, this.analyticsService);
+  AddIncomeBloc(this.dbService, this.analyticsService, this.trackingService);
 
   @override
   void dispose() {
@@ -37,7 +39,8 @@ class AddIncomeBloc {
           state.dateTime,
           state.category,
           AppTexts.upFirstLetter(state.comment)));
-      await analyticsService.analyze(dbService);
+      await analyticsService.analyze();
+      trackingService.incomeAdded();
       Navigator.pop(context, true);
     }
   }
