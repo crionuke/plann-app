@@ -14,7 +14,11 @@ class IrregularItemBloc {
   String _title;
   DateTime _date;
 
-  IrregularItemBloc();
+  IrregularItemBloc() {
+    // Setup default values
+    _currency = CurrencyType.rubles;
+    _date = DateTime.now();
+  }
 
   IrregularItemBloc.from(IrregularModel model) {
     _value = model.value.toString().replaceAll(".0", "");

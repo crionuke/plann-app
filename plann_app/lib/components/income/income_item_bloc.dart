@@ -16,7 +16,11 @@ class IncomeItemBloc {
   IncomeCategoryType _category;
   String _comment = "";
 
-  IncomeItemBloc();
+  IncomeItemBloc() {
+    // Setup default values
+    _currency = CurrencyType.rubles;
+    _dateTime = DateTime.now();
+  }
 
   IncomeItemBloc.from(IncomeModel model) {
     _value = model.value.toString().replaceAll(".0", "");

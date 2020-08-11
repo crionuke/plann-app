@@ -16,7 +16,11 @@ class ExpenseItemBloc {
   ExpenseCategoryType _category;
   String _comment = "";
 
-  ExpenseItemBloc();
+  ExpenseItemBloc() {
+    // Setup default values
+    _currency = CurrencyType.rubles;
+    _date = DateTime.now();
+  }
 
   ExpenseItemBloc.from(ExpenseModel model) {
     _value = model.value.toString().replaceAll(".0", "");
