@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
@@ -163,29 +164,33 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
 
   Widget _buildExpenseList(
       BuildContext context, ExpenseMainBloc bloc, List<ExpenseModel> list) {
-    return ListView.separated(
-        separatorBuilder: (context, index) {
-          return Divider(height: 1);
-        },
-        itemBuilder: (context, index) {
-          ExpenseModel model = list[index];
-          String itemValue = AppTexts.formatCurrencyValue(
-              context, model.currency, model.value);
-          String itemCategory =
-              AppTexts.formatExpenseCategoryType(context, model.category);
-          String itemDate = AppTexts.formatDate(context, model.date);
+    return GroupedListView<ExpenseModel, String>(
+      elements: list,
+      groupBy: (model) {
+        return AppTexts.upFirstLetter(
+            AppTexts.formatMonth(context, model.date));
+      },
+      groupSeparatorBuilder: (String groupByValue) =>
+          ListTile(title: Text(groupByValue)),
+      itemBuilder: (context, ExpenseModel model) {
+        String itemValue =
+            AppTexts.formatCurrencyValue(context, model.currency, model.value);
+        String itemCategory =
+            AppTexts.formatExpenseCategoryType(context, model.category);
+        String itemDate = AppTexts.formatDate(context, model.date);
 
-          return ListTile(
-            title: Text(itemValue),
-            subtitle: Text(
-                "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () {
-              _editExpense(context, bloc, model);
-            },
-          );
-        },
-        itemCount: list.length);
+        return ListTile(
+          title: Text(itemValue),
+          subtitle: Text(
+              "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
+          trailing: Icon(Icons.navigate_next),
+          onTap: () {
+            _editExpense(context, bloc, model);
+          },
+        );
+      },
+      order: GroupedListOrder.ASC,
+    );
   }
 
   Widget _buildPlannedExpenseList(BuildContext context, ExpenseMainBloc bloc,

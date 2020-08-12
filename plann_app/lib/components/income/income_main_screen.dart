@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
@@ -149,29 +150,33 @@ class _IncomeMainState extends State<IncomeMainScreen>
 
   Widget _buildIncomeList(
       BuildContext context, IncomeMainBloc bloc, List<IncomeModel> list) {
-    return ListView.separated(
-        separatorBuilder: (context, index) {
-          return Divider(height: 1);
-        },
-        itemBuilder: (context, index) {
-          IncomeModel model = list[index];
-          String itemValue = AppTexts.formatCurrencyValue(
-              context, model.currency, model.value);
-          String itemCategory =
-              AppTexts.formatIncomeCategoryType(context, model.category);
-          String itemDate = AppTexts.formatDate(context, model.date);
+    return GroupedListView<IncomeModel, String>(
+      elements: list,
+      groupBy: (model) {
+        return AppTexts.upFirstLetter(
+            AppTexts.formatMonth(context, model.date));
+      },
+      groupSeparatorBuilder: (String groupByValue) =>
+          ListTile(title: Text(groupByValue)),
+      itemBuilder: (context, IncomeModel model) {
+        String itemValue =
+            AppTexts.formatCurrencyValue(context, model.currency, model.value);
+        String itemCategory =
+            AppTexts.formatIncomeCategoryType(context, model.category);
+        String itemDate = AppTexts.formatDate(context, model.date);
 
-          return ListTile(
-            title: Text("+" + itemValue),
-            subtitle: Text(
-                "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () {
-              _editIncome(context, bloc, model);
-            },
-          );
-        },
-        itemCount: list.length);
+        return ListTile(
+          title: Text("+" + itemValue),
+          subtitle: Text(
+              "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
+          trailing: Icon(Icons.navigate_next),
+          onTap: () {
+            _editIncome(context, bloc, model);
+          },
+        );
+      },
+      order: GroupedListOrder.ASC,
+    );
   }
 
   Widget _buildPlannedIncomeList(BuildContext context, IncomeMainBloc bloc,

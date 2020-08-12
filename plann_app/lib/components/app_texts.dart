@@ -71,6 +71,12 @@ class AppTexts {
     return format.format(dateTime.toLocal()).toString();
   }
 
+  static String formatMonth(BuildContext context, DateTime dateTime) {
+    final Locale locale = Localizations.localeOf(context);
+    final DateFormat format = DateFormat.MMMM(locale.toString());
+    return format.format(dateTime.toLocal()).toString();
+  }
+
   static String formatDateTime(BuildContext context, DateTime dateTime) {
     final Locale locale = Localizations.localeOf(context);
     final DateFormat format = DateFormat("yMMMMd", locale.toString()).add_jms();
