@@ -3,9 +3,11 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/month_analytics.dart';
+import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:provider/provider.dart';
 
 class MonthCaruselView extends StatelessWidget {
@@ -73,67 +75,50 @@ class MonthCaruselView extends StatelessWidget {
   }
 
   Widget _buildIncomeTile(BuildContext context, MonthAnalytics monthAnalytics) {
-    if (monthAnalytics.finished) {
-      return ListTile(
-        onTap: () {},
-        leading: Icon(Icons.arrow_downward),
-        title: Text(FlutterI18n.translate(context, "texts.income_s") +
-            ": " +
-            AppTexts.mergeCurrencyAndPercentMap(
-                context,
-                monthAnalytics.actualIncomeValues,
-                monthAnalytics.incomePercentDiff,
-                prefix: "+")),
-      );
-    } else {
-      return ListTile(
-        onTap: () {},
-        leading: Icon(Icons.arrow_downward),
-        title: Text(FlutterI18n.translate(context, "texts.income_s") + ":"),
-        subtitle: Text(FlutterI18n.translate(context, "texts.fact") +
-            ": " +
-            AppTexts.formatCurrencyMap(
-                context, monthAnalytics.actualIncomeValues, prefix: "+") +
-            "\n" +
-            FlutterI18n.translate(context, "texts.plan") +
-            ": " +
-            AppTexts.formatCurrencyMap(
-                context, monthAnalytics.plannedIncomeValues,
-                prefix: "+")),
-      );
-    }
+    return ListTile(
+      onTap: () {},
+      leading: Icon(Icons.arrow_downward),
+      title: Text(FlutterI18n.translate(context, "texts.income_s") + ":"),
+      subtitle: Text(_prepareCurrencyMapWithPercents(
+          context, monthAnalytics.actualIncomeValues,
+          monthAnalytics.incomePercentDiff,
+          prefix: "+")),
+    );
   }
 
   Widget _buildExpenseTile(
       BuildContext context, MonthAnalytics monthAnalytics) {
-    if (monthAnalytics.finished) {
-      return ListTile(
-        onTap: () {},
-        leading: Icon(Icons.account_balance_wallet),
-        title: Text(FlutterI18n.translate(context, "texts.regular") +
-            ": " +
-            AppTexts.mergeCurrencyAndPercentMap(
-                context,
-                monthAnalytics.actualExpenseValues,
-                monthAnalytics.expensePercentDiff,
-                prefix: "-")),
-      );
+    return ListTile(
+      onTap: () {},
+      leading: Icon(Icons.account_balance_wallet),
+      title: Text(FlutterI18n.translate(context, "texts.regular") + ":"),
+      subtitle: Text(_prepareCurrencyMapWithPercents(
+          context, monthAnalytics.actualExpenseValues,
+          monthAnalytics.expensePercentDiff,
+          prefix: "-")),
+    );
+  }
+
+  String _prepareCurrencyMapWithPercents(BuildContext context,
+      Map<CurrencyType, double> currencyMap,
+      Map<CurrencyType, int> percentMap, {String prefix = ""}) {
+    if (currencyMap.isNotEmpty) {
+      return currencyMap
+          .map((key, value) =>
+          MapEntry<CurrencyType, String>(
+              key,
+              AppTexts.formatCurrencyType(key) + ": " + prefix +
+                  AppValues.prepareToDisplay(value) +
+                  " (" +
+                  (percentMap[key] >= 0
+                      ? "+" + percentMap[key].toString()
+                      : percentMap[key].toString()) +
+                  "%)"
+          ))
+          .values
+          .join("\n");
     } else {
-      return ListTile(
-        onTap: () {},
-        leading: Icon(Icons.account_balance_wallet),
-        title: Text(FlutterI18n.translate(context, "texts.regular") + ":"),
-        subtitle: Text(FlutterI18n.translate(context, "texts.fact") +
-            ": " +
-            AppTexts.formatCurrencyMap(
-                context, monthAnalytics.actualExpenseValues, prefix: "-") +
-            "\n" +
-            FlutterI18n.translate(context, "texts.plan") +
-            ": " +
-            AppTexts.formatCurrencyMap(
-                context, monthAnalytics.plannedExpenseValues,
-                prefix: "-")),
-      );
+      return "-";
     }
   }
 

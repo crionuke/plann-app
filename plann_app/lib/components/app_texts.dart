@@ -83,6 +83,19 @@ class AppTexts {
     return format.format(dateTime.toLocal()).toString();
   }
 
+  static String formatCurrencyType(CurrencyType type) {
+    switch (type) {
+      case (CurrencyType.rubles):
+        return "₽";
+      case (CurrencyType.euro):
+        return "€";
+      case (CurrencyType.dollars):
+        return "\$";
+      default:
+        return "UNKNOWN";
+    }
+  }
+
   static String formatCurrencyValue(
       BuildContext context, CurrencyType currencyType, num value) {
     return FlutterI18n.translate(
