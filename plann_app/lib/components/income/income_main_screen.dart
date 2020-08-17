@@ -175,7 +175,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
           },
         );
       },
-      order: GroupedListOrder.ASC,
+      sort: false,
     );
   }
 

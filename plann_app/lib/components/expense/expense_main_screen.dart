@@ -189,7 +189,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
           },
         );
       },
-      order: GroupedListOrder.ASC,
+      sort: false,
     );
   }
 
