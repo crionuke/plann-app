@@ -21,7 +21,7 @@ class PlannedIrregularItemBloc {
 
   PlannedIrregularItemBloc.from(PlannedIrregularModel model) {
     _creationDate = model.creationDate;
-    _value = model.value.toString().replaceAll(".0", "");
+    _value = AppValues.prepareToDisplay(model.value);
     _currency = model.currency;
     _title = model.title;
     _date = model.date;

@@ -18,7 +18,7 @@ class PlannedExpenseItemBloc {
   PlannedExpenseItemBloc();
 
   PlannedExpenseItemBloc.from(PlannedExpenseModel model) {
-    _value = model.value.toString().replaceAll(".0", "");
+    _value = AppValues.prepareToDisplay(model.value);
     _currency = model.currency;
     _category = model.category;
     _comment = model.comment;

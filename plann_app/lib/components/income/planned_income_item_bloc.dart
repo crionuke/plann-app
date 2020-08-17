@@ -21,7 +21,7 @@ class PlannedIncomeItemBloc {
   PlannedIncomeItemBloc();
 
   PlannedIncomeItemBloc.from(PlannedIncomeModel model) {
-    _value = model.value.toString().replaceAll(".0", "");
+    _value = AppValues.prepareToDisplay(model.value);
     _currency = model.currency;
     _mode = model.mode;
     if (_mode == SubjectModeType.onetime) {

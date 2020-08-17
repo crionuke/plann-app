@@ -23,7 +23,7 @@ class IncomeItemBloc {
   }
 
   IncomeItemBloc.from(IncomeModel model) {
-    _value = model.value.toString().replaceAll(".0", "");
+    _value = AppValues.prepareToDisplay(model.value);
     _currency = model.currency;
     _dateTime = model.date;
     _category = model.category;

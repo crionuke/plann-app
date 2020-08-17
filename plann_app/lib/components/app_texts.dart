@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
+import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -101,7 +102,7 @@ class AppTexts {
     return FlutterI18n.translate(
         context, "texts." + currencyType.toString().split(".")[1] + "_value",
         translationParams: {
-          "value": value.toStringAsFixed(2).replaceAll(".00", "")
+          "value": AppValues.prepareToDisplay(value)
         });
   }
 

@@ -23,7 +23,7 @@ class ExpenseItemBloc {
   }
 
   ExpenseItemBloc.from(ExpenseModel model) {
-    _value = model.value.toString().replaceAll(".0", "");
+    _value = AppValues.prepareToDisplay(model.value);
     _currency = model.currency;
     _date = model.date;
     _category = model.category;
