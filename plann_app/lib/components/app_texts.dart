@@ -18,13 +18,15 @@ class AppTexts {
     }
   }
 
-  static String formatCurrencyMap(
-      BuildContext context, Map<CurrencyType, double> currencyMap,
+  static String formatCurrencyMap(BuildContext context,
+      Map<CurrencyType, double> currencyMap,
       {String prefix = ""}) {
     if (currencyMap.isNotEmpty) {
       return currencyMap
-          .map((key, value) => MapEntry<CurrencyType, String>(
-              key, AppTexts.formatCurrencyValue(context, key, value)))
+          .map((key, value) =>
+          MapEntry<CurrencyType, String>(
+              key,
+              AppTexts.formatCurrencyValue(context, key, value, shorten: true)))
           .values
           .map((value) => prefix + value)
           .join(", ");
@@ -52,7 +54,7 @@ class AppTexts {
       return currencyMap
           .map((key, value) => MapEntry<CurrencyType, String>(
               key,
-              AppTexts.formatCurrencyValue(context, key, value) +
+              AppTexts.formatCurrencyValue(context, key, value, shorten: true) +
                   " (" +
                   (percentMap[key] > 0
                       ? "+" + percentMap[key].toString()
@@ -98,11 +100,40 @@ class AppTexts {
   }
 
   static String formatCurrencyValue(
-      BuildContext context, CurrencyType currencyType, num value) {
+      BuildContext context, CurrencyType currencyType, num value,
+      {shorten: false}) {
+    String displayValue;
+    if (shorten) {
+      displayValue = formatValueAsShorten(context, value);
+    } else {
+      displayValue = AppValues.prepareToDisplay(value);
+    }
+
     return FlutterI18n.translate(
         context, "texts." + currencyType.toString().split(".")[1] + "_value",
         translationParams: {
-          "value": AppValues.prepareToDisplay(value)
+          "value": displayValue
+        });
+  }
+
+  static String formatValueAsShorten(BuildContext context, num value) {
+    String template = "default";
+    num shortenValue = value;
+    if (value >= 1000 && value < 1000000) {
+      template = "thousand";
+      shortenValue = value / 1000;
+    } else if (value >= 1000000 && value < 1000000000) {
+      template = "million";
+      shortenValue = value / 1000000;
+    } else if (value >= 1000000000 && value < 1000000000000) {
+      template = "billion";
+      shortenValue = value / 1000000000;
+    }
+
+    return FlutterI18n.translate(
+        context, "shorten_numbers." + template,
+        translationParams: {
+          "value": AppValues.prepareToDisplay(shortenValue, fixed: 1)
         });
   }
 

@@ -71,6 +71,12 @@
     "terms_and_conditions": "Условия использования",
     "privacy_policy": "Политика конфиденциальности"
   },
+  "shorten_numbers": {
+    "default": "{value}",
+    "thousand": "{value} тыс.",
+    "million": "{value} млн.",
+    "billion": "{value} млрд."
+  },
   "currency_type_enum": {
     "rubles": "Рубли",
     "euro": "Евро",

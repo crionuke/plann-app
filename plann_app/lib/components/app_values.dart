@@ -7,8 +7,11 @@ class AppValues {
     }
   }
 
-  static String prepareToDisplay(num value) {
+  static String prepareToDisplay(num value, {num fixed = 2}) {
     // TODO detect what use "." or ","
-    return value.toStringAsFixed(2).replaceAll(".00", "").replaceAll(".", ",");
+    return value.toStringAsFixed(fixed)
+        .replaceAll(".00", "")
+        .replaceAll(".0", "")
+        .replaceAll(".", ",");
   }
 }

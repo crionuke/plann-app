@@ -3,7 +3,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/month_analytics.dart';
@@ -108,7 +107,7 @@ class MonthCaruselView extends StatelessWidget {
           MapEntry<CurrencyType, String>(
               key,
               AppTexts.formatCurrencyType(key) + ": " + prefix +
-                  AppValues.prepareToDisplay(value) +
+                  AppTexts.formatValueAsShorten(context, value) +
                   " (" +
                   (percentMap[key] >= 0
                       ? "+" + percentMap[key].toString()
