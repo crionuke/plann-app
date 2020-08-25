@@ -57,8 +57,8 @@ class MonthCaruselView extends StatelessWidget {
                             )),
                         _buildIncomeTile(context, monthAnalytics),
                         _buildExpenseTile(context, monthAnalytics),
-                        _buildIrregularTile(context, monthAnalytics),
-                        _buildAccountsTile(context, monthAnalytics),
+//                        _buildIrregularTile(context, monthAnalytics),
+//                        _buildAccountsTile(context, monthAnalytics),
                       ],
                     )))));
   }

@@ -74,9 +74,21 @@ class AppTexts {
     return format.format(dateTime.toLocal()).toString();
   }
 
+  static String formatMonthYear(BuildContext context, DateTime dateTime) {
+    final Locale locale = Localizations.localeOf(context);
+    final DateFormat format = DateFormat.yMMMM(locale.toString());
+    return format.format(dateTime.toLocal()).toString();
+  }
+
   static String formatMonth(BuildContext context, DateTime dateTime) {
     final Locale locale = Localizations.localeOf(context);
     final DateFormat format = DateFormat.MMMM(locale.toString());
+    return format.format(dateTime.toLocal()).toString();
+  }
+
+  static String formatShortMonth(BuildContext context, DateTime dateTime) {
+    final Locale locale = Localizations.localeOf(context);
+    final DateFormat format = DateFormat.MMM(locale.toString());
     return format.format(dateTime.toLocal()).toString();
   }
 

@@ -1,10 +1,12 @@
 import 'package:plann_app/services/db/models/currency_model.dart';
+import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 
 class MonthAnalytics {
   final int index;
   final int year;
   final int month;
   final bool finished;
+  final DateTime date;
 
   Map<CurrencyType, double> actualIncomeValues;
   Map<CurrencyType, double> plannedIncomeValues;
@@ -12,22 +14,26 @@ class MonthAnalytics {
   Map<CurrencyType, double> plannedExpenseValues;
   Map<CurrencyType, double> actualIrregularValues;
   Map<CurrencyType, double> plannedIrregularValues;
-  Map<CurrencyType, double> accountDebet;
-  Map<CurrencyType, double> accountBalance;
   Map<CurrencyType, int> incomePercentDiff;
   Map<CurrencyType, int> expensePercentDiff;
 
-  MonthAnalytics(this.index, this.year, this.month, this.finished) {
+  Map<CurrencyType, double> accountDebet;
+  Map<CurrencyType, double> accountBalance;
+  Map<PlannedIrregularModel, double> accountParts;
+
+  MonthAnalytics(this.index, this.year, this.month, this.finished)
+      : date = DateTime(year, month) {
     actualIncomeValues = Map();
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     plannedExpenseValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
-    accountDebet = Map();
-    accountBalance = Map();
     incomePercentDiff = Map();
     expensePercentDiff = Map();
+    accountDebet = Map();
+    accountBalance = Map();
+    accountParts = Map();
   }
 
   void addActualIncomeValue(CurrencyType currencyType, double value) {
@@ -54,8 +60,11 @@ class MonthAnalytics {
     _addValue(plannedIrregularValues, currencyType, value);
   }
 
-  void addDebetValue(CurrencyType currencyType, double value) {
+  void addDebetValue(
+      PlannedIrregularModel model, CurrencyType currencyType, double value) {
     _addValue(accountDebet, currencyType, value);
+
+    accountParts[model] = value;
   }
 
   Map<CurrencyType, double> calcBalance(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/irregular/add_irregular_screen.dart';
@@ -8,6 +9,9 @@ import 'package:plann_app/components/irregular/add_planned_irregular_screen.dart
 import 'package:plann_app/components/irregular/edit_irregular_screen.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
+import 'package:plann_app/components/widgets/log_chart.dart';
+import 'package:plann_app/services/analytics/analytics_data.dart';
+import 'package:plann_app/services/analytics/month_analytics.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:provider/provider.dart';
@@ -100,7 +104,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             if (state.loaded) {
               return TabBarView(controller: _tabController, children: [
                 _buildListView(context, bloc, state.fact),
-                _buildPlannedListView(context, bloc, state.planned),
+                _buildPlannedView(context, bloc, state),
               ]);
             }
           }
@@ -118,13 +122,65 @@ class _IrregularMainState extends State<IrregularMainScreen>
     }
   }
 
-  Widget _buildPlannedListView(BuildContext context, IrregularMainBloc bloc,
-      List<PlannedIrregularModel> list) {
-    if (list.isEmpty) {
+  Widget _buildPlannedView(BuildContext context, IrregularMainBloc bloc, IrregularMainViewState state) {
+    if (state.planned.isEmpty) {
       return _buildNoPlannedIrregular(context);
     } else {
-      return _buildPlannedIrregularList(context, bloc, list);
+      double height = 160;
+
+      ColorsMap<int> colorsMap = ColorsMap();
+      state.analytics.plannedIrregularList
+          .forEach((model) => colorsMap.assign(model.id));
+
+      List<LogChartBar> bars = state.analytics.monthList.map((month) {
+        if (month.accountParts.length == 0) {
+          return LogChartBar.empty(AppTexts.upFirstLetter(
+              AppTexts.formatShortMonth(context, month.date)));
+        } else {
+          return LogChartBar(
+              AppTexts.upFirstLetter(
+                  AppTexts.formatShortMonth(context, month.date)),
+              month.accountParts.entries
+                  .map((e) =>
+                      LogChartItem(colorsMap.getColor(e.key.id), e.value))
+                  .toList());
+        }
+      }).toList();
+
+      return Column(
+        children: [
+          _buildCard(state.analytics.monthList[state.selectedMonth]),
+          LogChart(height, bars, (context, column) {
+            bloc.monthSelected(column);
+          }),
+          Expanded(
+              child: _buildPlannedIrregularList(
+                  context, bloc, state.planned, colorsMap)),
+        ],
+      );
     }
+  }
+
+  Widget _buildCard(MonthAnalytics month) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Container(
+        child: ListTile(
+//              leading: Icon(Icons.account_balance),
+          title: Text(AppTexts.upFirstLetter(
+                  AppTexts.formatMonthYear(context, month.date)) +
+              ":"),
+          subtitle: Text(FlutterI18n.translate(context, "texts.debet") +
+              ": " +
+              AppTexts.formatCurrencyMap(context, month.accountDebet,
+                  prefix: "+") +
+              "\n" +
+              FlutterI18n.translate(context, "texts.balance") +
+              ": " +
+              AppTexts.formatCurrencyMap(context, month.accountBalance)),
+        ),
+      ),
+    );
   }
 
   Widget _buildNoIrregular(BuildContext context) {
@@ -169,8 +225,11 @@ class _IrregularMainState extends State<IrregularMainScreen>
         itemCount: list.length);
   }
 
-  Widget _buildPlannedIrregularList(BuildContext context,
-      IrregularMainBloc bloc, List<PlannedIrregularModel> list) {
+  Widget _buildPlannedIrregularList(
+      BuildContext context,
+      IrregularMainBloc bloc,
+      List<PlannedIrregularModel> list,
+      ColorsMap<int> colorsMap) {
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
@@ -182,6 +241,13 @@ class _IrregularMainState extends State<IrregularMainScreen>
           String itemDate = AppTexts.formatDate(context, model.date);
 
           return ListTile(
+            leading: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  color: colorsMap.getColor(model.id),
+                )),
             title: Text(model.title),
             subtitle: Text("$itemDate, $itemValue"),
             trailing: Icon(Icons.navigate_next),

@@ -174,25 +174,26 @@ class AnalyticsData {
         _findMonthAnalyticsByDate(model.date)
             .addPlannedIrregularValue(model.currency, model.value));
 
-    plannedIrregularList.forEach((model) => _applyDebet(
+    plannedIrregularList.forEach((model) => _applyDebet(model,
         model.creationDate, model.date, model.currency, model.value));
   }
 
-  void _applyDebet(DateTime fromDate, DateTime toDate,
+  void _applyDebet(PlannedIrregularModel model, DateTime fromDate,
+      DateTime toDate,
       CurrencyType currencyType, double value) {
     int fromMonthIndex = AnalyticsUtils.toAbs(fromDate.year, fromDate.month);
     int toMonthIndex = AnalyticsUtils.toAbs(toDate.year, toDate.month);
     int monthCount = toMonthIndex - fromMonthIndex;
     if (monthCount == 0) {
       _monthList[fromMonthIndex - _firstMonthIndex]
-          .addDebetValue(currencyType, value);
+          .addDebetValue(model, currencyType, value);
     } else {
       double valuePerMonth = value / monthCount;
       for (int monthIndex = fromMonthIndex;
-          monthIndex < toMonthIndex;
-          monthIndex++) {
+      monthIndex < toMonthIndex;
+      monthIndex++) {
         _monthList[monthIndex - _firstMonthIndex]
-            .addDebetValue(currencyType, valuePerMonth);
+            .addDebetValue(model, currencyType, valuePerMonth);
       }
     }
   }

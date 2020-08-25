@@ -30,7 +30,7 @@ class FinancesView extends StatelessWidget {
     return Column(children: <Widget>[
       Container(
           margin: EdgeInsets.all(10),
-          height: 340,
+          height: 240,
           child: Provider<MonthCaruselBloc>(
               create: (context) => monthCaruselBloc,
               dispose: (context, bloc) => bloc.dispose(),
