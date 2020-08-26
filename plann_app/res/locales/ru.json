@@ -69,7 +69,9 @@
     "purchase_annual_subtitle": "(12 мес. по {per_month_price} / 1 мес. Экономия {save_value}%)",
     "restore_purchases": "Восстановить покупки",
     "terms_and_conditions": "Условия использования",
-    "privacy_policy": "Политика конфиденциальности"
+    "privacy_policy": "Политика конфиденциальности",
+    "irregular_size_info": "{value} к {date}",
+    "irregular_per_month_info": "По {value} / мес."
   },
   "shorten_numbers": {
     "default": "{value}",

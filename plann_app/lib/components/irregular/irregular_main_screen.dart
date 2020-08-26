@@ -10,6 +10,7 @@ import 'package:plann_app/components/irregular/edit_irregular_screen.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/widgets/log_chart.dart';
+import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/month_analytics.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
@@ -157,7 +158,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             }),
             Expanded(
                 child: _buildPlannedIrregularList(
-                    context, bloc, state.planned, colorsMap)),
+                    context, bloc, state.planned, colorsMap, state.analytics)),
           ],
         ))
       ]);
@@ -237,16 +238,31 @@ class _IrregularMainState extends State<IrregularMainScreen>
       BuildContext context,
       IrregularMainBloc bloc,
       List<PlannedIrregularModel> list,
-      ColorsMap<int> colorsMap) {
+      ColorsMap<int> colorsMap,
+      AnalyticsData analyticsData) {
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
         },
         itemBuilder: (context, index) {
           PlannedIrregularModel model = list[index];
-          String itemValue = AppTexts.formatCurrencyValue(
-              context, model.currency, model.value);
-          String itemDate = AppTexts.formatDate(context, model.date);
+
+          String sizeInfo = FlutterI18n.translate(
+              context, "texts.irregular_size_info",
+              translationParams: {
+                "value": AppTexts.formatCurrencyValue(
+                    context, model.currency, model.value,
+                    shorten: true),
+                "date": AppTexts.formatDate(context, model.date),
+              });
+
+          String perMonthInfo = FlutterI18n.translate(
+              context, "texts.irregular_per_month_info",
+              translationParams: {
+                "value": AppTexts.formatCurrencyValue(context, model.currency,
+                    analyticsData.perMonthValues[model.id],
+                    shorten: true),
+              });
 
           return ListTile(
             leading: ClipRRect(
@@ -257,7 +273,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
                   color: colorsMap.getColor(model.id),
                 )),
             title: Text(model.title),
-            subtitle: Text("$itemDate, $itemValue"),
+//            isThreeLine: true,
+            subtitle: Text("$sizeInfo\n${perMonthInfo}"),
             trailing: Icon(Icons.navigate_next),
             onTap: () {
               _editPlannedIrregular(context, bloc, model);

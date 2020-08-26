@@ -18,6 +18,8 @@ class AnalyticsData {
   final List<PlannedIrregularModel> plannedIrregularList;
 
   List<MonthAnalytics> _monthList;
+  Map<int, double> _perMonthValues;
+
   int _currentMonthIndex;
   int _firstMonthIndex;
   int _lastMonthIndex;
@@ -25,6 +27,8 @@ class AnalyticsData {
   int get monthCount => _monthList.length;
 
   List<MonthAnalytics> get monthList => _monthList;
+
+  Map<int, double> get perMonthValues => _perMonthValues;
 
   int get currentMonthOffset => _currentMonthIndex - _firstMonthIndex;
 
@@ -67,6 +71,7 @@ class AnalyticsData {
     _plannedIrregularCount = plannedIrregularList.length;
 
     _monthList = List();
+    _perMonthValues = Map();
     DateTime now = DateTime.now();
     _currentMonthIndex = AnalyticsUtils.toAbs(now.year, now.month);
     _firstMonthIndex = _currentMonthIndex - 1;
@@ -187,8 +192,10 @@ class AnalyticsData {
     if (monthCount == 0) {
       _monthList[fromMonthIndex - _firstMonthIndex]
           .addDebetValue(model, currencyType, value);
+      _perMonthValues[model.id] = value;
     } else {
       double valuePerMonth = value / monthCount;
+      _perMonthValues[model.id] = valuePerMonth;
       for (int monthIndex = fromMonthIndex;
       monthIndex < toMonthIndex;
       monthIndex++) {
