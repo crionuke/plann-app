@@ -10,7 +10,6 @@ import 'package:plann_app/components/irregular/edit_irregular_screen.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/widgets/log_chart.dart';
-import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/month_analytics.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
@@ -122,7 +121,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
     }
   }
 
-  Widget _buildPlannedView(BuildContext context, IrregularMainBloc bloc, IrregularMainViewState state) {
+  Widget _buildPlannedView(BuildContext context, IrregularMainBloc bloc,
+      IrregularMainViewState state) {
     if (state.planned.isEmpty) {
       return _buildNoPlannedIrregular(context);
     } else {
@@ -147,17 +147,20 @@ class _IrregularMainState extends State<IrregularMainScreen>
         }
       }).toList();
 
-      return Column(
-        children: [
-          _buildCard(state.analytics.monthList[state.selectedMonth]),
-          LogChart(height, bars, (context, column) {
-            bloc.monthSelected(column);
-          }),
-          Expanded(
-              child: _buildPlannedIrregularList(
-                  context, bloc, state.planned, colorsMap)),
-        ],
-      );
+      return CustomScrollView(slivers: <Widget>[
+        SliverFillRemaining(
+            child: Column(
+          children: [
+            _buildCard(state.analytics.monthList[state.selectedMonth]),
+            LogChart(height, bars, (context, column) {
+              bloc.monthSelected(column);
+            }),
+            Expanded(
+                child: _buildPlannedIrregularList(
+                    context, bloc, state.planned, colorsMap)),
+          ],
+        ))
+      ]);
     }
   }
 
