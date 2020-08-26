@@ -175,6 +175,11 @@ class _IrregularMainState extends State<IrregularMainScreen>
               AppTexts.formatCurrencyMap(context, month.accountDebet,
                   prefix: "+") +
               "\n" +
+              FlutterI18n.translate(context, "texts.expense") +
+              ": " +
+              AppTexts.formatCurrencyMap(context, month.plannedIrregularValues,
+                  prefix: "-") +
+              "\n" +
               FlutterI18n.translate(context, "texts.balance") +
               ": " +
               AppTexts.formatCurrencyMap(context, month.accountBalance)),
