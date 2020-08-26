@@ -37,37 +37,29 @@ class LogChart extends StatelessWidget {
     return Container(
         height: height + 50,
 //        padding: const EdgeInsets.all(2),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            _buildBar(context, index, bar.items),
-            _buildTile(bar.title),
-          ],
-        ));
+        child: InkWell(
+            onTap: () => barTap(context, index),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildBar(context, index, bar.items),
+                _buildTile(bar.title),
+              ],
+            )));
   }
 
   Widget _buildBar(BuildContext context, int index, List<LogChartItem> items) {
-    return Stack(
-      children: [
-        Column(
-            children: items.map((item) {
-          if (item.value == 0) {
-            return Container(
-              width: BAR_WIDTH,
-              height: height,
-            );
-          } else {
-            return _buildBox(log(item.value) * _scale, item.color);
-          }
-        }).toList()),
-        Positioned.fill(
-            child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => barTap(context, index),
-                )))
-      ],
-    );
+    return Column(
+        children: items.map((item) {
+      if (item.value == 0) {
+        return Container(
+          width: BAR_WIDTH,
+          height: height,
+        );
+      } else {
+        return _buildBox(log(item.value) * _scale, item.color);
+      }
+    }).toList());
   }
 
   Widget _buildBox(double height, Color color) {
