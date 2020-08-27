@@ -9,9 +9,9 @@ class AppValues {
 
   static String prepareToDisplay(num value, {num fixed = 2}) {
     // TODO detect what use "." or ","
-    return value.toStringAsFixed(fixed)
-        .replaceAll(".00", "")
-        .replaceAll(".0", "")
+    return value
+        .toStringAsFixed(fixed)
+        .replaceAll(new RegExp("[.,]0*\$"), "")
         .replaceAll(".", ",");
   }
 }
