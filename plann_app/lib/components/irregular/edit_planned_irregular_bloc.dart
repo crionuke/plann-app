@@ -43,7 +43,7 @@ class EditPlannedIrregularBloc {
           model.id,
           PlannedIrregularModel(
               null,
-              DateTime.now(),
+              state.creationDate,
               num.parse(AppValues.prepareToParse(state.value)),
               state.currency,
               AppTexts.upFirstLetter(state.title),

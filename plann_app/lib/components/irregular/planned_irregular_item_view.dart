@@ -84,7 +84,12 @@ class PlannedIrregularItemView extends StatelessWidget {
 
   Widget _buildDateTextField(BuildContext context,
       PlannedIrregularItemBloc bloc, PlannedIrregularItemViewState state) {
-    return AppFields.buildDateTextFieldFuture(context, state.date, 'texts.date',
-        state.dateErrorKey, (value) => bloc.dateChanged(value));
+    return AppFields.buildDateTextFieldFrom(
+        context,
+        state.creationDate,
+        state.date,
+        'texts.date',
+        state.dateErrorKey,
+        (value) => bloc.dateChanged(value));
   }
 }

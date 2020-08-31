@@ -36,6 +36,14 @@ class PlannedIrregularItemBloc {
         _creationDate, _value, _currency, _title, _date);
   }
 
+  void creationDateChanged(DateTime date) {
+    _creationDate = date;
+    if (_creationDate.compareTo(_date) > 0) {
+      _creationDate = _date;
+    }
+    _controller.sink.add(currentState);
+  }
+
   void valueChanged(String value) {
     _value = value;
     _controller.sink.add(currentState);
@@ -53,10 +61,14 @@ class PlannedIrregularItemBloc {
 
   void dateChanged(DateTime date) {
     _date = date;
+    if (_date.compareTo(_creationDate) < 0) {
+      _date = _creationDate;
+    }
     _controller.sink.add(currentState);
   }
 
   bool done() {
+    String creationErrorKey = _creationDate == null ? "texts.field_empty" : null;
     String valueErrorKey;
     if (_value == null || _value.trim() == "") {
       valueErrorKey = "texts.field_empty";
@@ -70,6 +82,7 @@ class PlannedIrregularItemBloc {
 
     PlannedIrregularItemViewState state = PlannedIrregularItemViewState(
         _creationDate, _value, _currency, _title, _date,
+        creationErrorKey: creationErrorKey,
         valueErrorKey: valueErrorKey,
         currencyErrorKey: currencyErrorKey,
         titleErrorKey: titleErrorKey,
@@ -90,6 +103,7 @@ class PlannedIrregularItemViewState {
   final CurrencyType currency;
   final String title;
   final DateTime date;
+  final String creationErrorKey;
   final String valueErrorKey;
   final String currencyErrorKey;
   final String titleErrorKey;
@@ -97,13 +111,15 @@ class PlannedIrregularItemViewState {
 
   PlannedIrregularItemViewState(
       this.creationDate, this.value, this.currency, this.title, this.date,
-      {this.valueErrorKey,
+      {this.creationErrorKey,
+      this.valueErrorKey,
       this.currencyErrorKey,
       this.titleErrorKey,
       this.dateErrorKey});
 
   bool hasErrors() {
-    return valueErrorKey != null ||
+    return creationErrorKey != null ||
+        valueErrorKey != null ||
         currencyErrorKey != null ||
         titleErrorKey != null ||
         dateErrorKey != null;

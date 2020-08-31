@@ -72,6 +72,17 @@ class AppFields {
     });
   }
 
+  static Widget buildDateTextField(
+      BuildContext context,
+      DateTime initialValue,
+      String labelKey,
+      String errorKey,
+      Function(DateTime value) onChanged) {
+    DateTime now = DateTime.now();
+    return _buildDateTextField(context, initialValue, labelKey, errorKey,
+        DateTime(1900), now, DateTime(2100), onChanged);
+  }
+
   static Widget buildDateTextFieldPast(
       BuildContext context,
       DateTime initialValue,
@@ -81,6 +92,30 @@ class AppFields {
     DateTime now = DateTime.now();
     return _buildDateTextField(context, initialValue, labelKey, errorKey,
         DateTime(1900), now, now, onChanged);
+  }
+
+  static Widget buildDateTextFieldFrom(
+      BuildContext context,
+      DateTime from,
+      DateTime initialValue,
+      String labelKey,
+      String errorKey,
+      Function(DateTime value) onChanged) {
+    if (initialValue != null) {
+      if (initialValue.compareTo(from) < 0) {
+        initialValue = from;
+      }
+    }
+
+    return _buildDateTextField(
+        context,
+        initialValue,
+        labelKey,
+        errorKey,
+        from,
+        initialValue != null ? initialValue : from,
+        DateTime(2100),
+        onChanged);
   }
 
   static Widget buildDateTextFieldFuture(
