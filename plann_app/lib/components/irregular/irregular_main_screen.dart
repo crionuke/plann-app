@@ -9,6 +9,8 @@ import 'package:plann_app/components/irregular/add_planned_irregular_screen.dart
 import 'package:plann_app/components/irregular/edit_irregular_screen.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
+import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
+import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/month_analytics.dart';
@@ -152,9 +154,12 @@ class _IrregularMainState extends State<IrregularMainScreen>
         SliverFillRemaining(
             child: Column(
           children: [
-            _buildCard(state.analytics.monthList[state.selectedMonth]),
-            LogChart(height, bars, (context, column) {
-              bloc.monthSelected(column);
+            Provider<IrregularMonthPanelBloc>(
+                create: (context) => bloc.monthPanelBloc,
+                child: IrregularMonthPanelView()),
+            LogChart(height, bars, state.analytics.currentMonthOffset,
+                (context, column) {
+              bloc.monthPanelBloc.setMonthByIndex(column);
             }),
             Expanded(
                 child: _buildPlannedIrregularList(
@@ -163,33 +168,6 @@ class _IrregularMainState extends State<IrregularMainScreen>
         ))
       ]);
     }
-  }
-
-  Widget _buildCard(MonthAnalytics month) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: Container(
-        child: ListTile(
-//              leading: Icon(Icons.account_balance),
-          title: Text(AppTexts.upFirstLetter(
-                  AppTexts.formatMonthYear(context, month.date)) +
-              ":"),
-          subtitle: Text(FlutterI18n.translate(context, "texts.debet") +
-              ": " +
-              AppTexts.formatCurrencyMap(context, month.accountDebet,
-                  prefix: "+") +
-              "\n" +
-              FlutterI18n.translate(context, "texts.expense") +
-              ": " +
-              AppTexts.formatCurrencyMap(context, month.plannedIrregularValues,
-                  prefix: "-") +
-              "\n" +
-              FlutterI18n.translate(context, "texts.balance") +
-              ": " +
-              AppTexts.formatCurrencyMap(context, month.accountBalance)),
-        ),
-      ),
-    );
   }
 
   Widget _buildNoIrregular(BuildContext context) {

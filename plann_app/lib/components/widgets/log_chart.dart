@@ -11,11 +11,12 @@ class LogChart extends StatelessWidget {
 
   final double height;
   final List<LogChartBar> bars;
+  final int initialBar;
   final LogChartBarTapCallback barTap;
 
   double _scale;
 
-  LogChart(this.height, this.bars, this.barTap) {
+  LogChart(this.height, this.bars, this.initialBar, this.barTap) {
     _scale = height * 0.8 / calcSum(bars);
   }
 
@@ -25,6 +26,8 @@ class LogChart extends StatelessWidget {
       child: Container(
           height: height + 50,
           child: ListView(
+            controller:
+                ScrollController(initialScrollOffset: initialBar * BAR_WIDTH),
             scrollDirection: Axis.horizontal,
             children: bars
                 .map((bar) => _buildColumn(context, bars.indexOf(bar), bar))
