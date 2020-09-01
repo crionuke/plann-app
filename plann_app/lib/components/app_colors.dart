@@ -16,12 +16,15 @@ class ColorsMap<K> {
     Colors.yellow,
     Colors.orange,
     Colors.purple,
+    Colors.blueGrey,
     Colors.cyan,
     Colors.lime,
     Colors.indigo,
-    Colors.brown,
-    Colors.grey,
     Colors.pink,
+    Colors.grey,
+    Colors.purpleAccent,
+    Colors.brown,
+    Colors.greenAccent,
   ];
 
   Map<K, Color> _map;
