@@ -242,13 +242,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
               });
 
           return ListTile(
-            leading: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  color: colorsMap.getColor(model.id),
-                )),
+            leading: AppViews.buildRoundedBox(colorsMap.getColor(model.id)),
             title: Text(model.title),
 //            isThreeLine: true,
             subtitle: Text("$sizeInfo\n${perMonthInfo}"),

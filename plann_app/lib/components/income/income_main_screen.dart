@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
@@ -9,6 +10,7 @@ import 'package:plann_app/components/income/add_planned_income_screen.dart';
 import 'package:plann_app/components/income/edit_income_screen.dart';
 import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
+import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
@@ -150,6 +152,10 @@ class _IncomeMainState extends State<IncomeMainScreen>
 
   Widget _buildIncomeList(
       BuildContext context, IncomeMainBloc bloc, List<IncomeModel> list) {
+
+    ColorsMap<IncomeCategoryType> colorsMap = ColorsMap();
+    list.forEach((model) => colorsMap.assign(model.category));
+
     return GroupedListView<IncomeModel, String>(
       elements: list,
       groupBy: (model) {
@@ -166,6 +172,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
         String itemDate = AppTexts.formatDate(context, model.date);
 
         return ListTile(
+          leading: AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
           title: Text("+" + itemValue),
           subtitle: Text(
               "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
@@ -10,6 +11,7 @@ import 'package:plann_app/components/expense/add_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_bloc.dart';
+import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:provider/provider.dart';
@@ -164,6 +166,10 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
 
   Widget _buildExpenseList(
       BuildContext context, ExpenseMainBloc bloc, List<ExpenseModel> list) {
+
+    ColorsMap<ExpenseCategoryType> colorsMap = ColorsMap();
+    list.forEach((model) => colorsMap.assign(model.category));
+
     return GroupedListView<ExpenseModel, String>(
       elements: list,
       groupBy: (model) {
@@ -180,6 +186,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
         String itemDate = AppTexts.formatDate(context, model.date);
 
         return ListTile(
+          leading: AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
           title: Text(itemValue),
           subtitle: Text(
               "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),

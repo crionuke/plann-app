@@ -21,6 +21,7 @@ class ColorsMap<K> {
     Colors.indigo,
     Colors.brown,
     Colors.grey,
+    Colors.pink,
   ];
 
   Map<K, Color> _map;
