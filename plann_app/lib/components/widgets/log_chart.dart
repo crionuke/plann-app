@@ -11,12 +11,12 @@ class LogChart extends StatelessWidget {
 
   final double height;
   final List<LogChartBar> bars;
-  final int initialBar;
+  final int currentColumn;
   final LogChartBarTapCallback barTap;
 
   double _scale;
 
-  LogChart(this.height, this.bars, this.initialBar, this.barTap) {
+  LogChart(this.height, this.bars, this.currentColumn, this.barTap) {
     _scale = height * 0.8 / calcSum(bars);
   }
 
@@ -26,8 +26,8 @@ class LogChart extends StatelessWidget {
       child: Container(
           height: height + 50,
           child: ListView(
-            controller:
-                ScrollController(initialScrollOffset: initialBar * BAR_WIDTH),
+            controller: ScrollController(
+                initialScrollOffset: currentColumn * BAR_WIDTH),
             scrollDirection: Axis.horizontal,
             children: bars
                 .map((bar) => _buildColumn(context, bars.indexOf(bar), bar))
@@ -46,7 +46,7 @@ class LogChart extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _buildBar(context, index, bar.items),
-                _buildTile(bar.title),
+                _buildTile(bar.title, underlined: index == currentColumn),
               ],
             )));
   }
@@ -75,11 +75,21 @@ class LogChart extends StatelessWidget {
         ));
   }
 
-  Container _buildTile(String title) {
+  Container _buildTile(String title, {bool underlined}) {
+    Text text;
+    if (underlined) {
+      text = Text(
+        title,
+        style: TextStyle(decoration: TextDecoration.underline),
+      );
+    } else {
+      text = Text(title);
+    }
+
     return Container(
       width: BAR_WIDTH,
       height: 50,
-      child: Center(child: Text(title)),
+      child: Center(child: text),
     );
   }
 

@@ -13,7 +13,6 @@ import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
-import 'package:plann_app/services/analytics/month_analytics.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:provider/provider.dart';
@@ -129,7 +128,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
     if (state.planned.isEmpty) {
       return _buildNoPlannedIrregular(context);
     } else {
-      double height = 160;
+      double height = 140;
 
       ColorsMap<int> colorsMap = ColorsMap();
       state.analytics.plannedIrregularList
