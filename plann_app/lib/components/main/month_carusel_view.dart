@@ -57,6 +57,7 @@ class MonthCaruselView extends StatelessWidget {
                             )),
                         _buildIncomeTile(context, monthAnalytics),
                         _buildExpenseTile(context, monthAnalytics),
+                        _buildDeltaTile(context, monthAnalytics),
 //                        _buildIrregularTile(context, monthAnalytics),
 //                        _buildAccountsTile(context, monthAnalytics),
                       ],
@@ -78,10 +79,8 @@ class MonthCaruselView extends StatelessWidget {
       onTap: () {},
       leading: Icon(Icons.arrow_downward),
       title: Text(FlutterI18n.translate(context, "texts.income_s") + ":"),
-      subtitle: Text(_prepareCurrencyMapWithPercents(
-          context, monthAnalytics.actualIncomeValues,
-          monthAnalytics.incomePercentDiff,
-          prefix: "+")),
+      subtitle: Text(_prepareCurrencyMapWithPercents(context,
+          monthAnalytics.actualIncomeValues, monthAnalytics.incomePercentDiff)),
     );
   }
 
@@ -92,28 +91,40 @@ class MonthCaruselView extends StatelessWidget {
       leading: Icon(Icons.account_balance_wallet),
       title: Text(FlutterI18n.translate(context, "texts.regular") + ":"),
       subtitle: Text(_prepareCurrencyMapWithPercents(
-          context, monthAnalytics.actualExpenseValues,
-          monthAnalytics.expensePercentDiff,
-          prefix: "-")),
+          context,
+          monthAnalytics.actualExpenseValues,
+          monthAnalytics.expensePercentDiff)),
+    );
+  }
+
+  Widget _buildDeltaTile(BuildContext context, MonthAnalytics monthAnalytics) {
+    return ListTile(
+      onTap: () {},
+      leading: Icon(Icons.change_history),
+      title: Text(FlutterI18n.translate(context, "texts.delta") + ":"),
+      subtitle: Text(_prepareCurrencyMapWithPercents(
+          context, monthAnalytics.deltaValues, monthAnalytics.deltaPercentDiff,
+          signed: false)),
     );
   }
 
   String _prepareCurrencyMapWithPercents(BuildContext context,
-      Map<CurrencyType, double> currencyMap,
-      Map<CurrencyType, int> percentMap, {String prefix = ""}) {
+      Map<CurrencyType, double> currencyMap, Map<CurrencyType, int> percentMap,
+      {String prefix = "", bool signed = true}) {
     if (currencyMap.isNotEmpty) {
+      String sign = signed ? "+" : "";
       return currencyMap
-          .map((key, value) =>
-          MapEntry<CurrencyType, String>(
+          .map((key, value) => MapEntry<CurrencyType, String>(
               key,
-              AppTexts.formatCurrencyType(key) + ": " + prefix +
+              AppTexts.formatCurrencyType(key) +
+                  ": " +
+                  prefix +
                   AppTexts.formatValueAsShorten(context, value) +
                   " (" +
-                  (percentMap[key] >= 0
-                      ? "+" + percentMap[key].toString()
+                  (percentMap[key] > 0
+                      ? sign + percentMap[key].toString()
                       : percentMap[key].toString()) +
-                  "%)"
-          ))
+                  "%)"))
           .values
           .join("\n");
     } else {

@@ -90,6 +90,7 @@ class AnalyticsData {
     await _calcBalance();
     await _calcIncomePercentDiff();
     await _calcExpensePercentDiff();
+    await _calcDeltaPercentDiff();
     print("[AnalyticsData] firstMonth=" +
         _firstMonthIndex.toString() +
         ", lastMonth=" +
@@ -224,6 +225,12 @@ class AnalyticsData {
     _monthList.forEach((monthAnalytics) {
       monthAnalytics.calcExpensePercentDiff(prevMonthExpenseValue);
       prevMonthExpenseValue = monthAnalytics.actualExpenseValues;
+    });
+  }
+
+  Future<void> _calcDeltaPercentDiff() async {
+    _monthList.forEach((monthAnalytics) {
+      monthAnalytics.calcDeltaPercentDiff();
     });
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 
@@ -12,10 +13,12 @@ class MonthAnalytics {
   Map<CurrencyType, double> plannedIncomeValues;
   Map<CurrencyType, double> actualExpenseValues;
   Map<CurrencyType, double> plannedExpenseValues;
+  Map<CurrencyType, double> deltaValues;
   Map<CurrencyType, double> actualIrregularValues;
   Map<CurrencyType, double> plannedIrregularValues;
   Map<CurrencyType, int> incomePercentDiff;
   Map<CurrencyType, int> expensePercentDiff;
+  Map<CurrencyType, int> deltaPercentDiff;
 
   Map<CurrencyType, double> accountDebet;
   Map<CurrencyType, double> accountBalance;
@@ -27,10 +30,12 @@ class MonthAnalytics {
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     plannedExpenseValues = Map();
+    deltaValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
     incomePercentDiff = Map();
     expensePercentDiff = Map();
+    deltaPercentDiff = Map();
     accountDebet = Map();
     accountBalance = Map();
     accountParts = Map();
@@ -38,6 +43,7 @@ class MonthAnalytics {
 
   void addActualIncomeValue(CurrencyType currencyType, double value) {
     _addValue(actualIncomeValues, currencyType, value);
+    _addValue(deltaValues, currencyType, value);
   }
 
   void addPlannedIncomeValue(CurrencyType currencyType, double value) {
@@ -46,6 +52,7 @@ class MonthAnalytics {
 
   void addActualExpenseValue(CurrencyType currencyType, double value) {
     _addValue(actualExpenseValues, currencyType, value);
+    _addValue(deltaValues, currencyType, -value);
   }
 
   void addPlannedExpenseValue(CurrencyType currencyType, double value) {
@@ -60,8 +67,8 @@ class MonthAnalytics {
     _addValue(plannedIrregularValues, currencyType, value);
   }
 
-  void addDebetValue(
-      PlannedIrregularModel model, CurrencyType currencyType, double value) {
+  void addDebetValue(PlannedIrregularModel model, CurrencyType currencyType,
+      double value) {
     _addValue(accountDebet, currencyType, value);
 
     accountParts[model] = value;
@@ -105,8 +112,22 @@ class MonthAnalytics {
     });
   }
 
-  void _addValue(
-      Map<CurrencyType, double> list, CurrencyType currencyType, double value) {
+  void calcDeltaPercentDiff() {
+    deltaValues.forEach((key, value) {
+      double expense = actualExpenseValues[key];
+      double income = actualIncomeValues[key];
+      if (expense != null && income != null) {
+        deltaPercentDiff[key] = ((1 - expense / income) * 100).round();
+      } else if (value > 0) {
+        deltaPercentDiff[key] = 100;
+      } else {
+        deltaPercentDiff[key] = -100;
+      }
+    });
+  }
+
+  void _addValue(Map<CurrencyType, double> list, CurrencyType currencyType,
+      double value) {
     double lastValue = list[currencyType];
     if (lastValue == null) {
       lastValue = 0;
@@ -114,22 +135,28 @@ class MonthAnalytics {
     list[currencyType] = lastValue += value;
   }
 
-  Map<CurrencyType, double> _addCurrencyMap(
-      Map<CurrencyType, double> map1, Map<CurrencyType, double> map2) {
+  Map<CurrencyType, double> _addCurrencyMap(Map<CurrencyType, double> map1,
+      Map<CurrencyType, double> map2) {
     Map<CurrencyType, double> result = Map();
     map1.forEach((key, value) => result[key] = value);
     map2.forEach(
-        (key, value) => result[key] == null ? result[key] = 0 : result[key]);
+            (key, value) =>
+        result[key] == null
+            ? result[key] = 0
+            : result[key]);
     map2.forEach((key, value) => result[key] = result[key] + value);
     return result;
   }
 
-  Map<CurrencyType, double> _subCurrencyMap(
-      Map<CurrencyType, double> map1, Map<CurrencyType, double> map2) {
+  Map<CurrencyType, double> _subCurrencyMap(Map<CurrencyType, double> map1,
+      Map<CurrencyType, double> map2) {
     Map<CurrencyType, double> result = Map();
     map1.forEach((key, value) => result[key] = value);
     map2.forEach(
-        (key, value) => result[key] == null ? result[key] = 0 : result[key]);
+            (key, value) =>
+        result[key] == null
+            ? result[key] = 0
+            : result[key]);
     map2.forEach((key, value) => result[key] = result[key] - value);
     return result;
   }
