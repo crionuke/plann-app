@@ -174,7 +174,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
       elements: list,
       groupBy: (model) {
         return AppTexts.upFirstLetter(
-            AppTexts.formatMonth(context, model.date));
+            AppTexts.formatDate(context, model.date));
       },
       groupSeparatorBuilder: (String groupByValue) =>
           ListTile(title: Text(groupByValue)),
