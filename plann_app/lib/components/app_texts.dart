@@ -131,13 +131,14 @@ class AppTexts {
   static String formatValueAsShorten(BuildContext context, num value) {
     String template = "default";
     num shortenValue = value;
-    if (value >= 1000 && value < 1000000) {
+    num absValue = value.abs();
+    if (absValue >= 1000 && absValue < 1000000) {
       template = "thousand";
       shortenValue = value / 1000;
-    } else if (value >= 1000000 && value < 1000000000) {
+    } else if (absValue >= 1000000 && absValue < 1000000000) {
       template = "million";
       shortenValue = value / 1000000;
-    } else if (value >= 1000000000 && value < 1000000000000) {
+    } else if (absValue >= 1000000000 && absValue < 1000000000000) {
       template = "billion";
       shortenValue = value / 1000000000;
     }
