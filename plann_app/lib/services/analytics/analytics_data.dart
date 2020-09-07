@@ -21,7 +21,7 @@ class AnalyticsData {
 
   Map<int, double> _perMonthValues;
   Map<DateTime, Map<CurrencyType, double>> _perDayExpenses;
-  Map<int, Map<CurrencyType, double>> _perMonthIncomes;
+  Map<DateTime, Map<CurrencyType, double>> _perMonthIncomes;
 
   int _currentMonthIndex;
   int _firstMonthIndex;
@@ -36,7 +36,7 @@ class AnalyticsData {
   Map<DateTime, Map<CurrencyType, double>> get perDayExpenses =>
       _perDayExpenses;
 
-  Map<int, Map<CurrencyType, double>> get perMonthIncomes =>
+  Map<DateTime, Map<CurrencyType, double>> get perMonthIncomes =>
       _perMonthIncomes;
 
   int get currentMonthOffset => _currentMonthIndex - _firstMonthIndex;
@@ -158,15 +158,15 @@ class AnalyticsData {
         .addActualIncomeValue(model.currency, model.value));
 
     actualIncomeList.forEach((model) {
-      int monthIndex = AnalyticsUtils.toAbs(model.date.year, model.date.month);
+      DateTime rounded = DateTime(model.date.year, model.date.month);
 
-      if (_perMonthIncomes[monthIndex] == null) {
-        _perMonthIncomes[monthIndex] = Map();
+      if (_perMonthIncomes[rounded] == null) {
+        _perMonthIncomes[rounded] = Map();
       }
-      if (_perMonthIncomes[monthIndex][model.currency] == null) {
-        _perMonthIncomes[monthIndex][model.currency] = 0;
+      if (_perMonthIncomes[rounded][model.currency] == null) {
+        _perMonthIncomes[rounded][model.currency] = 0;
       }
-      _perMonthIncomes[monthIndex][model.currency] += model.value;
+      _perMonthIncomes[rounded][model.currency] += model.value;
     });
   }
 
@@ -187,13 +187,16 @@ class AnalyticsData {
         .addActualExpenseValue(model.currency, model.value));
 
     actualExpenseList.forEach((model) {
-      if (_perDayExpenses[model.date] == null) {
-        _perDayExpenses[model.date] = Map();
+      DateTime rounded =
+          DateTime(model.date.year, model.date.month, model.date.day);
+
+      if (_perDayExpenses[rounded] == null) {
+        _perDayExpenses[rounded] = Map();
       }
-      if (_perDayExpenses[model.date][model.currency] == null) {
-        _perDayExpenses[model.date][model.currency] = 0;
+      if (_perDayExpenses[rounded][model.currency] == null) {
+        _perDayExpenses[rounded][model.currency] = 0;
       }
-      _perDayExpenses[model.date][model.currency] += model.value;
+      _perDayExpenses[rounded][model.currency] += model.value;
     });
   }
 

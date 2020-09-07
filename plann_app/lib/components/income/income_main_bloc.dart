@@ -27,10 +27,10 @@ class IncomeMainBloc {
     if (!_controller.isClosed) {
       CurrencyType defaultCurrency = CurrencyType.rubles;
 
-      Map<int, double> perMonthIncomes = analyticsService
+      Map<DateTime, double> perMonthIncomes = analyticsService
           .analytics.perMonthIncomes
-          .map((monthIndex, currencyMap) => MapEntry<int, double>(
-              monthIndex,
+          .map((dateTime, currencyMap) => MapEntry<DateTime, double>(
+              dateTime,
               currencyMap.containsKey(defaultCurrency)
                   ? currencyMap[defaultCurrency]
                   : 0));
@@ -44,7 +44,7 @@ class IncomeMainBloc {
 class IncomeMainViewState {
   final bool loaded;
   final List<IncomeModel> fact;
-  final Map<int, double> perMonthIncomes;
+  final Map<DateTime, double> perMonthIncomes;
   final List<PlannedIncomeModel> planned;
 
   IncomeMainViewState.loading()

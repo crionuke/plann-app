@@ -174,13 +174,15 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     return GroupedListView<ExpenseModel, String>(
       elements: list,
       groupBy: (model) {
-        if (perDayExpenses[model.date] != null &&
-            perDayExpenses[model.date] > 0) {
+        DateTime rounded =
+            DateTime(model.date.year, model.date.month, model.date.day);
+
+        if (perDayExpenses[rounded] != null && perDayExpenses[rounded] > 0) {
           return AppTexts.upFirstLetter(
                   AppTexts.formatDate(context, model.date)) +
               " (" +
               AppTexts.formatCurrencyValue(
-                  context, CurrencyType.rubles, perDayExpenses[model.date],
+                  context, CurrencyType.rubles, perDayExpenses[rounded],
                   shorten: true) +
               ")";
         } else {

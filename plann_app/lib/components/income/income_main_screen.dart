@@ -118,7 +118,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
   }
 
   Widget _buildListView(BuildContext context, IncomeMainBloc bloc,
-      List<IncomeModel> list, Map<int, double> perMonthIncomes) {
+      List<IncomeModel> list, Map<DateTime, double> perMonthIncomes) {
     if (list.isEmpty) {
       return _buildNoIncome(context);
     } else {
@@ -154,23 +154,22 @@ class _IncomeMainState extends State<IncomeMainScreen>
   }
 
   Widget _buildIncomeList(BuildContext context, IncomeMainBloc bloc,
-      List<IncomeModel> list, Map<int, double> perMonthIncomes) {
+      List<IncomeModel> list, Map<DateTime, double> perMonthIncomes) {
     ColorsMap<IncomeCategoryType> colorsMap = ColorsMap();
     IncomeCategoryType.values.forEach((category) => colorsMap.assign(category));
 
     return GroupedListView<IncomeModel, String>(
       elements: list,
       groupBy: (model) {
-        int monthIndex =
-            AnalyticsUtils.toAbs(model.date.year, model.date.month);
+        DateTime rounded = DateTime(model.date.year, model.date.month);
 
-        if (perMonthIncomes[monthIndex] != null &&
-            perMonthIncomes[monthIndex] > 0) {
+        if (perMonthIncomes[rounded] != null &&
+            perMonthIncomes[rounded] > 0) {
           return AppTexts.upFirstLetter(
                   AppTexts.formatMonth(context, model.date)) +
               " (" +
               AppTexts.formatCurrencyValue(
-                  context, CurrencyType.rubles, perMonthIncomes[monthIndex],
+                  context, CurrencyType.rubles, perMonthIncomes[rounded],
                   shorten: true) +
               ")";
         } else {
