@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
+import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 
@@ -10,8 +13,9 @@ class ExpenseMainBloc {
   Stream get stream => _controller.stream;
 
   final DbService dbService;
+  final AnalyticsService analyticsService;
 
-  ExpenseMainBloc(this.dbService);
+  ExpenseMainBloc(this.dbService, this.analyticsService);
 
   @override
   void dispose() {
@@ -23,7 +27,18 @@ class ExpenseMainBloc {
     List<ExpenseModel> fact = await dbService.getExpenseList();
     List<PlannedExpenseModel> planned = await dbService.getPlannedExpenseList();
     if (!_controller.isClosed) {
-      _controller.sink.add(ExpenseMainViewState.loaded(fact, planned));
+      CurrencyType defaultCurrency = CurrencyType.rubles;
+
+      Map<DateTime, double> perDayExpenses = analyticsService
+          .analytics.perDayExpenses
+          .map((dateTime, currencyMap) => MapEntry<DateTime, double>(
+              dateTime,
+              currencyMap.containsKey(defaultCurrency)
+                  ? currencyMap[defaultCurrency]
+                  : 0));
+
+      _controller.sink
+          .add(ExpenseMainViewState.loaded(fact, perDayExpenses, planned));
     }
   }
 }
@@ -31,12 +46,15 @@ class ExpenseMainBloc {
 class ExpenseMainViewState {
   final bool loaded;
   final List<ExpenseModel> fact;
+  final Map<DateTime, double> perDayExpenses;
   final List<PlannedExpenseModel> planned;
 
   ExpenseMainViewState.loading()
       : loaded = false,
         fact = null,
+        perDayExpenses = null,
         planned = null;
 
-  ExpenseMainViewState.loaded(this.fact, this.planned) : loaded = true;
+  ExpenseMainViewState.loaded(this.fact, this.perDayExpenses, this.planned)
+      : loaded = true;
 }

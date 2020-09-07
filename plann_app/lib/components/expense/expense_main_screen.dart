@@ -11,6 +11,7 @@ import 'package:plann_app/components/expense/add_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_bloc.dart';
+import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
@@ -118,7 +119,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             var state = snapshot.data;
             if (state.loaded) {
               return TabBarView(controller: _tabController, children: [
-                _buildListView(context, bloc, state.fact),
+                _buildListView(context, bloc, state.fact, state.perDayExpenses),
                 _buildPlannedListView(context, bloc, state.planned),
               ]);
             }
@@ -128,12 +129,12 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
         });
   }
 
-  Widget _buildListView(
-      BuildContext context, ExpenseMainBloc bloc, List<ExpenseModel> list) {
+  Widget _buildListView(BuildContext context, ExpenseMainBloc bloc,
+      List<ExpenseModel> list, Map<DateTime, double> perDayExpenses) {
     if (list.isEmpty) {
       return _buildNoExpense(context);
     } else {
-      return _buildExpenseList(context, bloc, list);
+      return _buildExpenseList(context, bloc, list, perDayExpenses);
     }
   }
 
@@ -164,17 +165,27 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     ]);
   }
 
-  Widget _buildExpenseList(
-      BuildContext context, ExpenseMainBloc bloc, List<ExpenseModel> list) {
-
+  Widget _buildExpenseList(BuildContext context, ExpenseMainBloc bloc,
+      List<ExpenseModel> list, Map<DateTime, double> perDayExpenses) {
     ColorsMap<ExpenseCategoryType> colorsMap = ColorsMap();
     list.forEach((model) => colorsMap.assign(model.category));
 
     return GroupedListView<ExpenseModel, String>(
       elements: list,
       groupBy: (model) {
-        return AppTexts.upFirstLetter(
-            AppTexts.formatDate(context, model.date));
+        if (perDayExpenses[model.date] != null &&
+            perDayExpenses[model.date] > 0) {
+          return AppTexts.upFirstLetter(
+                  AppTexts.formatDate(context, model.date)) +
+              " (" +
+              AppTexts.formatCurrencyValue(
+                  context, CurrencyType.rubles, perDayExpenses[model.date],
+                  shorten: true) +
+              ")";
+        } else {
+          return AppTexts.upFirstLetter(
+              AppTexts.formatDate(context, model.date));
+        }
       },
       groupSeparatorBuilder: (String groupByValue) =>
           ListTile(title: Text(groupByValue)),

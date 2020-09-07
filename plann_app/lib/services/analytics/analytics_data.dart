@@ -18,7 +18,10 @@ class AnalyticsData {
   final List<PlannedIrregularModel> plannedIrregularList;
 
   List<MonthAnalytics> _monthList;
+
   Map<int, double> _perMonthValues;
+  Map<DateTime, Map<CurrencyType, double>> _perDayExpenses;
+  Map<int, Map<CurrencyType, double>> _perMonthIncomes;
 
   int _currentMonthIndex;
   int _firstMonthIndex;
@@ -29,6 +32,12 @@ class AnalyticsData {
   List<MonthAnalytics> get monthList => _monthList;
 
   Map<int, double> get perMonthValues => _perMonthValues;
+
+  Map<DateTime, Map<CurrencyType, double>> get perDayExpenses =>
+      _perDayExpenses;
+
+  Map<int, Map<CurrencyType, double>> get perMonthIncomes =>
+      _perMonthIncomes;
 
   int get currentMonthOffset => _currentMonthIndex - _firstMonthIndex;
 
@@ -72,6 +81,9 @@ class AnalyticsData {
 
     _monthList = List();
     _perMonthValues = Map();
+    _perDayExpenses = Map();
+    _perMonthIncomes = Map();
+
     DateTime now = DateTime.now();
     _currentMonthIndex = AnalyticsUtils.toAbs(now.year, now.month);
     _firstMonthIndex = _currentMonthIndex - 1;
@@ -144,6 +156,18 @@ class AnalyticsData {
   Future<void> _analyzeActualIncomeList() async {
     actualIncomeList.forEach((model) => _findMonthAnalyticsByDate(model.date)
         .addActualIncomeValue(model.currency, model.value));
+
+    actualIncomeList.forEach((model) {
+      int monthIndex = AnalyticsUtils.toAbs(model.date.year, model.date.month);
+
+      if (_perMonthIncomes[monthIndex] == null) {
+        _perMonthIncomes[monthIndex] = Map();
+      }
+      if (_perMonthIncomes[monthIndex][model.currency] == null) {
+        _perMonthIncomes[monthIndex][model.currency] = 0;
+      }
+      _perMonthIncomes[monthIndex][model.currency] += model.value;
+    });
   }
 
   Future<void> _analyzePlannedIncomeList() async {
@@ -161,6 +185,16 @@ class AnalyticsData {
   Future<void> _analyzeActualExpenseList() async {
     actualExpenseList.forEach((model) => _findMonthAnalyticsByDate(model.date)
         .addActualExpenseValue(model.currency, model.value));
+
+    actualExpenseList.forEach((model) {
+      if (_perDayExpenses[model.date] == null) {
+        _perDayExpenses[model.date] = Map();
+      }
+      if (_perDayExpenses[model.date][model.currency] == null) {
+        _perDayExpenses[model.date][model.currency] = 0;
+      }
+      _perDayExpenses[model.date][model.currency] += model.value;
+    });
   }
 
   Future<void> _analyzePlannedExpenseList() async {
@@ -180,13 +214,12 @@ class AnalyticsData {
         _findMonthAnalyticsByDate(model.date)
             .addPlannedIrregularValue(model.currency, model.value));
 
-    plannedIrregularList.forEach((model) => _applyDebet(model,
-        model.creationDate, model.date, model.currency, model.value));
+    plannedIrregularList.forEach((model) => _applyDebet(
+        model, model.creationDate, model.date, model.currency, model.value));
   }
 
   void _applyDebet(PlannedIrregularModel model, DateTime fromDate,
-      DateTime toDate,
-      CurrencyType currencyType, double value) {
+      DateTime toDate, CurrencyType currencyType, double value) {
     int fromMonthIndex = AnalyticsUtils.toAbs(fromDate.year, fromDate.month);
     int toMonthIndex = AnalyticsUtils.toAbs(toDate.year, toDate.month);
     int monthCount = toMonthIndex - fromMonthIndex;
@@ -198,8 +231,8 @@ class AnalyticsData {
       double valuePerMonth = value / monthCount;
       _perMonthValues[model.id] = valuePerMonth;
       for (int monthIndex = fromMonthIndex;
-      monthIndex < toMonthIndex;
-      monthIndex++) {
+          monthIndex < toMonthIndex;
+          monthIndex++) {
         _monthList[monthIndex - _firstMonthIndex]
             .addDebetValue(model, currencyType, valuePerMonth);
       }

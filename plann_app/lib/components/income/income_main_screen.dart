@@ -10,6 +10,8 @@ import 'package:plann_app/components/income/add_planned_income_screen.dart';
 import 'package:plann_app/components/income/edit_income_screen.dart';
 import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
+import 'package:plann_app/services/analytics/analytics_utils.dart';
+import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
@@ -104,7 +106,8 @@ class _IncomeMainState extends State<IncomeMainScreen>
 
             if (state.loaded) {
               return TabBarView(controller: _tabController, children: [
-                _buildListView(context, bloc, state.fact),
+                _buildListView(
+                    context, bloc, state.fact, state.perMonthIncomes),
                 _buildPlannedListView(context, bloc, state.planned),
               ]);
             }
@@ -114,12 +117,12 @@ class _IncomeMainState extends State<IncomeMainScreen>
         });
   }
 
-  Widget _buildListView(
-      BuildContext context, IncomeMainBloc bloc, List<IncomeModel> list) {
+  Widget _buildListView(BuildContext context, IncomeMainBloc bloc,
+      List<IncomeModel> list, Map<int, double> perMonthIncomes) {
     if (list.isEmpty) {
       return _buildNoIncome(context);
     } else {
-      return _buildIncomeList(context, bloc, list);
+      return _buildIncomeList(context, bloc, list, perMonthIncomes);
     }
   }
 
@@ -150,17 +153,30 @@ class _IncomeMainState extends State<IncomeMainScreen>
     ]);
   }
 
-  Widget _buildIncomeList(
-      BuildContext context, IncomeMainBloc bloc, List<IncomeModel> list) {
-
+  Widget _buildIncomeList(BuildContext context, IncomeMainBloc bloc,
+      List<IncomeModel> list, Map<int, double> perMonthIncomes) {
     ColorsMap<IncomeCategoryType> colorsMap = ColorsMap();
     list.forEach((model) => colorsMap.assign(model.category));
 
     return GroupedListView<IncomeModel, String>(
       elements: list,
       groupBy: (model) {
-        return AppTexts.upFirstLetter(
-            AppTexts.formatMonth(context, model.date));
+        int monthIndex =
+            AnalyticsUtils.toAbs(model.date.year, model.date.month);
+
+        if (perMonthIncomes[monthIndex] != null &&
+            perMonthIncomes[monthIndex] > 0) {
+          return AppTexts.upFirstLetter(
+                  AppTexts.formatMonth(context, model.date)) +
+              " (" +
+              AppTexts.formatCurrencyValue(
+                  context, CurrencyType.rubles, perMonthIncomes[monthIndex],
+                  shorten: true) +
+              ")";
+        } else {
+          return AppTexts.upFirstLetter(
+              AppTexts.formatMonth(context, model.date));
+        }
       },
       groupSeparatorBuilder: (String groupByValue) =>
           ListTile(title: Text(groupByValue)),
