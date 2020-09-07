@@ -188,8 +188,9 @@ class App extends StatelessWidget {
   MaterialPageRoute _buildIncomeListPageRoute() {
     return MaterialPageRoute(builder: (context) {
       return Provider<IncomeMainBloc>(
-          create: (context) =>
-              IncomeMainBloc(Provider.of<DbService>(context, listen: false)),
+          create: (context) => IncomeMainBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: IncomeMainScreen());
     });
@@ -250,8 +251,9 @@ class App extends StatelessWidget {
   MaterialPageRoute _buildExpenseListPageRoute() {
     return MaterialPageRoute(builder: (context) {
       return Provider<ExpenseMainBloc>(
-          create: (context) =>
-              ExpenseMainBloc(Provider.of<DbService>(context, listen: false)),
+          create: (context) => ExpenseMainBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: ExpenseMainScreen());
     });
@@ -312,9 +314,9 @@ class App extends StatelessWidget {
   MaterialPageRoute _buildIrregularMainScreenPageRoute() {
     return MaterialPageRoute(builder: (context) {
       return Provider<IrregularMainBloc>(
-          create: (context) =>
-              IrregularMainBloc(Provider.of<DbService>(context, listen: false),
-                  Provider.of<AnalyticsService>(context, listen: false)),
+          create: (context) => IrregularMainBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: IrregularMainScreen());
     });
