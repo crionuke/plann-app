@@ -128,7 +128,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
     if (state.planned.isEmpty) {
       return _buildNoPlannedIrregular(context);
     } else {
-      double height = 140;
+      double height = 120;
 
       ColorsMap<int> colorsMap = ColorsMap();
       state.analytics.plannedIrregularList
