@@ -10,7 +10,6 @@ import 'package:plann_app/components/income/add_planned_income_screen.dart';
 import 'package:plann_app/components/income/edit_income_screen.dart';
 import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
-import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -74,7 +73,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
             PopupMenuItem<int>(
               value: 0,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.add")),
+                title: Text(FlutterI18n.translate(context, "texts.add_to_list")),
                 leading: Icon(Ionicons.md_add),
               ),
             ),
@@ -89,8 +88,8 @@ class _IncomeMainState extends State<IncomeMainScreen>
         ),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
-        Tab(icon: Icon(FontAwesome5.list_alt)),
-        Tab(icon: Icon(FontAwesome5.calendar_alt)),
+        Tab(text: FlutterI18n.translate(context, "texts.list")),
+        Tab(text: FlutterI18n.translate(context, "texts.plan_noun")),
       ]),
     );
   }

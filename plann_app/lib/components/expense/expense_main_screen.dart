@@ -81,15 +81,15 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             PopupMenuItem<int>(
               value: 0,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.add")),
+                title: Text(FlutterI18n.translate(context, "texts.add_to_list")),
                 leading: Icon(Ionicons.md_add),
               ),
             ),
             PopupMenuItem<int>(
               value: 1,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.to_plan")),
-                leading: Icon(FontAwesome5.calendar_alt),
+                title: Text(FlutterI18n.translate(context, "texts.create_template")),
+                leading: Icon(Icons.create),
               ),
             ),
             PopupMenuItem<int>(
@@ -103,8 +103,8 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
         ),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
-        Tab(icon: Icon(FontAwesome5.list_alt)),
-        Tab(icon: Icon(FontAwesome5.calendar_alt)),
+        Tab(text: FlutterI18n.translate(context, "texts.list")),
+        Tab(text: FlutterI18n.translate(context, "texts.templates"),)
       ]),
     );
   }

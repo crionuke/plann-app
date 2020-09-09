@@ -15,7 +15,7 @@ class AddPlannedExpenseScreen extends StatelessWidget {
         Provider.of<AddPlannedExpenseBloc>(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "texts.regular_short")),
+          title: Text(FlutterI18n.translate(context, "texts.template")),
           elevation: 0,
           flexibleSpace: AppViews.buildAppGradientContainer(context),
           actions: <Widget>[

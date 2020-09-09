@@ -73,7 +73,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             PopupMenuItem<int>(
               value: 0,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.add")),
+                title: Text(FlutterI18n.translate(context, "texts.add_to_list")),
                 leading: Icon(Ionicons.md_add),
               ),
             ),
@@ -88,8 +88,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
         ),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
-        Tab(icon: Icon(FontAwesome5.list_alt)),
-        Tab(icon: Icon(FontAwesome5.calendar_alt)),
+        Tab(text: FlutterI18n.translate(context, "texts.list")),
+        Tab(text: FlutterI18n.translate(context, "texts.plan_noun")),
       ]),
     );
   }
