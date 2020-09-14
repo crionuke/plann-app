@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_dialogs.dart';
@@ -81,14 +82,16 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             PopupMenuItem<int>(
               value: 0,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.add_to_list")),
+                title:
+                    Text(FlutterI18n.translate(context, "texts.add_to_list")),
                 leading: Icon(Ionicons.md_add),
               ),
             ),
             PopupMenuItem<int>(
               value: 1,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.create_template")),
+                title: Text(
+                    FlutterI18n.translate(context, "texts.create_template")),
                 leading: Icon(Icons.create),
               ),
             ),
@@ -104,7 +107,9 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
       ],
       bottom: TabBar(controller: _tabController, tabs: [
         Tab(text: FlutterI18n.translate(context, "texts.list")),
-        Tab(text: FlutterI18n.translate(context, "texts.templates"),)
+        Tab(
+          text: FlutterI18n.translate(context, "texts.templates"),
+        )
       ]),
     );
   }
@@ -216,6 +221,8 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
 
   Widget _buildPlannedExpenseList(BuildContext context, ExpenseMainBloc bloc,
       List<PlannedExpenseModel> list) {
+    final SlidableController slidableController = SlidableController();
+
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
@@ -227,15 +234,50 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
           String itemCategory =
               AppTexts.formatExpenseCategoryType(context, model.category);
 
-          return ListTile(
-            title: Text(itemValue),
-            subtitle: Text(
-                "$itemCategory. ${model.comment != null ? model.comment : ""}"),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () {
-              _editPlannedExpense(context, bloc, model);
-            },
-          );
+          return Slidable.builder(
+              key: Key(model.id.toString()),
+              controller: slidableController,
+              direction: Axis.horizontal,
+              child: ListTile(
+                title: Text(itemValue),
+                subtitle: Text(
+                    "$itemCategory. ${model.comment != null ? model.comment : ""}"),
+                trailing: Icon(Icons.navigate_next),
+                onTap: () {
+                  _editPlannedExpense(context, bloc, model);
+                },
+              ),
+              actionPane: SlidableDrawerActionPane(),
+              dismissal: SlidableDismissal(
+                  closeOnCanceled: true,
+                  onWillDismiss: (actionType) async {
+                    return await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AppDialogs.buildConfirmDeletionDialog(
+                              context,
+                              () => Navigator.of(context).pop(false),
+                              () => Navigator.of(context).pop(true));
+                        });
+                  },
+                  onDismissed: (actionType) async {
+                    bloc.delete(model.id);
+                  },
+//                  dragDismissible: false,
+                  child: SlidableDrawerDismissal()),
+              secondaryActionDelegate: SlideActionBuilderDelegate(
+                  actionCount: 1,
+                  builder: (context, index, animation, renderingMode) {
+                    return IconSlideAction(
+                      caption: FlutterI18n.translate(context, "texts.delete"),
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () {
+                        var state = Slidable.of(context);
+                        state.dismiss();
+                      },
+                    );
+                  }));
         },
         itemCount: list.length);
   }

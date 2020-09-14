@@ -41,6 +41,12 @@ class ExpenseMainBloc {
           .add(ExpenseMainViewState.loaded(fact, perDayExpenses, planned));
     }
   }
+
+  void delete(int id) async {
+    await dbService.deletePlannedExpense(id);
+    await analyticsService.analyze();
+    requestState();
+  }
 }
 
 class ExpenseMainViewState {
