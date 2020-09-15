@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plann_app/components/main/main_screen.dart';
 import 'package:plann_app/services/purchase/purchase_service.dart';
 
@@ -18,7 +19,7 @@ class BlockBloc {
     _controller.close();
   }
 
-  void requestState() {
+  void requestState() async {
     _controller.sink.add(BlockScreenState.loading());
     _fireState();
   }
@@ -52,8 +53,14 @@ class BlockBloc {
   void _fireState() async {
     print("[BlockBloc] fireState");
     if (!_controller.isClosed) {
-      _controller.sink.add(BlockScreenState.loaded(
-          purchaseService.basePurchaseItem, purchaseService.purchaseList));
+      try {
+        _controller.sink.add(BlockScreenState.loaded(
+            await purchaseService.basePurchaseItem,
+            await purchaseService.purchaseList));
+      } on PlatformException catch (e) {
+        print("[BlockBloc] " + e.toString());
+        _controller.sink.add(BlockScreenState.failed());
+      }
     }
   }
 }
@@ -61,6 +68,7 @@ class BlockBloc {
 class BlockScreenState {
   final bool loaded;
   final bool purchased;
+  final bool failed;
   final PurchaseResult purchaseResult;
   final PurchaseItem basePurchaseItem;
   final List<PurchaseItem> purchaseList;
@@ -68,6 +76,7 @@ class BlockScreenState {
   BlockScreenState.loading()
       : loaded = false,
         purchased = false,
+        failed = false,
         purchaseResult = null,
         basePurchaseItem = null,
         purchaseList = null;
@@ -75,11 +84,21 @@ class BlockScreenState {
   BlockScreenState.purchased(this.purchaseResult)
       : loaded = false,
         purchased = true,
+        failed = false,
         basePurchaseItem = null,
         purchaseList = null;
 
   BlockScreenState.loaded(this.basePurchaseItem, this.purchaseList)
       : loaded = true,
         purchased = false,
+        failed = false,
         purchaseResult = null;
+
+  BlockScreenState.failed()
+      : loaded = false,
+        purchased = false,
+        failed = true,
+        purchaseResult = null,
+        basePurchaseItem = null,
+        purchaseList = null;
 }

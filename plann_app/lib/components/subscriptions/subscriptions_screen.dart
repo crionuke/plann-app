@@ -41,6 +41,21 @@ class SubscriptionsScreen extends StatelessWidget {
                             bloc.restorePurchases();
                           });
                         }
+                      } else if (state.failed) {
+                        return Column(
+                          children: [
+                            ListTile(
+                                title: Text(FlutterI18n.translate(context,
+                                    "texts.subscriptions_not_available"))),
+                            RaisedButton(
+                              child: Text(FlutterI18n.translate(
+                                  context, "texts.try_again")),
+                              onPressed: () {
+                                bloc.requestState();
+                              },
+                            )
+                          ],
+                        );
                       }
                     }
 

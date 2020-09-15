@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plann_app/services/purchase/purchase_service.dart';
 
 class SubscriptionsBloc {
@@ -16,7 +17,7 @@ class SubscriptionsBloc {
     _controller.close();
   }
 
-  void requestState() {
+  void requestState() async {
     _controller.sink.add(SubscriptionsViewState.loading());
     _fireState();
   }
@@ -45,10 +46,15 @@ class SubscriptionsBloc {
   void _fireState() async {
     print("[SubscriptionsBloc] fireState");
     if (!_controller.isClosed) {
+      try {
       _controller.sink.add(SubscriptionsViewState.loaded(
-          purchaseService.basePurchaseItem,
+          await purchaseService.basePurchaseItem,
           await purchaseService.getAccessEntitlement(),
-          purchaseService.purchaseList));
+          await purchaseService.purchaseList));
+      } on PlatformException catch (e) {
+        print("[SubscriptionsBloc] " + e.toString());
+        _controller.sink.add(SubscriptionsViewState.failed());
+      }
     }
   }
 }
@@ -56,6 +62,7 @@ class SubscriptionsBloc {
 class SubscriptionsViewState {
   final bool loaded;
   final bool purchased;
+  final bool failed;
   final PurchaseResult purchaseResult;
   final PurchaseItem basePurchaseItem;
   final AccessEntitlement accessEntitlement;
@@ -64,6 +71,7 @@ class SubscriptionsViewState {
   SubscriptionsViewState.loading()
       : loaded = false,
         purchased = false,
+        failed = false,
         purchaseResult = null,
         basePurchaseItem = null,
         accessEntitlement = null,
@@ -72,6 +80,7 @@ class SubscriptionsViewState {
   SubscriptionsViewState.purchased(this.purchaseResult)
       : loaded = false,
         purchased = true,
+        failed = false,
         basePurchaseItem = null,
         accessEntitlement = null,
         purchaseList = null;
@@ -80,5 +89,15 @@ class SubscriptionsViewState {
       this.basePurchaseItem, this.accessEntitlement, this.purchaseList)
       : loaded = true,
         purchased = false,
+        failed = false,
         purchaseResult = null;
+
+  SubscriptionsViewState.failed()
+      : loaded = false,
+        purchased = false,
+        failed = true,
+        basePurchaseItem = null,
+        purchaseResult = null,
+        accessEntitlement = null,
+        purchaseList = null;
 }

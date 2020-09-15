@@ -12,30 +12,34 @@ class PurchaseService {
   static const API_KEY = "QcsNMFNHlhaJmTxHTCXMoaglosdSUCXo";
   static const FREE_PERIOD_DAYS = 14;
 
-  final List<PurchaseItem> purchaseList = List();
-
-  PurchaseItem _basePurchaseItem;
-
-  TrackingService trackingService;
+  final TrackingService trackingService;
 
   PurchaseService(this.trackingService);
 
   Future<void> start() async {
     await Purchases.setDebugLogsEnabled(true);
     await Purchases.setup(API_KEY);
-
-    Offerings offerings = await Purchases.getOfferings();
-    print("[PurchaseService] ${offerings}");
-    if (offerings.current != null) {
-      for (Package package in offerings.current.availablePackages) {
-        purchaseList.add(PurchaseItem(package));
-      }
-
-      _basePurchaseItem = PurchaseItem(offerings.current.monthly);
-    }
   }
 
-  PurchaseItem get basePurchaseItem => _basePurchaseItem;
+  Future<PurchaseItem> get basePurchaseItem async {
+    Offerings offerings = await Purchases.getOfferings();
+    if (offerings.current != null && offerings.current.monthly != null) {
+      return PurchaseItem(offerings.current.monthly);
+    }
+    return null;
+  }
+
+  Future<List<PurchaseItem>> get purchaseList async {
+    List<PurchaseItem> list = List();
+    Offerings offerings = await Purchases.getOfferings();
+    if (offerings.current != null &&
+        offerings.current.availablePackages != null) {
+      for (Package package in offerings.current.availablePackages) {
+        list.add(PurchaseItem(package));
+      }
+    }
+    return list;
+  }
 
   Future<DateTime> get blockingDate async {
     PurchaserInfo purchaserInfo = await _getPurchaseInfo();
