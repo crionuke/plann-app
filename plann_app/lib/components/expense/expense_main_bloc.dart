@@ -42,7 +42,13 @@ class ExpenseMainBloc {
     }
   }
 
-  void delete(int id) async {
+  void deleteExpense(int id) async {
+    await dbService.deleteExpense(id);
+    await analyticsService.analyze();
+    requestState();
+  }
+
+  void deletePlannedExpense(int id) async {
     await dbService.deletePlannedExpense(id);
     await analyticsService.analyze();
     requestState();

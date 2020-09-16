@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:plann_app/components/app_colors.dart';
+import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
@@ -73,7 +75,8 @@ class _IncomeMainState extends State<IncomeMainScreen>
             PopupMenuItem<int>(
               value: 0,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.add_to_list")),
+                title:
+                    Text(FlutterI18n.translate(context, "texts.add_to_list")),
                 leading: Icon(Ionicons.md_add),
               ),
             ),
@@ -156,14 +159,14 @@ class _IncomeMainState extends State<IncomeMainScreen>
       List<IncomeModel> list, Map<DateTime, double> perMonthIncomes) {
     ColorsMap<IncomeCategoryType> colorsMap = ColorsMap();
     IncomeCategoryType.values.forEach((category) => colorsMap.assign(category));
+    final SlidableController slidableController = SlidableController();
 
     return GroupedListView<IncomeModel, String>(
       elements: list,
       groupBy: (model) {
         DateTime rounded = DateTime(model.date.year, model.date.month);
 
-        if (perMonthIncomes[rounded] != null &&
-            perMonthIncomes[rounded] > 0) {
+        if (perMonthIncomes[rounded] != null && perMonthIncomes[rounded] > 0) {
           return AppTexts.upFirstLetter(
                   AppTexts.formatMonth(context, model.date)) +
               " (" +
@@ -185,16 +188,52 @@ class _IncomeMainState extends State<IncomeMainScreen>
             AppTexts.formatIncomeCategoryType(context, model.category);
         String itemDate = AppTexts.formatDate(context, model.date);
 
-        return ListTile(
-          leading: AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
-          title: Text("+" + itemValue),
-          subtitle: Text(
-              "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
-          trailing: Icon(Icons.navigate_next),
-          onTap: () {
-            _editIncome(context, bloc, model);
-          },
-        );
+        return Slidable.builder(
+            key: Key(model.id.toString()),
+            controller: slidableController,
+            direction: Axis.horizontal,
+            child: ListTile(
+              leading:
+                  AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
+              title: Text("+" + itemValue),
+              subtitle: Text(
+                  "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
+              trailing: Icon(Icons.navigate_next),
+              onTap: () {
+                _editIncome(context, bloc, model);
+              },
+            ),
+            actionPane: SlidableDrawerActionPane(),
+            dismissal: SlidableDismissal(
+                closeOnCanceled: true,
+                onWillDismiss: (actionType) async {
+                  return await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AppDialogs.buildConfirmDeletionDialog(
+                            context,
+                            () => Navigator.of(context).pop(false),
+                            () => Navigator.of(context).pop(true));
+                      });
+                },
+                onDismissed: (actionType) async {
+                  bloc.deleteIncome(model.id);
+                },
+//                  dragDismissible: false,
+                child: SlidableDrawerDismissal()),
+            secondaryActionDelegate: SlideActionBuilderDelegate(
+                actionCount: 1,
+                builder: (context, index, animation, renderingMode) {
+                  return IconSlideAction(
+                    caption: FlutterI18n.translate(context, "texts.delete"),
+                    color: Colors.red,
+                    icon: Icons.delete,
+                    onTap: () {
+                      var state = Slidable.of(context);
+                      state.dismiss();
+                    },
+                  );
+                }));
       },
       sort: false,
     );
@@ -202,6 +241,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
 
   Widget _buildPlannedIncomeList(BuildContext context, IncomeMainBloc bloc,
       List<PlannedIncomeModel> list) {
+    final SlidableController slidableController = SlidableController();
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
@@ -220,15 +260,50 @@ class _IncomeMainState extends State<IncomeMainScreen>
             itemDate = AppTexts.formatDate(context, model.date);
           }
 
-          return ListTile(
-            title: Text(itemValue),
-            subtitle: Text(
-                "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () {
-              _editPlannedIncome(context, bloc, model);
-            },
-          );
+          return Slidable.builder(
+              key: Key(model.id.toString()),
+              controller: slidableController,
+              direction: Axis.horizontal,
+              child: ListTile(
+                title: Text(itemValue),
+                subtitle: Text(
+                    "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
+                trailing: Icon(Icons.navigate_next),
+                onTap: () {
+                  _editPlannedIncome(context, bloc, model);
+                },
+              ),
+              actionPane: SlidableDrawerActionPane(),
+              dismissal: SlidableDismissal(
+                  closeOnCanceled: true,
+                  onWillDismiss: (actionType) async {
+                    return await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AppDialogs.buildConfirmDeletionDialog(
+                              context,
+                              () => Navigator.of(context).pop(false),
+                              () => Navigator.of(context).pop(true));
+                        });
+                  },
+                  onDismissed: (actionType) async {
+                    bloc.deletePlannedIncome(model.id);
+                  },
+//                  dragDismissible: false,
+                  child: SlidableDrawerDismissal()),
+              secondaryActionDelegate: SlideActionBuilderDelegate(
+                  actionCount: 1,
+                  builder: (context, index, animation, renderingMode) {
+                    return IconSlideAction(
+                      caption: FlutterI18n.translate(context, "texts.delete"),
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () {
+                        var state = Slidable.of(context);
+                        state.dismiss();
+                      },
+                    );
+                  }));
         },
         itemCount: list.length);
   }

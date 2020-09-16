@@ -39,6 +39,18 @@ class IncomeMainBloc {
           .add(IncomeMainViewState.loaded(fact, perMonthIncomes, planned));
     }
   }
+
+  void deleteIncome(int id) async {
+    await dbService.deleteIncome(id);
+    await analyticsService.analyze();
+    requestState();
+  }
+
+  void deletePlannedIncome(int id) async {
+    await dbService.deletePlannedIncome(id);
+    await analyticsService.analyze();
+    requestState();
+  }
 }
 
 class IncomeMainViewState {

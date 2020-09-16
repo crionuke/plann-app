@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:plann_app/components/app_colors.dart';
+import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/irregular/add_irregular_screen.dart';
@@ -73,7 +75,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
             PopupMenuItem<int>(
               value: 0,
               child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.add_to_list")),
+                title:
+                    Text(FlutterI18n.translate(context, "texts.add_to_list")),
                 leading: Icon(Ionicons.md_add),
               ),
             ),
@@ -189,6 +192,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
 
   Widget _buildIrregularList(
       BuildContext context, IrregularMainBloc bloc, List<IrregularModel> list) {
+    final SlidableController slidableController = SlidableController();
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
@@ -199,14 +203,49 @@ class _IrregularMainState extends State<IrregularMainScreen>
               context, model.currency, model.value);
           String itemDate = AppTexts.formatDate(context, model.date);
 
-          return ListTile(
-            title: Text(model.title),
-            subtitle: Text("$itemDate, $itemValue"),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () {
-              _editIrregular(context, bloc, model);
-            },
-          );
+          return Slidable.builder(
+              key: Key(model.id.toString()),
+              controller: slidableController,
+              direction: Axis.horizontal,
+              child: ListTile(
+                title: Text(model.title),
+                subtitle: Text("$itemDate, $itemValue"),
+                trailing: Icon(Icons.navigate_next),
+                onTap: () {
+                  _editIrregular(context, bloc, model);
+                },
+              ),
+              actionPane: SlidableDrawerActionPane(),
+              dismissal: SlidableDismissal(
+                  closeOnCanceled: true,
+                  onWillDismiss: (actionType) async {
+                    return await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AppDialogs.buildConfirmDeletionDialog(
+                              context,
+                              () => Navigator.of(context).pop(false),
+                              () => Navigator.of(context).pop(true));
+                        });
+                  },
+                  onDismissed: (actionType) async {
+                    bloc.deleteIrregular(model.id);
+                  },
+//                  dragDismissible: false,
+                  child: SlidableDrawerDismissal()),
+              secondaryActionDelegate: SlideActionBuilderDelegate(
+                  actionCount: 1,
+                  builder: (context, index, animation, renderingMode) {
+                    return IconSlideAction(
+                      caption: FlutterI18n.translate(context, "texts.delete"),
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () {
+                        var state = Slidable.of(context);
+                        state.dismiss();
+                      },
+                    );
+                  }));
         },
         itemCount: list.length);
   }
@@ -217,6 +256,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
       List<PlannedIrregularModel> list,
       ColorsMap<int> colorsMap,
       AnalyticsData analyticsData) {
+    final SlidableController slidableController = SlidableController();
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
@@ -241,16 +281,51 @@ class _IrregularMainState extends State<IrregularMainScreen>
                     shorten: true),
               });
 
-          return ListTile(
-            leading: AppViews.buildRoundedBox(colorsMap.getColor(model.id)),
-            title: Text(model.title),
+          return Slidable.builder(
+              key: Key(model.id.toString()),
+              controller: slidableController,
+              direction: Axis.horizontal,
+              child: ListTile(
+                leading: AppViews.buildRoundedBox(colorsMap.getColor(model.id)),
+                title: Text(model.title),
 //            isThreeLine: true,
-            subtitle: Text("$sizeInfo\n${perMonthInfo}"),
-            trailing: Icon(Icons.navigate_next),
-            onTap: () {
-              _editPlannedIrregular(context, bloc, model);
-            },
-          );
+                subtitle: Text("$sizeInfo\n${perMonthInfo}"),
+                trailing: Icon(Icons.navigate_next),
+                onTap: () {
+                  _editPlannedIrregular(context, bloc, model);
+                },
+              ),
+              actionPane: SlidableDrawerActionPane(),
+              dismissal: SlidableDismissal(
+                  closeOnCanceled: true,
+                  onWillDismiss: (actionType) async {
+                    return await showDialog<bool>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AppDialogs.buildConfirmDeletionDialog(
+                              context,
+                                  () => Navigator.of(context).pop(false),
+                                  () => Navigator.of(context).pop(true));
+                        });
+                  },
+                  onDismissed: (actionType) async {
+                    bloc.deletePlannedIrregular(model.id);
+                  },
+//                  dragDismissible: false,
+                  child: SlidableDrawerDismissal()),
+              secondaryActionDelegate: SlideActionBuilderDelegate(
+                  actionCount: 1,
+                  builder: (context, index, animation, renderingMode) {
+                    return IconSlideAction(
+                      caption: FlutterI18n.translate(context, "texts.delete"),
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () {
+                        var state = Slidable.of(context);
+                        state.dismiss();
+                      },
+                    );
+                  }));
         },
         itemCount: list.length);
   }

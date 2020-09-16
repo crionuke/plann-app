@@ -38,6 +38,18 @@ class IrregularMainBloc {
           fact, planned, analyticsService.analytics));
     }
   }
+
+  void deleteIrregular(int id) async {
+    await dbService.deleteIrregular(id);
+    await analyticsService.analyze();
+    requestState();
+  }
+
+  void deletePlannedIrregular(int id) async {
+    await dbService.deletePlannedIrregular(id);
+    await analyticsService.analyze();
+    requestState();
+  }
 }
 
 class IrregularMainViewState {

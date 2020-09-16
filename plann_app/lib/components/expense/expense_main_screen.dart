@@ -175,6 +175,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     ColorsMap<ExpenseCategoryType> colorsMap = ColorsMap();
     ExpenseCategoryType.values
         .forEach((category) => colorsMap.assign(category));
+    final SlidableController slidableController = SlidableController();
 
     return GroupedListView<ExpenseModel, String>(
       elements: list,
@@ -204,16 +205,52 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             AppTexts.formatExpenseCategoryType(context, model.category);
         String itemDate = AppTexts.formatDate(context, model.date);
 
-        return ListTile(
-          leading: AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
-          title: Text(itemValue),
-          subtitle: Text(
-              "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
-          trailing: Icon(Icons.navigate_next),
-          onTap: () {
-            _editExpense(context, bloc, model);
-          },
-        );
+        return Slidable.builder(
+            key: Key(model.id.toString()),
+            controller: slidableController,
+            direction: Axis.horizontal,
+            child: ListTile(
+              leading:
+                  AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
+              title: Text(itemValue),
+              subtitle: Text(
+                  "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
+              trailing: Icon(Icons.navigate_next),
+              onTap: () {
+                _editExpense(context, bloc, model);
+              },
+            ),
+            actionPane: SlidableDrawerActionPane(),
+            dismissal: SlidableDismissal(
+                closeOnCanceled: true,
+                onWillDismiss: (actionType) async {
+                  return await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AppDialogs.buildConfirmDeletionDialog(
+                            context,
+                            () => Navigator.of(context).pop(false),
+                            () => Navigator.of(context).pop(true));
+                      });
+                },
+                onDismissed: (actionType) async {
+                  bloc.deleteExpense(model.id);
+                },
+//                  dragDismissible: false,
+                child: SlidableDrawerDismissal()),
+            secondaryActionDelegate: SlideActionBuilderDelegate(
+                actionCount: 1,
+                builder: (context, index, animation, renderingMode) {
+                  return IconSlideAction(
+                    caption: FlutterI18n.translate(context, "texts.delete"),
+                    color: Colors.red,
+                    icon: Icons.delete,
+                    onTap: () {
+                      var state = Slidable.of(context);
+                      state.dismiss();
+                    },
+                  );
+                }));
       },
       sort: false,
     );
@@ -261,7 +298,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
                         });
                   },
                   onDismissed: (actionType) async {
-                    bloc.delete(model.id);
+                    bloc.deletePlannedExpense(model.id);
                   },
 //                  dragDismissible: false,
                   child: SlidableDrawerDismissal()),
