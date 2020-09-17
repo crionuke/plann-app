@@ -29,6 +29,7 @@ class IncomeMainScreen extends StatefulWidget {
 class _IncomeMainState extends State<IncomeMainScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  BuildContext _scaffoldContext;
 
   @override
   void initState() {
@@ -49,7 +50,12 @@ class _IncomeMainState extends State<IncomeMainScreen>
       length: 2,
       child: Scaffold(
         appBar: _buildAppBar(context, bloc),
-        body: _buildBody(context, bloc),
+        body: Builder(
+          builder: (BuildContext context) {
+            _scaffoldContext = context;
+            return _buildBody(context, bloc);
+          },
+        ),
       ),
     );
   }
@@ -292,17 +298,47 @@ class _IncomeMainState extends State<IncomeMainScreen>
 //                  dragDismissible: false,
                   child: SlidableDrawerDismissal()),
               secondaryActionDelegate: SlideActionBuilderDelegate(
-                  actionCount: 1,
+                  actionCount: 2,
                   builder: (context, index, animation, renderingMode) {
-                    return IconSlideAction(
-                      caption: FlutterI18n.translate(context, "texts.delete"),
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-                        var state = Slidable.of(context);
-                        state.dismiss();
-                      },
-                    );
+                    if (index == 0) {
+                      return IconSlideAction(
+                        caption: FlutterI18n.translate(context, "texts.add"),
+                        color: Colors.blueAccent,
+                        icon: Ionicons.md_add,
+                        onTap: () async {
+                          bloc.instantiateIncome(model.value, model.currency,
+                              model.category, model.comment);
+                          bloc.requestState();
+                          Scaffold.of(_scaffoldContext).hideCurrentSnackBar();
+                          Scaffold.of(_scaffoldContext).showSnackBar(SnackBar(
+                            content: Text(FlutterI18n.translate(
+                                context, "texts.income_added_to_list",
+                                translationParams: {
+                                  "value": itemValue,
+                                  "category":
+                                      AppTexts.lowFirstLetter(itemCategory),
+                                })),
+//                            action: SnackBarAction(
+//                              label:
+//                                  FlutterI18n.translate(context, "texts.undo"),
+//                              onPressed: () {
+//                                bloc.deleteIncome(id);
+//                              },
+//                            ),
+                          ));
+                        },
+                      );
+                    } else {
+                      return IconSlideAction(
+                        caption: FlutterI18n.translate(context, "texts.delete"),
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () {
+                          var state = Slidable.of(context);
+                          state.dismiss();
+                        },
+                      );
+                    }
                   }));
         },
         itemCount: list.length);

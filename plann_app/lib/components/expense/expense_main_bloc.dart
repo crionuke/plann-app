@@ -4,8 +4,10 @@ import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
+import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 
 class ExpenseMainBloc {
   final _controller = StreamController<ExpenseMainViewState>();
@@ -14,8 +16,9 @@ class ExpenseMainBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final TrackingService trackingService;
 
-  ExpenseMainBloc(this.dbService, this.analyticsService);
+  ExpenseMainBloc(this.dbService, this.analyticsService, this.trackingService);
 
   @override
   void dispose() {
@@ -52,6 +55,15 @@ class ExpenseMainBloc {
     await dbService.deletePlannedExpense(id);
     await analyticsService.analyze();
     requestState();
+  }
+
+  Future<int> instantiateExpense(num value, CurrencyType currency,
+      ExpenseCategoryType category, String comment) async {
+    int id = await dbService.addExpense(ExpenseModel(null, value, currency,
+        DateTime.now(), category, AppTexts.upFirstLetter(comment)));
+    await analyticsService.analyze();
+    trackingService.expenseAdded();
+    return id;
   }
 }
 

@@ -75,7 +75,6 @@ void main() async {
   await trackingService.start();
   await purchaseService.start();
   await analyticsService.start();
-//  await Future.delayed(Duration(seconds: 100));
 
   if (await purchaseService.hasAccess()) {
     print("[main] change to main screen");
@@ -190,7 +189,8 @@ class App extends StatelessWidget {
       return Provider<IncomeMainBloc>(
           create: (context) => IncomeMainBloc(
               Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+              Provider.of<AnalyticsService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: IncomeMainScreen());
     });
@@ -253,7 +253,8 @@ class App extends StatelessWidget {
       return Provider<ExpenseMainBloc>(
           create: (context) => ExpenseMainBloc(
               Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+              Provider.of<AnalyticsService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: ExpenseMainScreen());
     });

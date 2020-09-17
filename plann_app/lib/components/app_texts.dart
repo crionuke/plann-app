@@ -18,6 +18,16 @@ class AppTexts {
     }
   }
 
+  static String lowFirstLetter(String string) {
+    if (string.length == 0) {
+      return string;
+    } else if (string.length == 1) {
+      return "${string[0].toLowerCase()}";
+    } else {
+      return "${string[0].toLowerCase()}${string.substring(1)}";
+    }
+  }
+
   static String formatCurrencyMap(BuildContext context,
       Map<CurrencyType, double> currencyMap,
       {String prefix = ""}) {

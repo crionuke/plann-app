@@ -28,6 +28,7 @@ class ExpenseMainScreen extends StatefulWidget {
 class _ExpenseMainState extends State<ExpenseMainScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  BuildContext _scaffoldContext;
 
   @override
   void initState() {
@@ -47,9 +48,13 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: _buildAppBar(context, bloc),
-        body: _buildBody(context, bloc),
-      ),
+          appBar: _buildAppBar(context, bloc),
+          body: Builder(
+            builder: (BuildContext context) {
+              _scaffoldContext = context;
+              return _buildBody(context, bloc);
+            },
+          )),
     );
   }
 
@@ -303,17 +308,47 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
 //                  dragDismissible: false,
                   child: SlidableDrawerDismissal()),
               secondaryActionDelegate: SlideActionBuilderDelegate(
-                  actionCount: 1,
+                  actionCount: 2,
                   builder: (context, index, animation, renderingMode) {
-                    return IconSlideAction(
-                      caption: FlutterI18n.translate(context, "texts.delete"),
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-                        var state = Slidable.of(context);
-                        state.dismiss();
-                      },
-                    );
+                    if (index == 0) {
+                      return IconSlideAction(
+                        caption: FlutterI18n.translate(context, "texts.add"),
+                        color: Colors.blueAccent,
+                        icon: Ionicons.md_add,
+                        onTap: () async {
+                          bloc.instantiateExpense(model.value, model.currency,
+                              model.category, model.comment);
+                          bloc.requestState();
+                          Scaffold.of(_scaffoldContext).hideCurrentSnackBar();
+                          Scaffold.of(_scaffoldContext).showSnackBar(SnackBar(
+                            content: Text(FlutterI18n.translate(
+                                context, "texts.expense_added_to_list",
+                                translationParams: {
+                                  "value": itemValue,
+                                  "category":
+                                      AppTexts.lowFirstLetter(itemCategory),
+                                })),
+//                            action: SnackBarAction(
+//                              label:
+//                                  FlutterI18n.translate(context, "texts.undo"),
+//                              onPressed: () {
+//                                bloc.deleteExpense(id);
+//                              },
+//                            ),
+                          ));
+                        },
+                      );
+                    } else {
+                      return IconSlideAction(
+                        caption: FlutterI18n.translate(context, "texts.delete"),
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () {
+                          var state = Slidable.of(context);
+                          state.dismiss();
+                        },
+                      );
+                    }
                   }));
         },
         itemCount: list.length);
