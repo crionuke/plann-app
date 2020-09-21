@@ -197,131 +197,155 @@ class DbService {
   }
 
   Future<void> fill(txn) async {
-    // Авансы
-    for (int monthIndex = 1; monthIndex <= 5; monthIndex++) {
+    var random = Random();
+
+    for (int monthIndex = 1; monthIndex <= 9; monthIndex++) {
+      // Авансы
       await txn.insert(
           IncomeModel.INCOME_TABLE,
           IncomeModel(
-              null,
-              30000,
-              CurrencyType.rubles,
-              DateTime(2020, monthIndex, 20),
-              IncomeCategoryType.prepaid,
-              "АО \"Тестовая коомпания\"")
+                  null,
+                  30000,
+                  CurrencyType.rubles,
+                  DateTime(2020, monthIndex, 20),
+                  IncomeCategoryType.prepaid,
+                  "Работа")
               .toMap());
-    }
-    // Зарплаты
-    for (int monthIndex = 2; monthIndex <= 6; monthIndex++) {
+      // Зарплаты
       await txn.insert(
           IncomeModel.INCOME_TABLE,
           IncomeModel(
-              null,
-              57000,
-              CurrencyType.rubles,
-              DateTime(2020, monthIndex, 5),
-              IncomeCategoryType.salary,
-              "АО \"Тестовая коомпания\"")
+                  null,
+                  57000,
+                  CurrencyType.rubles,
+                  DateTime(2020, monthIndex, 5),
+                  IncomeCategoryType.salary,
+                  "Работа")
               .toMap());
+      // Рента
+      await txn.insert(
+          IncomeModel.INCOME_TABLE,
+          IncomeModel(
+                  null,
+                  32500,
+                  CurrencyType.rubles,
+                  DateTime(2020, monthIndex, 11),
+                  IncomeCategoryType.rent,
+                  "Арнендная плата")
+              .toMap());
+      for (int i = 0; i < random.nextInt(2); i++) {
+        await txn.insert(
+            IncomeModel.INCOME_TABLE,
+            IncomeModel(
+                    null,
+                    random.nextInt(4000),
+                    CurrencyType.rubles,
+                    DateTime(2020, monthIndex, 11),
+                    IncomeCategoryType.deposits,
+                    "Капитализация вклада, " +
+                        (3 + random.nextInt(3)).toString() +
+                        "% годовых")
+                .toMap());
+      }
     }
 
     // Плановые доходы
     await txn.insert(
         PlannedIncomeModel.PLANNED_INCOME_TABLE,
         PlannedIncomeModel(
-            null,
-            30000,
-            CurrencyType.rubles,
-            SubjectModeType.monthly,
-            DateTime.now(),
-            IncomeCategoryType.prepaid,
-            "АО \"Тестовая коомпания\"")
+                null,
+                30000,
+                CurrencyType.rubles,
+                SubjectModeType.monthly,
+                DateTime.now(),
+                IncomeCategoryType.prepaid,
+                "Работа")
             .toMap());
     await txn.insert(
         PlannedIncomeModel.PLANNED_INCOME_TABLE,
         PlannedIncomeModel(
-            null,
-            57000,
-            CurrencyType.rubles,
-            SubjectModeType.monthly,
-            DateTime.now(),
-            IncomeCategoryType.salary,
-            "АО \"Тестовая коомпания\"")
+                null,
+                57000,
+                CurrencyType.rubles,
+                SubjectModeType.monthly,
+                DateTime.now(),
+                IncomeCategoryType.salary,
+                "Работа")
             .toMap());
 
     // Плановые расходы
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 27000, CurrencyType.rubles,
-            ExpenseCategoryType.house, "Аренда")
+                ExpenseCategoryType.house, "Аренда")
             .toMap());
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 4000, CurrencyType.rubles,
-            ExpenseCategoryType.house, "Коммунальные платежи")
+                ExpenseCategoryType.house, "Коммунальные платежи")
             .toMap());
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 1000, CurrencyType.rubles,
-            ExpenseCategoryType.it, "Связь и интернет")
+                ExpenseCategoryType.it, "Связь и интернет")
             .toMap());
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 10000, CurrencyType.rubles,
-            ExpenseCategoryType.shops, "Еда")
+                ExpenseCategoryType.shops, "Еда")
             .toMap());
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 5000, CurrencyType.rubles,
-            ExpenseCategoryType.clothes, "")
+                ExpenseCategoryType.clothes, "")
             .toMap());
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 5500, CurrencyType.rubles,
-            ExpenseCategoryType.auto, "Бензин")
+                ExpenseCategoryType.auto, "Бензин")
             .toMap());
     await txn.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
-        PlannedExpenseModel(null, 7000, CurrencyType.rubles,
-            ExpenseCategoryType.fun, "")
+        PlannedExpenseModel(
+                null, 7000, CurrencyType.rubles, ExpenseCategoryType.fun, "")
             .toMap());
 
     // Расходы
-    var random = Random();
-    for (int monthIndex = 1; monthIndex <= 6; monthIndex++) {
+    for (int monthIndex = 1; monthIndex <= 9; monthIndex++) {
       await txn.insert(
           ExpenseModel.EXPENSE_TABLE,
           ExpenseModel(
-              null,
-              27000,
-              CurrencyType.rubles,
-              DateTime(2020, monthIndex, 11),
-              ExpenseCategoryType.house,
-              "Аренда")
+                  null,
+                  27000,
+                  CurrencyType.rubles,
+                  DateTime(2020, monthIndex, 11),
+                  ExpenseCategoryType.house,
+                  "Аренда")
               .toMap());
       await txn.insert(
           ExpenseModel.EXPENSE_TABLE,
           ExpenseModel(
-              null,
-              3000 + random.nextInt(2000),
-              CurrencyType.rubles,
-              DateTime(2020, monthIndex, 5 + random.nextInt(5)),
-              ExpenseCategoryType.house,
-              "Коммунальные платежи")
+                  null,
+                  3000 + random.nextInt(2000),
+                  CurrencyType.rubles,
+                  DateTime(2020, monthIndex, 5 + random.nextInt(5)),
+                  ExpenseCategoryType.house,
+                  "Коммунальные платежи")
               .toMap());
 
       for (int randomIndex = 0;
-      randomIndex <= random.nextInt(10);
-      randomIndex++) {
+          randomIndex <= 60;
+          randomIndex++) {
         await txn.insert(
             ExpenseModel.EXPENSE_TABLE,
             ExpenseModel(
-                null,
-                1000 + random.nextInt(5000),
-                CurrencyType.rubles,
-                DateTime(2020, monthIndex, random.nextInt(28)),
-                ExpenseCategoryType.values[
-                random.nextInt(ExpenseCategoryType.values.length)],
-                "")
+                    null,
+                    1000 + random.nextInt(5000),
+                    CurrencyType.rubles,
+                    DateTime(2020, monthIndex, random.nextInt(28)),
+                    ExpenseCategoryType.values[
+                        random.nextInt(ExpenseCategoryType.values.length)],
+                    "")
                 .toMap());
       }
     }
@@ -330,34 +354,29 @@ class DbService {
     await txn.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 1, 13), 25000,
-            CurrencyType.rubles, "Кофе-машина", DateTime(2020, 5, 7))
+                CurrencyType.rubles, "Кофе-машина", DateTime(2020, 5, 7))
             .toMap());
     await txn.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 2, 27), 90000,
-            CurrencyType.rubles, "Отпуск", DateTime(2020, 10, 10))
+                CurrencyType.rubles, "Отпуск", DateTime(2020, 10, 10))
             .toMap());
     await txn.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 4, 14), 30000,
-            CurrencyType.rubles, "Новый год", DateTime(2020, 12, 31))
+                CurrencyType.rubles, "Новый год", DateTime(2020, 12, 31))
             .toMap());
     await txn.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
-        PlannedIrregularModel(
-            null,
-            DateTime(2020, 4, 16),
-            80000,
-            CurrencyType.rubles,
-            "Новый компьютер",
-            DateTime(2020, 9, 1))
+        PlannedIrregularModel(null, DateTime(2020, 4, 16), 80000,
+                CurrencyType.rubles, "Новый компьютер", DateTime(2020, 9, 1))
             .toMap());
 
     // Нерегулярные расходы
     await txn.insert(
         IrregularModel.IRREGULAR_TABLE,
         IrregularModel(null, 24990, CurrencyType.rubles, "Кофе-машина",
-            DateTime(2020, 5, 6))
+                DateTime(2020, 5, 6))
             .toMap());
   }
 }
