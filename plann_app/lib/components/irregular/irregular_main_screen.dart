@@ -185,7 +185,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_planned_expense")),
+        child: Text(FlutterI18n.translate(context, "texts.no_irregular_planned")),
       ))
     ]);
   }
