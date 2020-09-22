@@ -19,7 +19,7 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-//    String path = join(await getDatabasesPath(), "plann_102.db");
+//    String path = join(await getDatabasesPath(), "plann_115.db");
     String path = join(await getDatabasesPath(), "plann.db");
     database =
         await openDatabase(path, version: 1, onConfigure: (database) async {
@@ -205,7 +205,7 @@ class DbService {
           IncomeModel.INCOME_TABLE,
           IncomeModel(
                   null,
-                  30000,
+                  45000,
                   CurrencyType.rubles,
                   DateTime(2020, monthIndex, 20),
                   IncomeCategoryType.prepaid,
@@ -216,7 +216,7 @@ class DbService {
           IncomeModel.INCOME_TABLE,
           IncomeModel(
                   null,
-                  57000,
+                  127500,
                   CurrencyType.rubles,
                   DateTime(2020, monthIndex, 5),
                   IncomeCategoryType.salary,
@@ -333,14 +333,12 @@ class DbService {
                   "Коммунальные платежи")
               .toMap());
 
-      for (int randomIndex = 0;
-          randomIndex <= 60;
-          randomIndex++) {
+      for (int randomIndex = 0; randomIndex <= 80; randomIndex++) {
         await txn.insert(
             ExpenseModel.EXPENSE_TABLE,
             ExpenseModel(
                     null,
-                    1000 + random.nextInt(5000),
+                    1000 + random.nextInt(1000),
                     CurrencyType.rubles,
                     DateTime(2020, monthIndex, random.nextInt(28)),
                     ExpenseCategoryType.values[
