@@ -51,6 +51,7 @@ class FinancesView extends StatelessWidget {
   Widget _buildTile1(BuildContext context, MonthCaruselBloc monthCaruselBloc,
       SlidableController slidableController) {
     return Slidable.builder(
+        key: Key("income_s"),
         controller: slidableController,
         direction: Axis.horizontal,
         child: ListTile(
@@ -62,6 +63,15 @@ class FinancesView extends StatelessWidget {
           },
         ),
         actionPane: SlidableDrawerActionPane(),
+        dismissal: SlidableDismissal(
+            closeOnCanceled: true,
+            onWillDismiss: (actionType) async {
+              await Navigator.pushNamed<bool>(
+                  context, AddIncomeScreen.routeName);
+              monthCaruselBloc.requestState();
+              return false;
+            },
+            child: SlidableDrawerDismissal()),
         secondaryActionDelegate: SlideActionBuilderDelegate(
             actionCount: 1,
             builder: (context, index, animation, renderingMode) {
@@ -69,11 +79,9 @@ class FinancesView extends StatelessWidget {
                 caption: FlutterI18n.translate(context, "texts.add"),
                 color: Colors.blueAccent,
                 icon: Ionicons.md_add,
-                onTap: () async
-                {
-                  await Navigator.pushNamed<bool>(
-                      context, AddIncomeScreen.routeName);
-                  monthCaruselBloc.requestState();
+                onTap: () async {
+                  var state = Slidable.of(context);
+                  state.dismiss();
                 },
               );
             }));
@@ -82,6 +90,7 @@ class FinancesView extends StatelessWidget {
   Widget _buildTile2(BuildContext context, MonthCaruselBloc monthCaruselBloc,
       SlidableController slidableController) {
     return Slidable.builder(
+        key: Key("regular"),
         controller: slidableController,
         direction: Axis.horizontal,
         child: ListTile(
@@ -93,6 +102,15 @@ class FinancesView extends StatelessWidget {
           },
         ),
         actionPane: SlidableDrawerActionPane(),
+        dismissal: SlidableDismissal(
+            closeOnCanceled: true,
+            onWillDismiss: (actionType) async {
+              await Navigator.pushNamed<bool>(
+                  context, AddExpenseScreen.routeName);
+              monthCaruselBloc.requestState();
+              return false;
+            },
+            child: SlidableDrawerDismissal()),
         secondaryActionDelegate: SlideActionBuilderDelegate(
             actionCount: 1,
             builder: (context, index, animation, renderingMode) {
@@ -101,8 +119,8 @@ class FinancesView extends StatelessWidget {
                 color: Colors.blueAccent,
                 icon: Ionicons.md_add,
                 onTap: () async {
-                  await Navigator.pushNamed<bool>(context, AddExpenseScreen.routeName);
-                  monthCaruselBloc.requestState();
+                  var state = Slidable.of(context);
+                  state.dismiss();
                 },
               );
             }));
