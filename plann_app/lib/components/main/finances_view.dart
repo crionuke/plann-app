@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:plann_app/components/expense/add_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_screen.dart';
+import 'package:plann_app/components/income/add_income_screen.dart';
 import 'package:plann_app/components/income/income_main_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_screen.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
@@ -27,6 +31,7 @@ class FinancesView extends StatelessWidget {
     final MonthCaruselBloc monthCaruselBloc =
         MonthCaruselBloc(dbService, analyticsService);
     final Divider divider1 = Divider(height: 1);
+    final SlidableController slidableController = SlidableController();
     return Column(children: <Widget>[
       Container(
           margin: EdgeInsets.all(10),
@@ -35,36 +40,72 @@ class FinancesView extends StatelessWidget {
               create: (context) => monthCaruselBloc,
               dispose: (context, bloc) => bloc.dispose(),
               child: MonthCaruselView())),
-      _buildTile1(context, monthCaruselBloc),
+      _buildTile1(context, monthCaruselBloc, slidableController),
       divider1,
-      _buildTile2(context, monthCaruselBloc),
+      _buildTile2(context, monthCaruselBloc, slidableController),
       divider1,
       _buildTile3(context, monthCaruselBloc),
     ]);
   }
 
-  ListTile _buildTile1(
-      BuildContext context, MonthCaruselBloc monthCaruselBloc) {
-    return ListTile(
-      title: Text(FlutterI18n.translate(context, "texts.income_s")),
-      trailing: Icon(Icons.navigate_next),
-      onTap: () async {
-        await Navigator.pushNamed(context, IncomeMainScreen.routeName);
-        monthCaruselBloc.requestState();
-      },
-    );
+  Widget _buildTile1(BuildContext context, MonthCaruselBloc monthCaruselBloc,
+      SlidableController slidableController) {
+    return Slidable.builder(
+        controller: slidableController,
+        direction: Axis.horizontal,
+        child: ListTile(
+          title: Text(FlutterI18n.translate(context, "texts.income_s")),
+          trailing: Icon(Icons.navigate_next),
+          onTap: () async {
+            await Navigator.pushNamed(context, IncomeMainScreen.routeName);
+            monthCaruselBloc.requestState();
+          },
+        ),
+        actionPane: SlidableDrawerActionPane(),
+        secondaryActionDelegate: SlideActionBuilderDelegate(
+            actionCount: 1,
+            builder: (context, index, animation, renderingMode) {
+              return IconSlideAction(
+                caption: FlutterI18n.translate(context, "texts.add"),
+                color: Colors.blueAccent,
+                icon: Ionicons.md_add,
+                onTap: () async
+                {
+                  await Navigator.pushNamed<bool>(
+                      context, AddIncomeScreen.routeName);
+                  monthCaruselBloc.requestState();
+                },
+              );
+            }));
   }
 
-  ListTile _buildTile2(
-      BuildContext context, MonthCaruselBloc monthCaruselBloc) {
-    return ListTile(
-      title: Text(FlutterI18n.translate(context, "texts.regular")),
-      trailing: Icon(Icons.navigate_next),
-      onTap: () async {
-        await Navigator.pushNamed(context, ExpenseMainScreen.routeName);
-        monthCaruselBloc.requestState();
-      },
-    );
+  Widget _buildTile2(BuildContext context, MonthCaruselBloc monthCaruselBloc,
+      SlidableController slidableController) {
+    return Slidable.builder(
+        controller: slidableController,
+        direction: Axis.horizontal,
+        child: ListTile(
+          title: Text(FlutterI18n.translate(context, "texts.regular")),
+          trailing: Icon(Icons.navigate_next),
+          onTap: () async {
+            await Navigator.pushNamed(context, ExpenseMainScreen.routeName);
+            monthCaruselBloc.requestState();
+          },
+        ),
+        actionPane: SlidableDrawerActionPane(),
+        secondaryActionDelegate: SlideActionBuilderDelegate(
+            actionCount: 1,
+            builder: (context, index, animation, renderingMode) {
+              return IconSlideAction(
+                caption: FlutterI18n.translate(context, "texts.add"),
+                color: Colors.blueAccent,
+                icon: Ionicons.md_add,
+                onTap: () async {
+                  await Navigator.pushNamed<bool>(context, AddExpenseScreen.routeName);
+                  monthCaruselBloc.requestState();
+                },
+              );
+            }));
   }
 
   ListTile _buildTile3(
