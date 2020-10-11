@@ -39,6 +39,8 @@ class SettingsView extends StatelessWidget {
     }
 
     children.add(divider1);
+    children.add(_buildTelegramChannelLink(context, bloc));
+    children.add(divider1);
     children.add(_buildTermsAndConditions(context, bloc));
     children.add(divider1);
     children.add(_buildPrivacyPolicy(context, bloc));
@@ -74,6 +76,16 @@ class SettingsView extends StatelessWidget {
         title:
             Text(FlutterI18n.translate(context, "texts.blocking_date") + ":"),
         subtitle: Text(AppTexts.formatDate(context, state.blockingDate)));
+  }
+
+  Widget _buildTelegramChannelLink(BuildContext context, SettingsBloc bloc) {
+    return ListTile(
+      onTap: () {
+        bloc.openTelegramChannel();
+      },
+      title: Text(FlutterI18n.translate(context, "texts.telegram_channel")),
+      trailing: Icon(Icons.navigate_next),
+    );
   }
 
   Widget _buildTermsAndConditions(BuildContext context, SettingsBloc bloc) {

@@ -37,6 +37,10 @@ class SettingsBloc {
   void openPrivacyPolicy() {
     launch("https://plannapp.blogspot.com/2020/06/privacy-policy.html");
   }
+
+  void openTelegramChannel() {
+    launch("https://t.me/plannapp");
+  }
 }
 
 class SettingsViewState {

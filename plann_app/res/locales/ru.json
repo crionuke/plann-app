@@ -82,7 +82,8 @@
     "terms_and_conditions": "Условия использования",
     "privacy_policy": "Политика конфиденциальности",
     "irregular_size_info": "{value} к {date}",
-    "irregular_per_month_info": "По {value} / мес."
+    "irregular_per_month_info": "По {value} / мес.",
+    "telegram_channel": "Telegram-канал"
   },
   "shorten_numbers": {
     "default": "{value}",
