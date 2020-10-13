@@ -32,6 +32,7 @@ import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dar
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_main_screen.dart';
 import 'package:plann_app/components/loading/loading_screen.dart';
+import 'package:plann_app/components/main/about_app_screen.dart';
 import 'package:plann_app/components/main/main_bloc.dart';
 import 'package:plann_app/components/main/main_screen.dart';
 import 'package:plann_app/components/subscriptions/block_bloc.dart';
@@ -76,9 +77,11 @@ void main() async {
   await purchaseService.start();
   await analyticsService.start();
 
-  if (await purchaseService.hasAccess()) {
+  if  (await purchaseService.hasAccess()) {
     print("[main] change to main screen");
     navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
+    // startup tutorials
+    navigatorKey.currentState.pushNamed(AboutAppScreen.routeName, arguments: 1);
   } else {
     print("[main] change to blocking screen");
     navigatorKey.currentState.pushReplacementNamed(BlockScreen.routeName);
@@ -119,6 +122,9 @@ class App extends StatelessWidget {
               return _buildMainPageRoute();
             case BlockScreen.routeName:
               return _buildBlockPageRoute();
+
+            case AboutAppScreen.routeName:
+              return _buildTutorialPageRoute(route.arguments);
 
             case IncomeMainScreen.routeName:
               return _buildIncomeListPageRoute();
@@ -179,6 +185,18 @@ class App extends StatelessWidget {
               navigatorKey),
           dispose: (context, bloc) => bloc.dispose(),
           child: BlockScreen());
+    });
+  }
+
+  MaterialPageRoute _buildTutorialPageRoute(int pageIndex) {
+    return MaterialPageRoute(builder: (context) {
+      return AboutAppScreen(pageIndex);
+//      return Provider<BlockBloc>(
+//          create: (context) => BlockBloc(
+//              Provider.of<PurchaseService>(context, listen: false),
+//              navigatorKey),
+//          dispose: (context, bloc) => bloc.dispose(),
+//          child: BlockScreen());
     });
   }
 

@@ -17,7 +17,6 @@ class MonthCaruselView extends StatelessWidget {
         stream: bloc.stream,
         initialData: bloc.currentState,
         builder: (context, snapshot) {
-          print(snapshot);
           var state = snapshot.data;
           return _buildCarusel(context, state.analytics);
         });

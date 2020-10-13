@@ -4,8 +4,8 @@ import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/main/settings_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_screen.dart';
+import 'package:plann_app/components/main/about_app_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SettingsView extends StatelessWidget {
   @override
@@ -44,6 +44,8 @@ class SettingsView extends StatelessWidget {
     children.add(_buildTermsAndConditions(context, bloc));
     children.add(divider1);
     children.add(_buildPrivacyPolicy(context, bloc));
+    children.add(divider1);
+    children.add(_buildAboutApp(context, bloc));
 
 //    children.add(divider1);
 //    children.add(ListTile(onTap: () async {
@@ -84,6 +86,17 @@ class SettingsView extends StatelessWidget {
         bloc.openTelegramChannel();
       },
       title: Text(FlutterI18n.translate(context, "texts.telegram_channel")),
+      trailing: Icon(Icons.navigate_next),
+    );
+  }
+
+  Widget _buildAboutApp(BuildContext context, SettingsBloc bloc) {
+    return ListTile(
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(AboutAppScreen.routeName, arguments: 1);
+      },
+      title: Text(FlutterI18n.translate(context, "texts.about_app")),
       trailing: Icon(Icons.navigate_next),
     );
   }
