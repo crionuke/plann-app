@@ -11,6 +11,8 @@ class AboutAppBloc {
   void markAsViewed() async {
     if (!valuesService.isExist(ValuesService.VALUE_ABOUT_APP_VIEWED)) {
       valuesService.addValue(ValuesService.VALUE_ABOUT_APP_VIEWED, "true");
+    } else {
+      valuesService.editValue(ValuesService.VALUE_ABOUT_APP_VIEWED, "true");
     }
   }
 }
