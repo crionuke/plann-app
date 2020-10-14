@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_views.dart';
+import 'package:plann_app/components/main/about_app_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class AboutAppScreen extends StatelessWidget {
@@ -9,12 +11,11 @@ class AboutAppScreen extends StatelessWidget {
 
   static const int MAX_PAGE = 4;
 
-  final int pageIndex;
-
-  AboutAppScreen(this.pageIndex);
+  AboutAppScreen();
 
   @override
   Widget build(BuildContext context) {
+    final AboutAppBloc bloc = Provider.of<AboutAppBloc>(context);
     final pageController = PageController(viewportFraction: 0.95);
 
     return Scaffold(
@@ -26,8 +27,8 @@ class AboutAppScreen extends StatelessWidget {
               AppViews.buildAppGradientOverlay(IconButton(
                 color: Colors.white,
                 icon: Icon(Icons.close),
-                tooltip: 'Run again',
                 onPressed: () {
+                  bloc.markAsViewed();
                   Navigator.of(context).pop();
                 },
               )),

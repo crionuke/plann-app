@@ -32,6 +32,7 @@ import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dar
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_main_screen.dart';
 import 'package:plann_app/components/loading/loading_screen.dart';
+import 'package:plann_app/components/main/about_app_bloc.dart';
 import 'package:plann_app/components/main/about_app_screen.dart';
 import 'package:plann_app/components/main/main_bloc.dart';
 import 'package:plann_app/components/main/main_screen.dart';
@@ -51,6 +52,7 @@ import 'package:plann_app/services/tracking/tracking_service.dart';
 import 'package:provider/provider.dart';
 
 import 'services/purchase/purchase_service.dart';
+import 'services/values/values_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +61,7 @@ void main() async {
   final trackingService = TrackingService();
   final purchaseService = PurchaseService(trackingService);
   final analyticsService = AnalyticsService(dbService, trackingService);
+  final valuesService = ValuesService(dbService);
 
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -68,6 +71,7 @@ void main() async {
       Provider<DbService>(create: (context) => dbService),
       Provider<AnalyticsService>(create: (context) => analyticsService),
       Provider<TrackingService>(create: (context) => trackingService),
+      Provider<ValuesService>(create: (context) => valuesService),
     ],
     child: App(navigatorKey, trackingService),
   ));
@@ -76,12 +80,16 @@ void main() async {
   await trackingService.start();
   await purchaseService.start();
   await analyticsService.start();
+  await valuesService.start();
 
-  if  (await purchaseService.hasAccess()) {
+  if (await purchaseService.hasAccess()) {
     print("[main] change to main screen");
     navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
-    // startup tutorials
-    navigatorKey.currentState.pushNamed(AboutAppScreen.routeName, arguments: 1);
+    if (!valuesService.isExist(ValuesService.VALUE_ABOUT_APP_VIEWED)) {
+      print("[main] about app already viewed, skip");
+      navigatorKey.currentState
+          .pushNamed(AboutAppScreen.routeName);
+    }
   } else {
     print("[main] change to blocking screen");
     navigatorKey.currentState.pushReplacementNamed(BlockScreen.routeName);
@@ -124,7 +132,7 @@ class App extends StatelessWidget {
               return _buildBlockPageRoute();
 
             case AboutAppScreen.routeName:
-              return _buildTutorialPageRoute(route.arguments);
+              return _buildTutorialPageRoute();
 
             case IncomeMainScreen.routeName:
               return _buildIncomeListPageRoute();
@@ -188,15 +196,13 @@ class App extends StatelessWidget {
     });
   }
 
-  MaterialPageRoute _buildTutorialPageRoute(int pageIndex) {
+  MaterialPageRoute _buildTutorialPageRoute() {
     return MaterialPageRoute(builder: (context) {
-      return AboutAppScreen(pageIndex);
-//      return Provider<BlockBloc>(
-//          create: (context) => BlockBloc(
-//              Provider.of<PurchaseService>(context, listen: false),
-//              navigatorKey),
-//          dispose: (context, bloc) => bloc.dispose(),
-//          child: BlockScreen());
+//      return AboutAppScreen(pageIndex);
+      return Provider<AboutAppBloc>(
+          create: (context) => AboutAppBloc(
+              Provider.of<ValuesService>(context, listen: false)),
+          child: AboutAppScreen());
     });
   }
 

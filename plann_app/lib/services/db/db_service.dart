@@ -8,6 +8,7 @@ import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
+import 'package:plann_app/services/db/models/value_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
@@ -19,27 +20,34 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-//    String path = join(await getDatabasesPath(), "plann_115.db");
-    String path = join(await getDatabasesPath(), "plann.db");
+    String path = join(await getDatabasesPath(), "plann_118.db");
+//    String path = join(await getDatabasesPath(), "plann.db");
     database =
-        await openDatabase(path, version: 1, onConfigure: (database) async {
+        await openDatabase(path, version: 2, onConfigure: (database) async {
       await database.execute("PRAGMA foreign_keys = ON");
     }, onOpen: (database) async {
       database = database;
       print("[DbService] opened");
     }, onCreate: (database, version) async {
-      await database.transaction((txn) async {
-        await txn.execute(IncomeModel.createTableSql);
-        await txn.execute(PlannedIncomeModel.createTableSql);
-        await txn.execute(ExpenseModel.createTableSql);
-        await txn.execute(PlannedExpenseModel.createTableSql);
-        await txn.execute(IrregularModel.createTableSql);
-        await txn.execute(PlannedIrregularModel.createTableSql);
-
-//        await fill(txn);
-      });
-
-      print("[DbService] created");
+      // Version 1
+      if (version >= 1) {
+        await database.execute(IncomeModel.createTableSql);
+        await database.execute(PlannedIncomeModel.createTableSql);
+        await database.execute(ExpenseModel.createTableSql);
+        await database.execute(PlannedExpenseModel.createTableSql);
+        await database.execute(IrregularModel.createTableSql);
+        await database.execute(PlannedIrregularModel.createTableSql);
+      }
+      if (version >= 2) {
+        await database.execute(ValueModel.createTableSql);
+      }
+//      await fill(txn);
+      print("[DbService] version $version created");
+    }, onUpgrade: (database, oldVersion, newVersion) async {
+      if (oldVersion < 2 && newVersion >= 2) {
+        print("[DbService] upgrade from 1 to 2");
+        await database.execute(ValueModel.createTableSql);
+      }
     });
   }
 
@@ -194,6 +202,31 @@ class DbService {
     return results.isNotEmpty
         ? results.map((map) => PlannedIrregularModel.fromMap(map)).toList()
         : [];
+  }
+
+  // Value CRUD operations
+
+  Future<int> addValue(ValueModel model) async {
+    return database.insert(ValueModel.VALUE_TABLE, model.toMap());
+  }
+
+  Future<void> editValue(String key, ValueModel model) async {
+    database.update(ValueModel.VALUE_TABLE, model.toMap(),
+        where: '${ValueModel.VALUE_KEY_V1}=?', whereArgs: [key]);
+  }
+
+  Future<void> deleteValue(String key) async {
+    database.delete(ValueModel.VALUE_TABLE,
+        where: '${ValueModel.VALUE_KEY_V1}=?', whereArgs: [key]);
+  }
+
+  Future<Map<String, String>> getAllValues() async {
+    List<Map<String, dynamic>> results =
+        await database.query(ValueModel.VALUE_TABLE);
+    Map<String, String> map = {};
+    results.forEach((value) => map[value[ValueModel.VALUE_KEY_V1]] =
+        value[ValueModel.VALUE_VALUE_V1]);
+    return map;
   }
 
   Future<void> fill(txn) async {

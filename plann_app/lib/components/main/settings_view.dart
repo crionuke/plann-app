@@ -94,7 +94,7 @@ class SettingsView extends StatelessWidget {
     return ListTile(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(AboutAppScreen.routeName, arguments: 1);
+            .pushNamed(AboutAppScreen.routeName);
       },
       title: Text(FlutterI18n.translate(context, "texts.about_app")),
       trailing: Icon(Icons.navigate_next),
