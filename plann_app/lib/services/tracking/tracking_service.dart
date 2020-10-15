@@ -45,19 +45,23 @@ class TrackingService {
     amplitude.logEvent("income_planned");
   }
 
-  void irregularAdded() {
-    amplitude.logEvent("irregular_added");
-  }
-
-  void irregularPlanned() {
-    amplitude.logEvent("irregular_planned");
-  }
-
   void expenseAdded() {
     amplitude.logEvent("expense_added");
   }
 
   void expensePlanned() {
     amplitude.logEvent("expense_planned");
+  }
+
+  void emergencyFundAdded() {
+    amplitude.logEvent("e_fund_added");
+  }
+
+  void irregularAdded() {
+    amplitude.logEvent("irregular_added");
+  }
+
+  void irregularPlanned() {
+    amplitude.logEvent("irregular_planned");
   }
 }

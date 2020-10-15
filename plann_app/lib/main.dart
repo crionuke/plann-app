@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:plann_app/components/emergency/add_emergency_fund_bloc.dart';
+import 'package:plann_app/components/emergency/add_emergency_fund_screen.dart';
+import 'package:plann_app/components/emergency/edit_emergency_fund_bloc.dart';
+import 'package:plann_app/components/emergency/edit_emergency_fund_screen.dart';
+import 'package:plann_app/components/emergency/emergency_fund_main_bloc.dart';
+import 'package:plann_app/components/emergency/emergency_fund_main_screen.dart';
 import 'package:plann_app/components/expense/add_expense_bloc.dart';
 import 'package:plann_app/components/expense/add_expense_screen.dart';
 import 'package:plann_app/components/expense/add_planned_expense_bloc.dart';
@@ -51,6 +57,7 @@ import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/tracking/tracking_service.dart';
 import 'package:provider/provider.dart';
 
+import 'services/db/models/emergency_fund_model.dart';
 import 'services/purchase/purchase_service.dart';
 import 'services/values/values_service.dart';
 
@@ -86,9 +93,10 @@ void main() async {
     print("[main] change to main screen");
     navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
     if (!valuesService.isExist(ValuesService.VALUE_ABOUT_APP_VIEWED)) {
-      print("[main] about app already viewed, skip");
       navigatorKey.currentState
           .pushNamed(AboutAppScreen.routeName);
+    } else {
+      print("[main] about app already viewed, skip");
     }
   } else {
     print("[main] change to blocking screen");
@@ -166,6 +174,13 @@ class App extends StatelessWidget {
               return _buildAddPlannedIrregularPageRoute();
             case EditPlannedIrregularScreen.routeName:
               return _buildEditPlannedIrregularPageRoute(route.arguments);
+
+            case EmergencyFundMainScreen.routeName:
+              return _buildEmergencyFundMainScreenPageRoute();
+            case AddEmergencyFundScreen.routeName:
+              return _buildAddEmergencyFundPageRoute();
+            case EditEmergencyFundScreen.routeName:
+              return _buildEditEmergencyFundPageRoute(route.arguments);
 
             case SubscriptionsScreen.routeName:
               return _buildSubscriptionsPageRoute();
@@ -331,6 +346,45 @@ class App extends StatelessWidget {
               model),
           dispose: (context, bloc) => bloc.dispose(),
           child: EditPlannedExpenseScreen());
+    });
+  }
+
+  // Emergency fund routes
+
+  MaterialPageRoute _buildEmergencyFundMainScreenPageRoute() {
+    return MaterialPageRoute(builder: (context) {
+      return Provider<EmergencyFundMainBloc>(
+          create: (context) => EmergencyFundMainBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: EmergencyFundMainScreen());
+    });
+  }
+
+  MaterialPageRoute _buildAddEmergencyFundPageRoute() {
+    return MaterialPageRoute<bool>(builder: (context) {
+      return Provider<AddEmergencyFundBloc>(
+          create: (context) => AddEmergencyFundBloc(
+            Provider.of<DbService>(context, listen: false),
+            Provider.of<AnalyticsService>(context, listen: false),
+            Provider.of<TrackingService>(context, listen: false),
+          ),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: AddEmergencyFundScreen());
+    });
+  }
+
+  MaterialPageRoute _buildEditEmergencyFundPageRoute(EmergencyFundModel model) {
+    return MaterialPageRoute<bool>(builder: (context) {
+      return Provider<EditEmergencyFundBloc>(
+          create: (context) => EditEmergencyFundBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false),
+              model),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: EditEmergencyFundScreen());
     });
   }
 

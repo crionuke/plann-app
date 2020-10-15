@@ -3,16 +3,17 @@ import 'dart:math';
 
 import 'package:path/path.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
+import 'package:plann_app/services/db/models/emergency_fund_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
-import 'package:plann_app/services/db/models/value_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
+import 'package:plann_app/services/db/models/value_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbService {
@@ -20,7 +21,7 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-    String path = join(await getDatabasesPath(), "plann_118.db");
+    String path = join(await getDatabasesPath(), "plann_119.db");
 //    String path = join(await getDatabasesPath(), "plann.db");
     database =
         await openDatabase(path, version: 2, onConfigure: (database) async {
@@ -40,6 +41,7 @@ class DbService {
       }
       if (version >= 2) {
         await database.execute(ValueModel.createTableSql);
+        await database.execute(EmergencyFundModel.createTableSql);
       }
 //      await fill(txn);
       print("[DbService] version $version created");
@@ -47,6 +49,7 @@ class DbService {
       if (oldVersion < 2 && newVersion >= 2) {
         print("[DbService] upgrade from 1 to 2");
         await database.execute(ValueModel.createTableSql);
+        await database.execute(EmergencyFundModel.createTableSql);
       }
     });
   }
@@ -224,10 +227,38 @@ class DbService {
     List<Map<String, dynamic>> results =
         await database.query(ValueModel.VALUE_TABLE);
     Map<String, String> map = {};
-    results.forEach((value) => map[value[ValueModel.VALUE_KEY_V1]] =
-        value[ValueModel.VALUE_VALUE_V1]);
+    results.forEach((value) =>
+        map[value[ValueModel.VALUE_KEY_V1]] = value[ValueModel.VALUE_VALUE_V1]);
     return map;
   }
+
+  // Emergency fund CRUD operations
+
+  Future<int> addEmergencyFund(EmergencyFundModel model) async {
+    return database.insert(
+        EmergencyFundModel.EMERGENY_FUND_TABLE, model.toMap());
+  }
+
+  Future<void> editEmergencyFund(int id, EmergencyFundModel model) async {
+    database.update(EmergencyFundModel.EMERGENY_FUND_TABLE, model.toMap(),
+        where: '${EmergencyFundModel.EMERGENCY_FUND_ID_V1}=?', whereArgs: [id]);
+  }
+
+  Future<void> deleteEmergencyFund(int id) async {
+    database.delete(EmergencyFundModel.EMERGENY_FUND_TABLE,
+        where: '${EmergencyFundModel.EMERGENCY_FUND_ID_V1}=?', whereArgs: [id]);
+  }
+
+  Future<List<EmergencyFundModel>> getEmergencyFundList() async {
+    List<Map<String, dynamic>> results = await database.query(
+        EmergencyFundModel.EMERGENY_FUND_TABLE,
+        orderBy: "${EmergencyFundModel.EMERGENCY_FUND_START_DATE_TS_V1} DESC");
+    return results.isNotEmpty
+        ? results.map((map) => EmergencyFundModel.fromMap(map)).toList()
+        : [];
+  }
+
+  // Test dataset
 
   Future<void> fill(txn) async {
     var random = Random();

@@ -14,6 +14,8 @@
     "no_irregular_planned": "Крупные покупки не запланированы",
     "targets": "Финансовые цели",
     "no_target": "Целей нет",
+    "emergency_fund": "Финансовая подушка",
+    "no_emergency_fund": "Финансовая подушка не сформирована",
     "date": "Дата",
     "creation_date": "Создано",
     "nearest_date": "Ближайшая дата",

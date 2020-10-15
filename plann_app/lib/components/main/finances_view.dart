@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:plann_app/components/emergency/emergency_fund_main_screen.dart';
 import 'package:plann_app/components/expense/add_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_screen.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
@@ -45,6 +46,8 @@ class FinancesView extends StatelessWidget {
       _buildTile2(context, monthCaruselBloc, slidableController),
       divider1,
       _buildTile3(context, monthCaruselBloc),
+      divider1,
+      _buildTile4(context, monthCaruselBloc),
     ]);
   }
 
@@ -127,6 +130,18 @@ class FinancesView extends StatelessWidget {
   }
 
   ListTile _buildTile3(
+      BuildContext context, MonthCaruselBloc monthCaruselBloc) {
+    return ListTile(
+      title: Text(FlutterI18n.translate(context, "texts.emergency_fund")),
+      trailing: Icon(Icons.navigate_next),
+      onTap: () async {
+        await Navigator.pushNamed(context, EmergencyFundMainScreen.routeName);
+        monthCaruselBloc.requestState();
+      },
+    );
+  }
+
+  ListTile _buildTile4(
       BuildContext context, MonthCaruselBloc monthCaruselBloc) {
     return ListTile(
       title: Text(FlutterI18n.translate(context, "texts.irregular")),
