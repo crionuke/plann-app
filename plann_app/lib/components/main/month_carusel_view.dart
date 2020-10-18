@@ -27,7 +27,7 @@ class MonthCaruselView extends StatelessWidget {
     final pageController = PageController(
         initialPage: analytics.currentMonthOffset, viewportFraction: 0.95);
     return PageView.builder(
-        itemCount: analytics.monthCount,
+        itemCount: analytics.currentMonthOffset + 1,
         controller: pageController,
         itemBuilder: (BuildContext context, int itemIndex) {
           MonthAnalytics monthAnalytics = state.analytics.monthList[itemIndex];
