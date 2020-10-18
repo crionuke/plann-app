@@ -9,7 +9,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class AboutAppScreen extends StatelessWidget {
   static const routeName = '/aboutApp';
 
-  static const int MAX_PAGE = 4;
+  static const int MAX_PAGE = 3;
 
   AboutAppScreen();
 
@@ -43,7 +43,6 @@ class AboutAppScreen extends StatelessWidget {
                   _buildPage(context, 1),
                   _buildPage(context, 2),
                   _buildPage(context, 3),
-                  _buildPage(context, 4)
                 ],
               ))
             ]),
@@ -53,8 +52,8 @@ class AboutAppScreen extends StatelessWidget {
                 padding: EdgeInsets.all(20),
                 child: SmoothPageIndicator(
                   controller: pageController,
-                  count: 4,
-                  effect: WormEffect(activeDotColor: AppColors.APP_COLOR_1),
+                  count: MAX_PAGE,
+                  effect: WormEffect(activeDotColor: Colors.blueAccent),
                 ),
               ),
             ),

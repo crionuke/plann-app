@@ -21,8 +21,8 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-    String path = join(await getDatabasesPath(), "plann_119.db");
-//    String path = join(await getDatabasesPath(), "plann.db");
+//    String path = join(await getDatabasesPath(), "plann_121.db");
+    String path = join(await getDatabasesPath(), "plann.db");
     database =
         await openDatabase(path, version: 2, onConfigure: (database) async {
       await database.execute("PRAGMA foreign_keys = ON");
@@ -41,15 +41,13 @@ class DbService {
       }
       if (version >= 2) {
         await database.execute(ValueModel.createTableSql);
-        await database.execute(EmergencyFundModel.createTableSql);
       }
-//      await fill(txn);
+//      await fill(database);
       print("[DbService] version $version created");
     }, onUpgrade: (database, oldVersion, newVersion) async {
       if (oldVersion < 2 && newVersion >= 2) {
         print("[DbService] upgrade from 1 to 2");
         await database.execute(ValueModel.createTableSql);
-        await database.execute(EmergencyFundModel.createTableSql);
       }
     });
   }
@@ -260,12 +258,12 @@ class DbService {
 
   // Test dataset
 
-  Future<void> fill(txn) async {
+  Future<void> fill(database) async {
     var random = Random();
 
     for (int monthIndex = 1; monthIndex <= 9; monthIndex++) {
       // Авансы
-      await txn.insert(
+      await database.insert(
           IncomeModel.INCOME_TABLE,
           IncomeModel(
                   null,
@@ -276,7 +274,7 @@ class DbService {
                   "Работа")
               .toMap());
       // Зарплаты
-      await txn.insert(
+      await database.insert(
           IncomeModel.INCOME_TABLE,
           IncomeModel(
                   null,
@@ -287,7 +285,7 @@ class DbService {
                   "Работа")
               .toMap());
       // Рента
-      await txn.insert(
+      await database.insert(
           IncomeModel.INCOME_TABLE,
           IncomeModel(
                   null,
@@ -298,7 +296,7 @@ class DbService {
                   "Арнендная плата")
               .toMap());
       for (int i = 0; i < random.nextInt(2); i++) {
-        await txn.insert(
+        await database.insert(
             IncomeModel.INCOME_TABLE,
             IncomeModel(
                     null,
@@ -314,7 +312,7 @@ class DbService {
     }
 
     // Плановые доходы
-    await txn.insert(
+    await database.insert(
         PlannedIncomeModel.PLANNED_INCOME_TABLE,
         PlannedIncomeModel(
                 null,
@@ -325,7 +323,7 @@ class DbService {
                 IncomeCategoryType.prepaid,
                 "Работа")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedIncomeModel.PLANNED_INCOME_TABLE,
         PlannedIncomeModel(
                 null,
@@ -338,37 +336,37 @@ class DbService {
             .toMap());
 
     // Плановые расходы
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 27000, CurrencyType.rubles,
                 ExpenseCategoryType.house, "Аренда")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 4000, CurrencyType.rubles,
                 ExpenseCategoryType.house, "Коммунальные платежи")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 1000, CurrencyType.rubles,
                 ExpenseCategoryType.it, "Связь и интернет")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 10000, CurrencyType.rubles,
                 ExpenseCategoryType.shops, "Еда")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 5000, CurrencyType.rubles,
                 ExpenseCategoryType.clothes, "")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(null, 5500, CurrencyType.rubles,
                 ExpenseCategoryType.auto, "Бензин")
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedExpenseModel.PLANNED_EXPENSE_TABLE,
         PlannedExpenseModel(
                 null, 7000, CurrencyType.rubles, ExpenseCategoryType.fun, "")
@@ -376,7 +374,7 @@ class DbService {
 
     // Расходы
     for (int monthIndex = 1; monthIndex <= 9; monthIndex++) {
-      await txn.insert(
+      await database.insert(
           ExpenseModel.EXPENSE_TABLE,
           ExpenseModel(
                   null,
@@ -386,7 +384,7 @@ class DbService {
                   ExpenseCategoryType.house,
                   "Аренда")
               .toMap());
-      await txn.insert(
+      await database.insert(
           ExpenseModel.EXPENSE_TABLE,
           ExpenseModel(
                   null,
@@ -398,7 +396,7 @@ class DbService {
               .toMap());
 
       for (int randomIndex = 0; randomIndex <= 80; randomIndex++) {
-        await txn.insert(
+        await database.insert(
             ExpenseModel.EXPENSE_TABLE,
             ExpenseModel(
                     null,
@@ -413,29 +411,29 @@ class DbService {
     }
 
     // Плановые нерегулярные расходы
-    await txn.insert(
+    await database.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 1, 13), 25000,
                 CurrencyType.rubles, "Кофе-машина", DateTime(2020, 5, 7))
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 2, 27), 90000,
                 CurrencyType.rubles, "Отпуск", DateTime(2020, 10, 10))
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 4, 14), 30000,
                 CurrencyType.rubles, "Новый год", DateTime(2020, 12, 31))
             .toMap());
-    await txn.insert(
+    await database.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 4, 16), 80000,
                 CurrencyType.rubles, "Новый компьютер", DateTime(2020, 9, 1))
             .toMap());
 
     // Нерегулярные расходы
-    await txn.insert(
+    await database.insert(
         IrregularModel.IRREGULAR_TABLE,
         IrregularModel(null, 24990, CurrencyType.rubles, "Кофе-машина",
                 DateTime(2020, 5, 6))
