@@ -86,8 +86,8 @@ class AnalyticsData {
 
     DateTime now = DateTime.now();
     _currentMonthIndex = AnalyticsUtils.toAbs(now.year, now.month);
-    _firstMonthIndex = _currentMonthIndex - 1;
-    _lastMonthIndex = _currentMonthIndex + 1;
+    _firstMonthIndex = _currentMonthIndex;
+    _lastMonthIndex = _currentMonthIndex;
     _calcRange();
     _fillMonthList();
   }
