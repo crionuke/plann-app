@@ -9,12 +9,14 @@ PODS:
   - FMDB/standard (2.7.5)
   - package_info (0.0.1):
     - Flutter
-  - Purchases (3.4.0)
-  - purchases_flutter (1.2.1):
+  - Purchases (3.7.2):
+    - PurchasesCoreSwift (= 3.7.2)
+  - purchases_flutter (1.4.0):
     - Flutter
-    - PurchasesHybridCommon (= 1.2.0)
-  - PurchasesHybridCommon (1.2.0):
-    - Purchases (= 3.4.0)
+    - PurchasesHybridCommon (= 1.4.4)
+  - PurchasesCoreSwift (3.7.2)
+  - PurchasesHybridCommon (1.4.4):
+    - Purchases (= 3.7.2)
   - sqflite (0.0.1):
     - Flutter
     - FMDB (~> 2.7.2)
@@ -34,6 +36,7 @@ SPEC REPOS:
     - Amplitude
     - FMDB
     - Purchases
+    - PurchasesCoreSwift
     - PurchasesHybridCommon
 
 EXTERNAL SOURCES:
@@ -56,9 +59,10 @@ SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  Purchases: b8cac232e403ca51541a425a65992b902cecc044
-  purchases_flutter: b27e7df010dbf09f9b7bdd849cc83ac19c3444d9
-  PurchasesHybridCommon: deba31751165f0a0f84eba3df68a54641f8a69b1
+  Purchases: f4b90cb0493bc32b4c9a1037cf0953df7dd89834
+  purchases_flutter: 38a515e7bbf2e00b22ee8a5cf593e8c2561f2969
+  PurchasesCoreSwift: 8b5b6ae27eba12fcd123165e486f8ac128e35d45
+  PurchasesHybridCommon: 9aa4f8f416d9796b60f763455d56c64949dc2db8
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 
