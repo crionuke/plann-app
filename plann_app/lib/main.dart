@@ -93,8 +93,7 @@ void main() async {
     print("[main] change to main screen");
     navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
     if (!valuesService.isExist(ValuesService.VALUE_ABOUT_APP_VIEWED)) {
-      navigatorKey.currentState
-          .pushNamed(AboutAppScreen.routeName);
+      navigatorKey.currentState.pushNamed(AboutAppScreen.routeName);
     } else {
       print("[main] about app already viewed, skip");
     }
@@ -193,8 +192,9 @@ class App extends StatelessWidget {
   MaterialPageRoute _buildMainPageRoute() {
     return MaterialPageRoute(builder: (context) {
       return Provider<MainBloc>(
-          create: (context) =>
-              MainBloc(Provider.of<PurchaseService>(context, listen: false)),
+          create: (context) => MainBloc(
+              Provider.of<PurchaseService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: MainScreen());
     });
@@ -216,7 +216,8 @@ class App extends StatelessWidget {
 //      return AboutAppScreen(pageIndex);
       return Provider<AboutAppBloc>(
           create: (context) => AboutAppBloc(
-              Provider.of<ValuesService>(context, listen: false)),
+              Provider.of<ValuesService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
           child: AboutAppScreen());
     });
   }
@@ -367,10 +368,10 @@ class App extends StatelessWidget {
     return MaterialPageRoute<bool>(builder: (context) {
       return Provider<AddEmergencyFundBloc>(
           create: (context) => AddEmergencyFundBloc(
-            Provider.of<DbService>(context, listen: false),
-            Provider.of<AnalyticsService>(context, listen: false),
-            Provider.of<TrackingService>(context, listen: false),
-          ),
+                Provider.of<DbService>(context, listen: false),
+                Provider.of<AnalyticsService>(context, listen: false),
+                Provider.of<TrackingService>(context, listen: false),
+              ),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddEmergencyFundScreen());
     });

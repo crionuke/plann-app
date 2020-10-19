@@ -37,6 +37,10 @@ class TrackingService {
     amplitude.logEvent("purchase", eventProperties: {"product_id": productId});
   }
 
+  void aboutAppViewed() {
+    amplitude.logEvent("about_app_viewed");
+  }
+
   void incomeAdded() {
     amplitude.logEvent("income_added");
   }
@@ -63,5 +67,9 @@ class TrackingService {
 
   void irregularPlanned() {
     amplitude.logEvent("irregular_planned");
+  }
+
+  void telegramOpened() {
+    amplitude.logEvent("telegram_opened");
   }
 }

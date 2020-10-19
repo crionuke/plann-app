@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:package_info/package_info.dart';
 import 'package:plann_app/services/purchase/purchase_service.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsBloc {
@@ -10,8 +11,9 @@ class SettingsBloc {
   Stream get stream => _controller.stream;
 
   PurchaseService purchaseService;
+  TrackingService trackingService;
 
-  SettingsBloc(this.purchaseService);
+  SettingsBloc(this.purchaseService, this.trackingService);
 
   @override
   void dispose() {
@@ -40,6 +42,7 @@ class SettingsBloc {
 
   void openTelegramChannel() {
     launch("https://t.me/plannapp");
+    trackingService.telegramOpened();
   }
 }
 

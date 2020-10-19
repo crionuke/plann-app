@@ -23,7 +23,8 @@ class MainScreen extends StatelessWidget {
               return _buildFinanceView(context, bloc, selectedIndex);
             } else if (selectedIndex == 1) {
               return Provider<SettingsBloc>(
-                  create: (context) => SettingsBloc(bloc.purchaseService),
+                  create: (context) =>
+                      SettingsBloc(bloc.purchaseService, bloc.trackingService),
                   dispose: (context, bloc) => bloc.dispose(),
                   child: _buildProfileView(context, bloc, selectedIndex));
             }
@@ -64,7 +65,8 @@ class MainScreen extends StatelessWidget {
       elevation: 0,
       items: [
         BottomNavigationBarItem(
-          icon: AppViews.buildAppGradientOverlay(Icon(Icons.account_balance_wallet)),
+          icon: AppViews.buildAppGradientOverlay(
+              Icon(Icons.account_balance_wallet)),
           title: AppViews.buildAppGradientOverlay(
               Text(FlutterI18n.translate(context, "texts.finances"))),
         ),
