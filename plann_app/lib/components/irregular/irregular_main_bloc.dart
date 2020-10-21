@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
-import 'package:plann_app/services/analytics/month_analytics.dart';
 import 'package:plann_app/services/db/db_service.dart';
+import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
+import 'package:plann_app/services/tracking/tracking_service.dart';
 
 class IrregularMainBloc {
   final _controller = StreamController<IrregularMainViewState>();
@@ -15,10 +16,12 @@ class IrregularMainBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final TrackingService trackingService;
 
   IrregularMonthPanelBloc monthPanelBloc;
 
-  IrregularMainBloc(this.dbService, this.analyticsService) {
+  IrregularMainBloc(
+      this.dbService, this.analyticsService, this.trackingService) {
     monthPanelBloc = IrregularMonthPanelBloc(analyticsService);
   }
 
@@ -49,6 +52,16 @@ class IrregularMainBloc {
     await dbService.deletePlannedIrregular(id);
     await analyticsService.analyze();
     requestState();
+  }
+
+  Future<int> instantiateIrregular(
+      num value, CurrencyType currency, String title, DateTime date) async {
+    int id = await dbService
+        .addIrregular(IrregularModel(null, value, currency, title, date));
+    await analyticsService.analyze();
+    trackingService.irregularAdded();
+    requestState();
+    return id;
   }
 }
 

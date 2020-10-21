@@ -29,6 +29,7 @@ class IrregularMainScreen extends StatefulWidget {
 class _IrregularMainState extends State<IrregularMainScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  BuildContext _scaffoldContext;
 
   @override
   void initState() {
@@ -49,7 +50,12 @@ class _IrregularMainState extends State<IrregularMainScreen>
       length: 2,
       child: Scaffold(
         appBar: _buildAppBar(context, bloc),
-        body: _buildBody(context, bloc),
+        body: Builder(
+          builder: (BuildContext context) {
+            _scaffoldContext = context;
+            return _buildBody(context, bloc);
+          },
+        ),
       ),
     );
   }
@@ -185,7 +191,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_irregular_planned")),
+        child:
+            Text(FlutterI18n.translate(context, "texts.no_irregular_planned")),
       ))
     ]);
   }
@@ -264,12 +271,14 @@ class _IrregularMainState extends State<IrregularMainScreen>
         itemBuilder: (context, index) {
           PlannedIrregularModel model = list[index];
 
+          String itemValue = AppTexts.formatCurrencyValue(
+              context, model.currency, model.value,
+              shorten: true);
+
           String sizeInfo = FlutterI18n.translate(
               context, "texts.irregular_size_info",
               translationParams: {
-                "value": AppTexts.formatCurrencyValue(
-                    context, model.currency, model.value,
-                    shorten: true),
+                "value": itemValue,
                 "date": AppTexts.formatDate(context, model.date),
               });
 
@@ -304,8 +313,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
                         builder: (BuildContext context) {
                           return AppDialogs.buildConfirmDeletionDialog(
                               context,
-                                  () => Navigator.of(context).pop(false),
-                                  () => Navigator.of(context).pop(true));
+                              () => Navigator.of(context).pop(false),
+                              () => Navigator.of(context).pop(true));
                         });
                   },
                   onDismissed: (actionType) async {
@@ -314,17 +323,39 @@ class _IrregularMainState extends State<IrregularMainScreen>
 //                  dragDismissible: false,
                   child: SlidableDrawerDismissal()),
               secondaryActionDelegate: SlideActionBuilderDelegate(
-                  actionCount: 1,
+                  actionCount: 2,
                   builder: (context, index, animation, renderingMode) {
-                    return IconSlideAction(
-                      caption: FlutterI18n.translate(context, "texts.delete"),
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-                        var state = Slidable.of(context);
-                        state.dismiss();
-                      },
-                    );
+                    if (index == 0) {
+                      return IconSlideAction(
+                        caption: FlutterI18n.translate(context, "texts.add"),
+                        color: Colors.blueAccent,
+                        icon: Ionicons.md_add,
+                        onTap: () async {
+                          bloc.instantiateIrregular(model.value, model.currency,
+                              model.title, model.date);
+                          bloc.requestState();
+                          Scaffold.of(_scaffoldContext).hideCurrentSnackBar();
+                          Scaffold.of(_scaffoldContext).showSnackBar(SnackBar(
+                            content: Text(FlutterI18n.translate(
+                                context, "texts.irregular_added_to_list",
+                                translationParams: {
+                                  "title": AppTexts.lowFirstLetter(model.title),
+                                  "value": itemValue,
+                                })),
+                          ));
+                        },
+                      );
+                    } else {
+                      return IconSlideAction(
+                        caption: FlutterI18n.translate(context, "texts.delete"),
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () {
+                          var state = Slidable.of(context);
+                          state.dismiss();
+                        },
+                      );
+                    }
                   }));
         },
         itemCount: list.length);

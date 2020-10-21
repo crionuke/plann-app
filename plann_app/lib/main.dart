@@ -396,7 +396,8 @@ class App extends StatelessWidget {
       return Provider<IrregularMainBloc>(
           create: (context) => IrregularMainBloc(
               Provider.of<DbService>(context, listen: false),
-              Provider.of<AnalyticsService>(context, listen: false)),
+              Provider.of<AnalyticsService>(context, listen: false),
+              Provider.of<TrackingService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: IrregularMainScreen());
     });

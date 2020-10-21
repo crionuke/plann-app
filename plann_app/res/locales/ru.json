@@ -43,6 +43,7 @@
     "add_to_list": "Добавить в список",
     "income_added_to_list": "В список доходов добавлено {value} в категории - {category}",
     "expense_added_to_list": "В список расходов добавлено {value} в категории - {category}",
+    "irregular_added_to_list": "В список крупных покупок добавлен(ы) {title} стоимостью {value} ",
     "undo": "Отменить",
     "create": "Создать",
     "to_plan": "Запланировать",
