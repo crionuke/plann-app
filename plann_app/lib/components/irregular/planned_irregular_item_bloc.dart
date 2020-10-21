@@ -16,7 +16,9 @@ class PlannedIrregularItemBloc {
   DateTime _date;
 
   PlannedIrregularItemBloc() {
+    // Setup default values
     _creationDate = DateTime.now();
+    _currency = CurrencyType.rubles;
   }
 
   PlannedIrregularItemBloc.from(PlannedIrregularModel model) {
