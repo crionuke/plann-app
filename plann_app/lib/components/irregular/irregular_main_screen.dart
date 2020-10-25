@@ -333,8 +333,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
                         color: Colors.blueAccent,
                         icon: Ionicons.md_add,
                         onTap: () async {
-                          bloc.instantiateIrregular(model.value, model.currency,
-                              model.title, model.date);
+                          bloc.instantiateIrregular(
+                              model.value, model.currency, model.title);
                           bloc.requestState();
                           Scaffold.of(_scaffoldContext).hideCurrentSnackBar();
                           Scaffold.of(_scaffoldContext).showSnackBar(SnackBar(

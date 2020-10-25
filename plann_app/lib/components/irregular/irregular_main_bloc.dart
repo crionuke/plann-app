@@ -55,9 +55,9 @@ class IrregularMainBloc {
   }
 
   Future<int> instantiateIrregular(
-      num value, CurrencyType currency, String title, DateTime date) async {
-    int id = await dbService
-        .addIrregular(IrregularModel(null, value, currency, title, date));
+      num value, CurrencyType currency, String title) async {
+    int id = await dbService.addIrregular(
+        IrregularModel(null, value, currency, title, DateTime.now()));
     await analyticsService.analyze();
     trackingService.irregularAdded();
     requestState();
