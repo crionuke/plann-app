@@ -49,6 +49,7 @@ class ExpenseItemView extends StatelessWidget {
   Widget _buildValueTextField(
       BuildContext context, ExpenseItemBloc bloc, ExpenseItemViewState state) {
     return TextFormField(
+      autofocus: state.valueAutofocus,
       initialValue: state.value,
       decoration: InputDecoration(
         icon: Icon(Icons.account_balance_wallet),
