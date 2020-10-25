@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
-import 'package:plann_app/services/analytics/month_analytics.dart';
+import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:provider/provider.dart';
 
 class IrregularMonthPanelView extends StatelessWidget {
@@ -20,11 +20,11 @@ class IrregularMonthPanelView extends StatelessWidget {
             initialData: bloc.currentState,
             builder: (context, snapshot) {
               var state = snapshot.data as IrregularMonthPanelViewState;
-              return _buildCard(context, state.monthAnalytics);
+              return _buildCard(context, state.month);
             }));
   }
 
-  Widget _buildCard(BuildContext context, MonthAnalytics month) {
+  Widget _buildCard(BuildContext context, AnalyticsMonth month) {
     return Card(
       margin: EdgeInsets.all(10),
       child: Container(
@@ -35,8 +35,8 @@ class IrregularMonthPanelView extends StatelessWidget {
               ":"),
           subtitle: Text(FlutterI18n.translate(context, "texts.debet") +
               ": " +
-              AppTexts.formatCurrencyMap(context, month.accountDebet,
-                  prefix: "+") +
+              AppTexts.formatCurrencyMap(
+                  context, month.plannedIrregularAccount.debet, prefix: "+") +
               "\n" +
               FlutterI18n.translate(context, "texts.expense") +
               ": " +
@@ -45,7 +45,8 @@ class IrregularMonthPanelView extends StatelessWidget {
               "\n" +
               FlutterI18n.translate(context, "texts.balance") +
               ": " +
-              AppTexts.formatCurrencyMap(context, month.accountBalance)),
+              AppTexts.formatCurrencyMap(
+                  context, month.plannedIrregularAccount.balance)),
         ),
       ),
     );

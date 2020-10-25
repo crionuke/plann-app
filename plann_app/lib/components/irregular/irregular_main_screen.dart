@@ -143,20 +143,22 @@ class _IrregularMainState extends State<IrregularMainScreen>
       state.analytics.plannedIrregularList
           .forEach((model) => colorsMap.assign(model.id));
 
-      List<LogChartBar> bars = state.analytics.monthList.map((month) {
-        if (month.accountParts.length == 0) {
-          return LogChartBar.empty(AppTexts.upFirstLetter(
-              AppTexts.formatShortMonth(context, month.date)));
+      List<LogChartBar> bars = List();
+      state.analytics.monthList.forEach((month) {
+        if (month.plannedIrregularAccount.values.length == 0) {
+          bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
+              AppTexts.formatShortMonth(context, month.date))));
         } else {
-          return LogChartBar(
+          bars.add(LogChartBar(
               AppTexts.upFirstLetter(
                   AppTexts.formatShortMonth(context, month.date)),
-              month.accountParts.entries
-                  .map((e) =>
-                      LogChartItem(colorsMap.getColor(e.key.id), e.value))
-                  .toList());
+              month.plannedIrregularAccount.values.entries
+                  .map((e) => LogChartItem(colorsMap.getColor(e.key), e.value))
+                  .toList()
+                  .reversed
+                  .toList()));
         }
-      }).toList();
+      });
 
       return CustomScrollView(slivers: <Widget>[
         SliverFillRemaining(
@@ -165,7 +167,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             Provider<IrregularMonthPanelBloc>(
                 create: (context) => bloc.monthPanelBloc,
                 child: IrregularMonthPanelView()),
-            LogChart(height, bars, state.analytics.currentMonthOffset,
+            LogChart(height, bars, state.analytics.monthList.currentMonthOffset,
                 (context, column) {
               bloc.monthPanelBloc.setMonthByIndex(column);
             }),
@@ -286,7 +288,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
               context, "texts.irregular_per_month_info",
               translationParams: {
                 "value": AppTexts.formatCurrencyValue(context, model.currency,
-                    analyticsData.perMonthValues[model.id],
+                    analyticsData.monthList.perMonthValue(model),
                     shorten: true),
               });
 

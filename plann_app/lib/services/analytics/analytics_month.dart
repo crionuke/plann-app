@@ -1,12 +1,11 @@
-import 'dart:math';
+import 'package:plann_app/services/analytics/analytics_account.dart';
+import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
-import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 
-class MonthAnalytics {
+class AnalyticsMonth {
   final int index;
   final int year;
   final int month;
-  final bool finished;
   final DateTime date;
 
   Map<CurrencyType, double> actualIncomeValues;
@@ -20,11 +19,9 @@ class MonthAnalytics {
   Map<CurrencyType, int> expensePercentDiff;
   Map<CurrencyType, int> deltaPercentDiff;
 
-  Map<CurrencyType, double> accountDebet;
-  Map<CurrencyType, double> accountBalance;
-  Map<PlannedIrregularModel, double> accountParts;
+  AnalyticsAccount<int> plannedIrregularAccount;
 
-  MonthAnalytics(this.index, this.year, this.month, this.finished)
+  AnalyticsMonth(this.index, this.year, this.month)
       : date = DateTime(year, month) {
     actualIncomeValues = Map();
     plannedIncomeValues = Map();
@@ -36,49 +33,40 @@ class MonthAnalytics {
     incomePercentDiff = Map();
     expensePercentDiff = Map();
     deltaPercentDiff = Map();
-    accountDebet = Map();
-    accountBalance = Map();
-    accountParts = Map();
+    plannedIrregularAccount = AnalyticsAccount();
   }
 
   void addActualIncomeValue(CurrencyType currencyType, double value) {
-    _addValue(actualIncomeValues, currencyType, value);
-    _addValue(deltaValues, currencyType, value);
+    print(100);
+    AnalyticsUtils.addValueToCurrencyMap(
+        actualIncomeValues, currencyType, value);
+    AnalyticsUtils.addValueToCurrencyMap(deltaValues, currencyType, value);
   }
 
   void addPlannedIncomeValue(CurrencyType currencyType, double value) {
-    _addValue(plannedIncomeValues, currencyType, value);
+    AnalyticsUtils.addValueToCurrencyMap(
+        plannedIncomeValues, currencyType, value);
   }
 
   void addActualExpenseValue(CurrencyType currencyType, double value) {
-    _addValue(actualExpenseValues, currencyType, value);
-    _addValue(deltaValues, currencyType, -value);
+    AnalyticsUtils.addValueToCurrencyMap(
+        actualExpenseValues, currencyType, value);
+    AnalyticsUtils.addValueToCurrencyMap(deltaValues, currencyType, -value);
   }
 
   void addPlannedExpenseValue(CurrencyType currencyType, double value) {
-    _addValue(plannedExpenseValues, currencyType, value);
+    AnalyticsUtils.addValueToCurrencyMap(
+        plannedExpenseValues, currencyType, value);
   }
 
   void addActualIrregularValue(CurrencyType currencyType, double value) {
-    _addValue(actualIrregularValues, currencyType, value);
+    AnalyticsUtils.addValueToCurrencyMap(
+        actualIrregularValues, currencyType, value);
   }
 
   void addPlannedIrregularValue(CurrencyType currencyType, double value) {
-    _addValue(plannedIrregularValues, currencyType, value);
-  }
-
-  void addDebetValue(PlannedIrregularModel model, CurrencyType currencyType,
-      double value) {
-    _addValue(accountDebet, currencyType, value);
-
-    accountParts[model] = value;
-  }
-
-  Map<CurrencyType, double> calcBalance(
-      Map<CurrencyType, double> prevMonthBalance) {
-    accountBalance = _addCurrencyMap(prevMonthBalance, accountDebet);
-    accountBalance = _subCurrencyMap(accountBalance, plannedIrregularValues);
-    return accountBalance;
+    AnalyticsUtils.addValueToCurrencyMap(
+        plannedIrregularValues, currencyType, value);
   }
 
   void calcIncomePercentDiff(Map<CurrencyType, double> prevMonthIncomeValues) {
@@ -124,40 +112,5 @@ class MonthAnalytics {
         deltaPercentDiff[key] = -100;
       }
     });
-  }
-
-  void _addValue(Map<CurrencyType, double> list, CurrencyType currencyType,
-      double value) {
-    double lastValue = list[currencyType];
-    if (lastValue == null) {
-      lastValue = 0;
-    }
-    list[currencyType] = lastValue += value;
-  }
-
-  Map<CurrencyType, double> _addCurrencyMap(Map<CurrencyType, double> map1,
-      Map<CurrencyType, double> map2) {
-    Map<CurrencyType, double> result = Map();
-    map1.forEach((key, value) => result[key] = value);
-    map2.forEach(
-            (key, value) =>
-        result[key] == null
-            ? result[key] = 0
-            : result[key]);
-    map2.forEach((key, value) => result[key] = result[key] + value);
-    return result;
-  }
-
-  Map<CurrencyType, double> _subCurrencyMap(Map<CurrencyType, double> map1,
-      Map<CurrencyType, double> map2) {
-    Map<CurrencyType, double> result = Map();
-    map1.forEach((key, value) => result[key] = value);
-    map2.forEach(
-            (key, value) =>
-        result[key] == null
-            ? result[key] = 0
-            : result[key]);
-    map2.forEach((key, value) => result[key] = result[key] - value);
-    return result;
   }
 }

@@ -60,7 +60,7 @@ class LogChart extends StatelessWidget {
           height: height,
         );
       } else {
-        return _buildBox(log(item.value) * _scale, item.color);
+        return _buildBox(max(item.value * _scale, 6), item.color);
       }
     }).toList());
   }
@@ -98,7 +98,7 @@ class LogChart extends StatelessWidget {
         .map((bar) {
           double sum = 0;
           for (LogChartItem item in bar.items) {
-            sum += log(item.value);
+            sum += item.value;
           }
           return sum;
         })

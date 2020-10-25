@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
-import 'package:plann_app/services/analytics/month_analytics.dart';
+import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:provider/provider.dart';
 
@@ -25,14 +25,15 @@ class MonthCaruselView extends StatelessWidget {
       MonthCaruselViewState state) {
     AnalyticsData analytics = state.analytics;
     final pageController = PageController(
-        initialPage: analytics.currentMonthOffset, viewportFraction: 0.95);
+        initialPage: analytics.monthList.currentMonthOffset,
+        viewportFraction: 0.95);
     return PageView.builder(
-        itemCount: analytics.currentMonthOffset + 1,
+        itemCount: analytics.monthList.currentMonthOffset + 1,
         controller: pageController,
         itemBuilder: (BuildContext context, int itemIndex) {
-          MonthAnalytics monthAnalytics = state.analytics.monthList[itemIndex];
-          return _buildMonthCard(
-              context, bloc, pageController, state, monthAnalytics);
+          AnalyticsMonth month =
+              state.analytics.monthList.findMonthByIndex(itemIndex);
+          return _buildMonthCard(context, bloc, pageController, state, month);
         });
   }
 
@@ -41,20 +42,20 @@ class MonthCaruselView extends StatelessWidget {
       MonthCaruselBloc bloc,
       PageController pageController,
       MonthCaruselViewState state,
-      MonthAnalytics monthAnalytics) {
+      AnalyticsMonth month) {
     return Container(
         child: Column(children: [
       Card(
           child: Column(children: [
-        _buildMonthHeader(context, bloc, pageController, state, monthAnalytics),
-        _buildIncomeTitle(context, state.currencyType, monthAnalytics),
-        _buildExpenseTitle(context, state.currencyType, monthAnalytics),
-        _buildDeltaTitle(context, state.currencyType, monthAnalytics),
+        _buildMonthHeader(context, bloc, pageController, state, month),
+        _buildIncomeTitle(context, state.currencyType, month),
+        _buildExpenseTitle(context, state.currencyType, month),
+        _buildDeltaTitle(context, state.currencyType, month),
       ])),
     ]));
   }
 
-  String _getMonthTitle(BuildContext context, MonthAnalytics monthAnalytics) {
+  String _getMonthTitle(BuildContext context, AnalyticsMonth monthAnalytics) {
     final Locale locale = Localizations.localeOf(context);
     final DateFormat format = DateFormat.yMMMM(locale.toString());
     String monthTitle = format
@@ -69,7 +70,7 @@ class MonthCaruselView extends StatelessWidget {
       MonthCaruselBloc bloc,
       PageController pageController,
       MonthCaruselViewState state,
-      MonthAnalytics monthAnalytics) {
+      AnalyticsMonth monthAnalytics) {
     return Row(
       children: [
         Expanded(
@@ -111,7 +112,7 @@ class MonthCaruselView extends StatelessWidget {
   }
 
   Widget _buildIncomeTitle(BuildContext context, CurrencyType currencyType,
-      MonthAnalytics monthAnalytics) {
+      AnalyticsMonth monthAnalytics) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -145,7 +146,7 @@ class MonthCaruselView extends StatelessWidget {
   }
 
   Widget _buildExpenseTitle(BuildContext context, CurrencyType currencyType,
-      MonthAnalytics monthAnalytics) {
+      AnalyticsMonth monthAnalytics) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -179,7 +180,7 @@ class MonthCaruselView extends StatelessWidget {
   }
 
   Widget _buildDeltaTitle(BuildContext context, CurrencyType currencyType,
-      MonthAnalytics monthAnalytics) {
+      AnalyticsMonth monthAnalytics) {
     return InkWell(
       onTap: () {},
       child: Container(

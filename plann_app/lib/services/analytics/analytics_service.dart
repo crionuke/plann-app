@@ -10,14 +10,13 @@ import 'package:plann_app/services/tracking/tracking_service.dart';
 
 class AnalyticsService {
   final DbService dbService;
-
   final TrackingService trackingService;
 
   AnalyticsData _analytics;
 
-  AnalyticsData get analytics => _analytics;
-
   AnalyticsService(this.dbService, this.trackingService);
+
+  AnalyticsData get analytics => _analytics;
 
   Future<void> start() async {
     print("[AnalyticsService] starting");
@@ -25,7 +24,7 @@ class AnalyticsService {
   }
 
   Future<AnalyticsData> analyze() async {
-    print("[AnalyticsService] analyze");
+    print("[AnalyticsService] analyze started");
 
     List<IncomeModel> incomeList = await dbService.getIncomeList();
     List<PlannedIncomeModel> plannedIncomeList =
@@ -49,6 +48,8 @@ class AnalyticsService {
         expenseList, plannedExpenseList, irregularList, plannedIrregularList);
     await analytics.analyze();
 
-    return (_analytics = analytics);
+    _analytics = analytics;
+
+    return _analytics;
   }
 }

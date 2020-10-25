@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:plann_app/services/analytics/analytics_data.dart';
+import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
-import 'package:plann_app/services/analytics/month_analytics.dart';
 
 class IrregularMonthPanelBloc {
   final _controller = StreamController.broadcast();
@@ -11,7 +11,7 @@ class IrregularMonthPanelBloc {
 
   final AnalyticsService analyticsService;
 
-  MonthAnalytics _monthAnalytics;
+  AnalyticsMonth _month;
 
   IrregularMonthPanelBloc(this.analyticsService) {
     setCurrentMonth();
@@ -22,16 +22,16 @@ class IrregularMonthPanelBloc {
   }
 
   IrregularMonthPanelViewState get currentState {
-    return IrregularMonthPanelViewState(_monthAnalytics);
+    return IrregularMonthPanelViewState(_month);
   }
 
   void setCurrentMonth() {
     AnalyticsData analytics = analyticsService.analytics;
-    setMonthByIndex(analytics.currentMonthOffset);
+    setMonthByIndex(analytics.monthList.currentMonthOffset);
   }
 
   void setMonthByIndex(int monthIndex) {
-    _monthAnalytics = analyticsService.analytics.monthList[monthIndex];
+    _month = analyticsService.analytics.monthList.findMonthByIndex(monthIndex);
     if (!_controller.isClosed) {
       _controller.sink.add(currentState);
     }
@@ -39,7 +39,7 @@ class IrregularMonthPanelBloc {
 }
 
 class IrregularMonthPanelViewState {
-  final MonthAnalytics monthAnalytics;
+  final AnalyticsMonth month;
 
-  IrregularMonthPanelViewState(this.monthAnalytics);
+  IrregularMonthPanelViewState(this.month);
 }
