@@ -13,10 +13,10 @@ class MonthCaruselBloc {
 
   Stream get stream => _controller.stream;
 
-  CurrencyType currencyType;
+  CurrencyType currency;
 
   MonthCaruselBloc(this.dbService, this.analyticsService) {
-    currencyType = CurrencyType.rubles;
+    currency = CurrencyType.rubles;
   }
 
   @override
@@ -26,7 +26,7 @@ class MonthCaruselBloc {
   }
 
   MonthCaruselViewState get currentState {
-    return MonthCaruselViewState(analyticsService.analytics, currencyType);
+    return MonthCaruselViewState(analyticsService.analytics, currency);
   }
 
   void requestState() {
@@ -35,24 +35,24 @@ class MonthCaruselBloc {
   }
 
   void switchToRubles() {
-    currencyType = CurrencyType.rubles;
+    currency = CurrencyType.rubles;
     requestState();
   }
 
   void switchToDollars() {
-    currencyType = CurrencyType.dollars;
+    currency = CurrencyType.dollars;
     requestState();
   }
 
   void switchToEuro() {
-    currencyType = CurrencyType.euro;
+    currency = CurrencyType.euro;
     requestState();
   }
 }
 
 class MonthCaruselViewState {
   final AnalyticsData analytics;
-  final CurrencyType currencyType;
+  final CurrencyType currency;
 
-  MonthCaruselViewState(this.analytics, this.currencyType);
+  MonthCaruselViewState(this.analytics, this.currency);
 }

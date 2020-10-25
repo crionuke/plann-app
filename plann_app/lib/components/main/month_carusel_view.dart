@@ -48,9 +48,10 @@ class MonthCaruselView extends StatelessWidget {
       Card(
           child: Column(children: [
         _buildMonthHeader(context, bloc, pageController, state, month),
-        _buildIncomeTitle(context, state.currencyType, month),
-        _buildExpenseTitle(context, state.currencyType, month),
-        _buildDeltaTitle(context, state.currencyType, month),
+        _buildIncomeTitle(context, state.currency, month),
+        _buildExpenseTitle(context, state.currency, month),
+        _buildDeltaTitle(context, state.currency, month),
+        _buildIrregularTitle(context, state.currency, month),
       ])),
     ]));
   }
@@ -83,11 +84,11 @@ class MonthCaruselView extends StatelessWidget {
           ),
         ),
         _buildCurrencySwitch(() => bloc.switchToRubles(), "\u20BD",
-            state.currencyType == CurrencyType.rubles),
+            state.currency == CurrencyType.rubles),
         _buildCurrencySwitch(() => bloc.switchToDollars(), "\$",
-            state.currencyType == CurrencyType.dollars),
+            state.currency == CurrencyType.dollars),
         _buildCurrencySwitch(() => bloc.switchToEuro(), "€",
-            state.currencyType == CurrencyType.euro),
+            state.currency == CurrencyType.euro),
       ],
     );
   }
@@ -111,7 +112,7 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
-  Widget _buildIncomeTitle(BuildContext context, CurrencyType currencyType,
+  Widget _buildIncomeTitle(BuildContext context, CurrencyType currency,
       AnalyticsMonth monthAnalytics) {
     return InkWell(
       onTap: () {},
@@ -133,7 +134,7 @@ class MonthCaruselView extends StatelessWidget {
                 Text(
                     _prepareCurrencyMapWithPercents(
                         context,
-                        currencyType,
+                        currency,
                         monthAnalytics.actualIncomeValues,
                         monthAnalytics.incomePercentDiff),
                     textAlign: TextAlign.left)
@@ -145,7 +146,7 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
-  Widget _buildExpenseTitle(BuildContext context, CurrencyType currencyType,
+  Widget _buildExpenseTitle(BuildContext context, CurrencyType currency,
       AnalyticsMonth monthAnalytics) {
     return InkWell(
       onTap: () {},
@@ -167,7 +168,7 @@ class MonthCaruselView extends StatelessWidget {
                 Text(
                     _prepareCurrencyMapWithPercents(
                         context,
-                        currencyType,
+                        currency,
                         monthAnalytics.actualExpenseValues,
                         monthAnalytics.expensePercentDiff),
                     textAlign: TextAlign.left)
@@ -179,7 +180,7 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
-  Widget _buildDeltaTitle(BuildContext context, CurrencyType currencyType,
+  Widget _buildDeltaTitle(BuildContext context, CurrencyType currency,
       AnalyticsMonth monthAnalytics) {
     return InkWell(
       onTap: () {},
@@ -201,7 +202,7 @@ class MonthCaruselView extends StatelessWidget {
                 Text(
                     _preparePercentsWithCurrencyMap(
                         context,
-                        currencyType,
+                        currency,
                         monthAnalytics.deltaPercentDiff,
                         monthAnalytics.deltaValues),
                     textAlign: TextAlign.left)
@@ -213,18 +214,52 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
+  Widget _buildIrregularTitle(BuildContext context, CurrencyType currency,
+      AnalyticsMonth monthAnalytics) {
+    double value = monthAnalytics.actualIrregularValues[currency];
+    String valueText = "";
+    if (value != null) {
+      valueText = AppTexts.formatValueAsShorten(context, value);
+    } else {
+      valueText = "-";
+    }
+
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(FlutterI18n.translate(context, "texts.irregular") + ":"),
+                ],
+              ),
+            ),
+            Column(
+              children: [Text(valueText, textAlign: TextAlign.left)],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _prepareCurrencyMapWithPercents(
       BuildContext context,
-      CurrencyType currencyType,
+      CurrencyType currency,
       Map<CurrencyType, double> currencyMap,
       Map<CurrencyType, int> percentMap) {
-    double value = currencyMap[currencyType];
+    double value = currencyMap[currency];
     if (value != null) {
       return AppTexts.formatValueAsShorten(context, value) +
           " (" +
-          (percentMap[currencyType] > 0
-              ? "+" + percentMap[currencyType].toString()
-              : percentMap[currencyType].toString()) +
+          (percentMap[currency] > 0
+              ? "+" + percentMap[currency].toString()
+              : percentMap[currency].toString()) +
           "%)";
     } else {
       return "-";
@@ -233,14 +268,14 @@ class MonthCaruselView extends StatelessWidget {
 
   String _preparePercentsWithCurrencyMap(
       BuildContext context,
-      CurrencyType currencyType,
+      CurrencyType currency,
       Map<CurrencyType, int> percentMap,
       Map<CurrencyType, double> currencyMap) {
-    int value = percentMap[currencyType];
+    int value = percentMap[currency];
     if (value != null) {
       return value.toString() +
           "% (" +
-          AppTexts.formatValueAsShorten(context, currencyMap[currencyType]) +
+          AppTexts.formatValueAsShorten(context, currencyMap[currency]) +
           ")";
     } else {
       return "-";
