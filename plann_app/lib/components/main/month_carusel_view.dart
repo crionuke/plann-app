@@ -85,7 +85,7 @@ class MonthCaruselView extends StatelessWidget {
           child: ListTile(
             onTap: () {
               pageController.animateToPage(pageController.initialPage,
-                  duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
             },
             title: Text(_getMonthTitle(context, month)),
           ),
