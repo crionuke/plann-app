@@ -188,8 +188,10 @@ class AnalyticsMonthList {
       // Expense percent diff
       month.calcExpensePercentDiff(prevMonthExpenseValue);
       prevMonthExpenseValue = month.actualExpenseValues;
-      // Delta percent diff
-      month.calcDeltaPercentDiff();
+      // Delta
+      month.calcDelta();
+      // Balance
+      month.calcBalance();
     });
   }
 

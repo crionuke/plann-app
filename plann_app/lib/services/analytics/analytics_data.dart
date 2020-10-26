@@ -115,8 +115,8 @@ class AnalyticsData {
 
   Future<void> _analyzeActualIrregularList() async {
     actualIrregularList.forEach((model) {
-      AnalyticsMonth monthAnalytics = monthList.findMonthByDate(model.date);
-      monthAnalytics.addActualIrregularValue(model.currency, model.value);
+      AnalyticsMonth month = monthList.findMonthByDate(model.date);
+      month.addActualIrregularValue(model.currency, model.value);
     });
   }
 

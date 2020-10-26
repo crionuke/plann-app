@@ -18,6 +18,7 @@ class AnalyticsMonth {
   Map<CurrencyType, int> incomePercentDiff;
   Map<CurrencyType, int> expensePercentDiff;
   Map<CurrencyType, int> deltaPercentDiff;
+  Map<CurrencyType, double> balanceValues;
 
   AnalyticsAccount<int> plannedIrregularAccount;
 
@@ -27,20 +28,19 @@ class AnalyticsMonth {
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     plannedExpenseValues = Map();
-    deltaValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
+    deltaValues = Map();
     incomePercentDiff = Map();
     expensePercentDiff = Map();
     deltaPercentDiff = Map();
+    balanceValues = Map();
     plannedIrregularAccount = AnalyticsAccount();
   }
 
   void addActualIncomeValue(CurrencyType currencyType, double value) {
-    print(100);
     AnalyticsUtils.addValueToCurrencyMap(
         actualIncomeValues, currencyType, value);
-    AnalyticsUtils.addValueToCurrencyMap(deltaValues, currencyType, value);
   }
 
   void addPlannedIncomeValue(CurrencyType currencyType, double value) {
@@ -51,7 +51,6 @@ class AnalyticsMonth {
   void addActualExpenseValue(CurrencyType currencyType, double value) {
     AnalyticsUtils.addValueToCurrencyMap(
         actualExpenseValues, currencyType, value);
-    AnalyticsUtils.addValueToCurrencyMap(deltaValues, currencyType, -value);
   }
 
   void addPlannedExpenseValue(CurrencyType currencyType, double value) {
@@ -67,6 +66,27 @@ class AnalyticsMonth {
   void addPlannedIrregularValue(CurrencyType currencyType, double value) {
     AnalyticsUtils.addValueToCurrencyMap(
         plannedIrregularValues, currencyType, value);
+  }
+
+  void calcDelta() {
+    deltaValues =
+        AnalyticsUtils.subCurrencyMap(actualIncomeValues, actualExpenseValues);
+    deltaValues.forEach((key, value) {
+      double expense = actualExpenseValues[key];
+      double income = actualIncomeValues[key];
+      if (expense != null && income != null) {
+        deltaPercentDiff[key] = ((1 - expense / income) * 100).round();
+      } else if (value > 0) {
+        deltaPercentDiff[key] = 100;
+      } else {
+        deltaPercentDiff[key] = -100;
+      }
+    });
+  }
+
+  void calcBalance() {
+    balanceValues = AnalyticsUtils.subCurrencyMap(
+        deltaValues, plannedIrregularAccount.debet);
   }
 
   void calcIncomePercentDiff(Map<CurrencyType, double> prevMonthIncomeValues) {
@@ -96,20 +116,6 @@ class AnalyticsMonth {
         }
       } else {
         expensePercentDiff[key] = 100;
-      }
-    });
-  }
-
-  void calcDeltaPercentDiff() {
-    deltaValues.forEach((key, value) {
-      double expense = actualExpenseValues[key];
-      double income = actualIncomeValues[key];
-      if (expense != null && income != null) {
-        deltaPercentDiff[key] = ((1 - expense / income) * 100).round();
-      } else if (value > 0) {
-        deltaPercentDiff[key] = 100;
-      } else {
-        deltaPercentDiff[key] = -100;
       }
     });
   }

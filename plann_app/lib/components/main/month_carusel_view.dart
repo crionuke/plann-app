@@ -50,18 +50,25 @@ class MonthCaruselView extends StatelessWidget {
         _buildMonthHeader(context, bloc, pageController, state, month),
         _buildIncomeTitle(context, state.currency, month),
         _buildExpenseTitle(context, state.currency, month),
-        _buildDeltaTitle(context, state.currency, month),
         _buildIrregularTitle(context, state.currency, month),
+        Divider(
+          height: 1,
+        ),
+        ListTile(
+          title: Text(FlutterI18n.translate(context, "texts.budget")),
+        ),
+        _buildBudgetDeltaTitle(context, state.currency, month),
+        _buildBudgetIrregularTitle(context, state.currency, month),
+        _buildBudgetBalanceTitle(context, state.currency, month),
       ])),
     ]));
   }
 
-  String _getMonthTitle(BuildContext context, AnalyticsMonth monthAnalytics) {
+  String _getMonthTitle(BuildContext context, AnalyticsMonth month) {
     final Locale locale = Localizations.localeOf(context);
     final DateFormat format = DateFormat.yMMMM(locale.toString());
     String monthTitle = format
-        .format(
-            DateTime(monthAnalytics.year, monthAnalytics.month, 1).toLocal())
+        .format(DateTime(month.year, month.month, 1).toLocal())
         .toString();
     return AppTexts.upFirstLetter(monthTitle);
   }
@@ -71,7 +78,7 @@ class MonthCaruselView extends StatelessWidget {
       MonthCaruselBloc bloc,
       PageController pageController,
       MonthCaruselViewState state,
-      AnalyticsMonth monthAnalytics) {
+      AnalyticsMonth month) {
     return Row(
       children: [
         Expanded(
@@ -80,7 +87,7 @@ class MonthCaruselView extends StatelessWidget {
               pageController.animateToPage(pageController.initialPage,
                   duration: Duration(milliseconds: 500), curve: Curves.easeIn);
             },
-            title: Text(_getMonthTitle(context, monthAnalytics)),
+            title: Text(_getMonthTitle(context, month)),
           ),
         ),
         _buildCurrencySwitch(() => bloc.switchToRubles(), "\u20BD",
@@ -112,8 +119,8 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
-  Widget _buildIncomeTitle(BuildContext context, CurrencyType currency,
-      AnalyticsMonth monthAnalytics) {
+  Widget _buildIncomeTitle(
+      BuildContext context, CurrencyType currency, AnalyticsMonth month) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -132,11 +139,8 @@ class MonthCaruselView extends StatelessWidget {
             Column(
               children: [
                 Text(
-                    _prepareCurrencyMapWithPercents(
-                        context,
-                        currency,
-                        monthAnalytics.actualIncomeValues,
-                        monthAnalytics.incomePercentDiff),
+                    _prepareCurrencyMapWithPercents(context, currency,
+                        month.actualIncomeValues, month.incomePercentDiff),
                     textAlign: TextAlign.left)
               ],
             ),
@@ -146,8 +150,8 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
-  Widget _buildExpenseTitle(BuildContext context, CurrencyType currency,
-      AnalyticsMonth monthAnalytics) {
+  Widget _buildExpenseTitle(
+      BuildContext context, CurrencyType currency, AnalyticsMonth month) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -166,11 +170,8 @@ class MonthCaruselView extends StatelessWidget {
             Column(
               children: [
                 Text(
-                    _prepareCurrencyMapWithPercents(
-                        context,
-                        currency,
-                        monthAnalytics.actualExpenseValues,
-                        monthAnalytics.expensePercentDiff),
+                    _prepareCurrencyMapWithPercents(context, currency,
+                        month.actualExpenseValues, month.expensePercentDiff),
                     textAlign: TextAlign.left)
               ],
             ),
@@ -180,43 +181,9 @@ class MonthCaruselView extends StatelessWidget {
     );
   }
 
-  Widget _buildDeltaTitle(BuildContext context, CurrencyType currency,
-      AnalyticsMonth monthAnalytics) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(FlutterI18n.translate(context, "texts.delta") + ":"),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                Text(
-                    _preparePercentsWithCurrencyMap(
-                        context,
-                        currency,
-                        monthAnalytics.deltaPercentDiff,
-                        monthAnalytics.deltaValues),
-                    textAlign: TextAlign.left)
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIrregularTitle(BuildContext context, CurrencyType currency,
-      AnalyticsMonth monthAnalytics) {
-    double value = monthAnalytics.actualIrregularValues[currency];
+  Widget _buildIrregularTitle(
+      BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    double value = month.actualIrregularValues[currency];
     String valueText = "";
     if (value != null) {
       valueText = AppTexts.formatValueAsShorten(context, value);
@@ -246,6 +213,112 @@ class MonthCaruselView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildBudgetDeltaTitle(
+      BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(FlutterI18n.translate(context, "texts.delta") + ":"),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                Text(
+                    _preparePercentsWithCurrencyMap(context, currency,
+                        month.deltaPercentDiff, month.deltaValues),
+                    textAlign: TextAlign.left)
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBudgetIrregularTitle(
+      BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(FlutterI18n.translate(context, "texts.irregular") + ":"),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                Text(
+                    _prepareValueFromCurrencyMap(
+                        context, currency, month.plannedIrregularAccount.debet),
+                    textAlign: TextAlign.left)
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBudgetBalanceTitle(
+      BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(FlutterI18n.translate(context, "texts.balance") + ":"),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                Text(
+                    _prepareValueFromCurrencyMap(
+                        context, currency, month.balanceValues),
+                    textAlign: TextAlign.left)
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _prepareValueFromCurrencyMap(
+    BuildContext context,
+    CurrencyType currency,
+    Map<CurrencyType, double> currencyMap,
+  ) {
+    double value = currencyMap[currency];
+    if (value != null) {
+      return AppTexts.formatValueAsShorten(context, value);
+    } else {
+      return "-";
+    }
   }
 
   String _prepareCurrencyMapWithPercents(
