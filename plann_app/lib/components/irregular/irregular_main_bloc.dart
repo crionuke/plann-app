@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
@@ -17,11 +18,12 @@ class IrregularMainBloc {
   final DbService dbService;
   final AnalyticsService analyticsService;
   final TrackingService trackingService;
+  final CurrencyService currencyService;
 
   IrregularMonthPanelBloc monthPanelBloc;
 
-  IrregularMainBloc(
-      this.dbService, this.analyticsService, this.trackingService) {
+  IrregularMainBloc(this.dbService, this.analyticsService, this.trackingService,
+      this.currencyService) {
     monthPanelBloc = IrregularMonthPanelBloc(analyticsService);
   }
 

@@ -156,7 +156,7 @@ class AnalyticsMonthList {
       if (monthCount == 0) {
         _monthList[fromMonthIndex - _firstMonthIndex]
             .plannedIrregularAccount
-            .addDebetValue(model.id, model.currency, model.value);
+            .addDebetValue(model, model.currency, model.value);
         _perMonthValues[model.id] = model.value;
       } else {
         double valuePerMonth = model.value / monthCount;
@@ -165,7 +165,7 @@ class AnalyticsMonthList {
             monthIndex++) {
           _monthList[monthIndex - _firstMonthIndex]
               .plannedIrregularAccount
-              .addDebetValue(model.id, model.currency, valuePerMonth);
+              .addDebetValue(model, model.currency, valuePerMonth);
           _perMonthValues[model.id] = valuePerMonth;
         }
       }

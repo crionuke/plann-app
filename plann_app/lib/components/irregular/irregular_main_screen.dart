@@ -15,6 +15,7 @@ import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
+import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:provider/provider.dart';
@@ -153,7 +154,17 @@ class _IrregularMainState extends State<IrregularMainScreen>
               AppTexts.upFirstLetter(
                   AppTexts.formatShortMonth(context, month.date)),
               month.plannedIrregularAccount.values.entries
-                  .map((e) => LogChartItem(colorsMap.getColor(e.key), e.value))
+                  .map((e) {
+                    PlannedIrregularModel model = e.key;
+                    double value = e.value;
+                    if (model.currency == CurrencyType.dollars) {
+                      value =
+                          bloc.currencyService.exchangeDollarsToRubles(value);
+                    } else if (model.currency == CurrencyType.euro) {
+                      value = bloc.currencyService.exchangeEuroToRubles(value);
+                    }
+                    return LogChartItem(colorsMap.getColor(model.id), value);
+                  })
                   .toList()
                   .reversed
                   .toList()));

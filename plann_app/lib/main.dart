@@ -47,6 +47,7 @@ import 'package:plann_app/components/subscriptions/block_screen.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_screen.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -69,6 +70,7 @@ void main() async {
   final purchaseService = PurchaseService(trackingService);
   final analyticsService = AnalyticsService(dbService, trackingService);
   final valuesService = ValuesService(dbService);
+  final currencyService = CurrencyService();
 
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -79,6 +81,7 @@ void main() async {
       Provider<AnalyticsService>(create: (context) => analyticsService),
       Provider<TrackingService>(create: (context) => trackingService),
       Provider<ValuesService>(create: (context) => valuesService),
+      Provider<CurrencyService>(create: (context) => currencyService),
     ],
     child: App(navigatorKey, trackingService),
   ));
@@ -88,6 +91,7 @@ void main() async {
   await purchaseService.start();
   await analyticsService.start();
   await valuesService.start();
+  await currencyService.start();
 
   if (await purchaseService.hasAccess()) {
     print("[main] change to main screen");
@@ -397,7 +401,8 @@ class App extends StatelessWidget {
           create: (context) => IrregularMainBloc(
               Provider.of<DbService>(context, listen: false),
               Provider.of<AnalyticsService>(context, listen: false),
-              Provider.of<TrackingService>(context, listen: false)),
+              Provider.of<TrackingService>(context, listen: false),
+              Provider.of<CurrencyService>(context, listen: false)),
           dispose: (context, bloc) => bloc.dispose(),
           child: IrregularMainScreen());
     });
