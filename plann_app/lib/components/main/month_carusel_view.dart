@@ -50,14 +50,14 @@ class MonthCaruselView extends StatelessWidget {
         _buildMonthHeader(context, bloc, pageController, state, month),
         _buildIncomeTitle(context, state.currency, month),
         _buildExpenseTitle(context, state.currency, month),
-        _buildIrregularTitle(context, state.currency, month),
-        _buildBudgetDeltaTitle(context, state.currency, month),
-        Divider(
-          height: 1,
-        ),
+//        _buildIrregularTitle(context, state.currency, month),
 //        ListTile(
 //          title: Text(FlutterI18n.translate(context, "texts.budget")),
 //        ),
+        Divider(
+          height: 1,
+        ),
+        _buildBudgetDeltaTitle(context, state.currency, month),
         _buildBudgetIrregularTitle(context, state.currency, month),
         _buildBudgetBalanceTitle(context, state.currency, month),
       ])),
