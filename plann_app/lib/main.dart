@@ -68,9 +68,10 @@ void main() async {
   final dbService = DbService();
   final trackingService = TrackingService();
   final purchaseService = PurchaseService(trackingService);
-  final analyticsService = AnalyticsService(dbService, trackingService);
-  final valuesService = ValuesService(dbService);
   final currencyService = CurrencyService();
+  final analyticsService =
+      AnalyticsService(dbService, trackingService, currencyService);
+  final valuesService = ValuesService(dbService);
 
   final navigatorKey = GlobalKey<NavigatorState>();
 

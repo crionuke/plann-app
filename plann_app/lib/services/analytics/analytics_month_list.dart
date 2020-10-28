@@ -1,4 +1,5 @@
 import 'package:plann_app/services/analytics/analytics_month.dart';
+import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
@@ -10,12 +11,13 @@ import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
 
 class AnalyticsMonthList {
-  final List<IncomeModel> actualIncomeList;
-  final List<PlannedIncomeModel> plannedIncomeList;
-  final List<ExpenseModel> actualExpenseList;
-  final List<PlannedExpenseModel> plannedExpenseList;
-  final List<IrregularModel> actualIrregularList;
-  final List<PlannedIrregularModel> plannedIrregularList;
+  final List<AnalyticsItem<IncomeModel>> analyticsActualIncomeList;
+  final List<AnalyticsItem<PlannedIncomeModel>> analyticsPlannedIncomeList;
+  final List<AnalyticsItem<ExpenseModel>> analyticsActualExpenseList;
+  final List<AnalyticsItem<PlannedExpenseModel>> analyticsPlannedExpenseList;
+  final List<AnalyticsItem<IrregularModel>> analyticsActualIrregularList;
+  final List<AnalyticsItem<PlannedIrregularModel>>
+      analyticsPlannedIrregularList;
 
   List<AnalyticsMonth> _monthList;
   int _currentMonthIndex;
@@ -25,12 +27,12 @@ class AnalyticsMonthList {
   Map<int, double> _perMonthValues;
 
   AnalyticsMonthList(
-      this.actualIncomeList,
-      this.plannedIncomeList,
-      this.actualExpenseList,
-      this.plannedExpenseList,
-      this.actualIrregularList,
-      this.plannedIrregularList) {
+      this.analyticsActualIncomeList,
+      this.analyticsPlannedIncomeList,
+      this.analyticsActualExpenseList,
+      this.analyticsPlannedExpenseList,
+      this.analyticsActualIrregularList,
+      this.analyticsPlannedIrregularList) {
     _perMonthValues = Map();
     _monthList = List();
     DateTime now = DateTime.now();
@@ -39,17 +41,18 @@ class AnalyticsMonthList {
     _lastMonthIndex = _currentMonthIndex;
     List<DateTime> dateList = List();
     // Fill list by all dates
-    actualIncomeList.forEach((income) => dateList.add(income.date));
-    plannedIncomeList.forEach((plannedIncome) {
-      if (plannedIncome.mode == SubjectModeType.onetime) {
-        dateList.add(plannedIncome.date);
+    analyticsActualIncomeList.forEach((item) => dateList.add(item.model.date));
+    analyticsPlannedIncomeList.forEach((item) {
+      if (item.model.mode == SubjectModeType.onetime) {
+        dateList.add(item.model.date);
       }
     });
-    actualExpenseList.forEach((expense) => dateList.add(expense.date));
-    actualIrregularList.forEach((irregular) => dateList.add(irregular.date));
-    plannedIrregularList.forEach((plannedIrregular) {
-      dateList.add(plannedIrregular.creationDate);
-      dateList.add(plannedIrregular.date);
+    analyticsActualExpenseList.forEach((item) => dateList.add(item.model.date));
+    analyticsActualIrregularList
+        .forEach((item) => dateList.add(item.model.date));
+    analyticsPlannedIrregularList.forEach((item) {
+      dateList.add(item.model.creationDate);
+      dateList.add(item.model.date);
     });
     // Calc min and max dates
     dateList.forEach((date) {
@@ -63,8 +66,8 @@ class AnalyticsMonthList {
     });
     // Fill month list
     for (int monthIndex = _firstMonthIndex;
-    monthIndex <= _lastMonthIndex;
-    monthIndex++) {
+        monthIndex <= _lastMonthIndex;
+        monthIndex++) {
       List yearMonth = AnalyticsUtils.toHuman(monthIndex);
       _monthList.add(AnalyticsMonth(monthIndex, yearMonth[0], yearMonth[1]));
     }
@@ -91,35 +94,34 @@ class AnalyticsMonthList {
 
   Future<void> calcIrregularPlan() async {
     // Copy list
-    List<PlannedIrregularModel> sorted = List();
-    sorted.addAll(plannedIrregularList);
+    List<AnalyticsItem<PlannedIrregularModel>> sorted = List();
+    sorted.addAll(analyticsPlannedIrregularList);
     // Sort
-    sorted.sort((m1, m2) {
-      if (m1.creationDate.year == m2.creationDate.year) {
-        if (m1.creationDate.month == m2.creationDate.month) {
-          return m1.date.compareTo(m2.date);
+    sorted.sort((item1, item2) {
+      PlannedIrregularModel model1 = item1.model;
+      PlannedIrregularModel model2 = item2.model;
+      if (model1.creationDate.year == model2.creationDate.year) {
+        if (model1.creationDate.month == model2.creationDate.month) {
+          return model1.date.compareTo(model2.date);
         }
       }
-      return m1.creationDate.compareTo(m2.creationDate);
+      return model1.creationDate.compareTo(model2.creationDate);
     });
     // Sorted list with all end points
     List<DateTime> points = List();
-    sorted.forEach((model) {
-      if (!points.contains(model.date)) {
-        points.add(model.date);
-      }
+    sorted.forEach((item) {
+      points.add(item.model.date);
     });
     points.sort();
     // Calc plan
-    sorted.forEach((model) {
+    sorted.forEach((item) {
+      PlannedIrregularModel model = item.model;
       DateTime fromDate = model.creationDate;
       double metric = _calcMetricWith(
           fromDate,
           model.date,
-          model.currency,
-          AnalyticsUtils.calcValuePerMonth(
-              model.creationDate, model.date, model.value));
-      print("${model.title} $metric");
+          AnalyticsUtils.calcValuePerMonth(model.creationDate, model.date,
+              item.currencyValue.valueInDefaultValue));
       for (DateTime point in points) {
         int pointMonthIndex = AnalyticsUtils.toAbs(point.year, point.month);
         int modelMonthIndex =
@@ -133,9 +135,8 @@ class AnalyticsMonthList {
             double currentMetric = _calcMetricWith(
                 point,
                 model.date,
-                model.currency,
                 AnalyticsUtils.calcValuePerMonth(
-                    point, model.date, model.value));
+                    point, model.date, item.currencyValue.valueInDefaultValue));
             print("${model.title} $currentMetric");
             //  Update best result
             if (currentMetric < metric) {
@@ -156,16 +157,20 @@ class AnalyticsMonthList {
       if (monthCount == 0) {
         _monthList[fromMonthIndex - _firstMonthIndex]
             .plannedIrregularAccount
-            .addDebetValue(model, model.currency, model.value);
+            .addDebetValue(item, model.currency, model.value,
+                item.currencyValue.valueInDefaultValue);
         _perMonthValues[model.id] = model.value;
       } else {
         double valuePerMonth = model.value / monthCount;
+        double valuePerMonthInDefaultCurrency =
+            item.currencyValue.valueInDefaultValue / monthCount;
         for (int monthIndex = fromMonthIndex;
             monthIndex < toMonthIndex;
             monthIndex++) {
           _monthList[monthIndex - _firstMonthIndex]
               .plannedIrregularAccount
-              .addDebetValue(model, model.currency, valuePerMonth);
+              .addDebetValue(item, model.currency, valuePerMonth,
+                  valuePerMonthInDefaultCurrency);
           _perMonthValues[model.id] = valuePerMonth;
         }
       }
@@ -196,17 +201,17 @@ class AnalyticsMonthList {
   }
 
   double _calcMetricWith(DateTime fromDate, DateTime toDate,
-      CurrencyType currency, double valuePerMonth) {
+      double valuePerMonthInDefaultCurrency) {
     int fromMonthIndex = AnalyticsUtils.toAbs(fromDate.year, fromDate.month);
     int toMonthIndex = AnalyticsUtils.toAbs(toDate.year, toDate.month);
     double max = 0;
     _monthList.forEach((month) {
-      double total = month.plannedIrregularAccount.debetPerCurrency(currency);
+      double total = month.plannedIrregularAccount.debetInDefaultCurrency();
       if (month.index >= fromMonthIndex && month.index <= toMonthIndex) {
-        total += valuePerMonth;
-      }
-      if (total > max) {
-        max = total;
+        total += valuePerMonthInDefaultCurrency;
+        if (total > max) {
+          max = total;
+        }
       }
     });
     return max;

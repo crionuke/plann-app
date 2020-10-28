@@ -15,7 +15,7 @@ import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
-import 'package:plann_app/services/db/models/currency_model.dart';
+import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:provider/provider.dart';
@@ -141,29 +141,23 @@ class _IrregularMainState extends State<IrregularMainScreen>
       double height = 120;
 
       ColorsMap<int> colorsMap = ColorsMap();
-      state.analytics.plannedIrregularList
-          .forEach((model) => colorsMap.assign(model.id));
+      state.analytics.analyticsPlannedIrregularList
+          .forEach((item) => colorsMap.assign(item.model.id));
 
       List<LogChartBar> bars = List();
       state.analytics.monthList.forEach((month) {
-        if (month.plannedIrregularAccount.values.length == 0) {
+        if (month.plannedIrregularAccount.valuesInDefaultCurrency.length == 0) {
           bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
               AppTexts.formatShortMonth(context, month.date))));
         } else {
           bars.add(LogChartBar(
               AppTexts.upFirstLetter(
                   AppTexts.formatShortMonth(context, month.date)),
-              month.plannedIrregularAccount.values.entries
+              month.plannedIrregularAccount.valuesInDefaultCurrency.entries
                   .map((e) {
-                    PlannedIrregularModel model = e.key;
-                    double value = e.value;
-                    if (model.currency == CurrencyType.dollars) {
-                      value =
-                          bloc.currencyService.exchangeDollarsToRubles(value);
-                    } else if (model.currency == CurrencyType.euro) {
-                      value = bloc.currencyService.exchangeEuroToRubles(value);
-                    }
-                    return LogChartItem(colorsMap.getColor(model.id), value);
+                    AnalyticsItem<PlannedIrregularModel> item = e.key;
+                    return LogChartItem(
+                        colorsMap.getColor(item.model.id), e.value);
                   })
                   .toList()
                   .reversed

@@ -1,4 +1,5 @@
 import 'package:plann_app/services/analytics/analytics_data.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -11,10 +12,11 @@ import 'package:plann_app/services/tracking/tracking_service.dart';
 class AnalyticsService {
   final DbService dbService;
   final TrackingService trackingService;
+  final CurrencyService currencyService;
 
   AnalyticsData _analytics;
 
-  AnalyticsService(this.dbService, this.trackingService);
+  AnalyticsService(this.dbService, this.trackingService, this.currencyService);
 
   AnalyticsData get analytics => _analytics;
 
@@ -40,16 +42,67 @@ class AnalyticsService {
         actualIncomeCount: incomeList.length,
         plannedIncomeCount: plannedIncomeList.length,
         actualExpenseCount: expenseList.length,
-        plannedExpenseCount: expenseList.length,
+        plannedExpenseCount: plannedExpenseList.length,
         actualIrregularCount: irregularList.length,
         plannedIrregularCount: plannedIrregularList.length);
 
-    AnalyticsData analytics = AnalyticsData(incomeList, plannedIncomeList,
-        expenseList, plannedExpenseList, irregularList, plannedIrregularList);
+    List<AnalyticsItem<IncomeModel>> analyticsActualIncomeList = List();
+    List<AnalyticsItem<PlannedIncomeModel>> analyticsPlannedIncomeList = List();
+    List<AnalyticsItem<ExpenseModel>> analyticsActualExpenseList = List();
+    List<AnalyticsItem<PlannedExpenseModel>> analyticsPlannedExpenseList =
+        List();
+    List<AnalyticsItem<IrregularModel>> analyticsActualIrregularList = List();
+    List<AnalyticsItem<PlannedIrregularModel>> analyticsPlannedIrregularList =
+        List();
+
+    analyticsActualIncomeList = incomeList
+        .map((model) => AnalyticsItem<IncomeModel>(
+            model, currencyService.exchange(model.currency, model.value)))
+        .toList();
+
+    analyticsPlannedIncomeList = plannedIncomeList
+        .map((model) => AnalyticsItem<PlannedIncomeModel>(
+            model, currencyService.exchange(model.currency, model.value)))
+        .toList();
+
+    analyticsActualExpenseList = expenseList
+        .map((model) => AnalyticsItem<ExpenseModel>(
+            model, currencyService.exchange(model.currency, model.value)))
+        .toList();
+
+    analyticsPlannedExpenseList = plannedExpenseList
+        .map((model) => AnalyticsItem<PlannedExpenseModel>(
+            model, currencyService.exchange(model.currency, model.value)))
+        .toList();
+
+    analyticsActualIrregularList = irregularList
+        .map((model) => AnalyticsItem<IrregularModel>(
+            model, currencyService.exchange(model.currency, model.value)))
+        .toList();
+
+    analyticsPlannedIrregularList = plannedIrregularList
+        .map((model) => AnalyticsItem<PlannedIrregularModel>(
+            model, currencyService.exchange(model.currency, model.value)))
+        .toList();
+
+    AnalyticsData analytics = AnalyticsData(
+        analyticsActualIncomeList,
+        analyticsPlannedIncomeList,
+        analyticsActualExpenseList,
+        analyticsPlannedExpenseList,
+        analyticsActualIrregularList,
+        analyticsPlannedIrregularList);
     await analytics.analyze();
 
     _analytics = analytics;
 
     return _analytics;
   }
+}
+
+class AnalyticsItem<T> {
+  final T model;
+  final CurrencyValue currencyValue;
+
+  AnalyticsItem(this.model, this.currencyValue);
 }

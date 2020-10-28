@@ -1,5 +1,6 @@
 import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_month_list.dart';
+import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -10,12 +11,13 @@ import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
 
 class AnalyticsData {
-  final List<IncomeModel> actualIncomeList;
-  final List<PlannedIncomeModel> plannedIncomeList;
-  final List<ExpenseModel> actualExpenseList;
-  final List<PlannedExpenseModel> plannedExpenseList;
-  final List<IrregularModel> actualIrregularList;
-  final List<PlannedIrregularModel> plannedIrregularList;
+  final List<AnalyticsItem<IncomeModel>> analyticsActualIncomeList;
+  final List<AnalyticsItem<PlannedIncomeModel>> analyticsPlannedIncomeList;
+  final List<AnalyticsItem<ExpenseModel>> analyticsActualExpenseList;
+  final List<AnalyticsItem<PlannedExpenseModel>> analyticsPlannedExpenseList;
+  final List<AnalyticsItem<IrregularModel>> analyticsActualIrregularList;
+  final List<AnalyticsItem<PlannedIrregularModel>>
+      analyticsPlannedIrregularList;
 
   AnalyticsMonthList _monthList;
 
@@ -23,19 +25,19 @@ class AnalyticsData {
   Map<DateTime, Map<CurrencyType, double>> _perMonthIncomes;
 
   AnalyticsData(
-      this.actualIncomeList,
-      this.plannedIncomeList,
-      this.actualExpenseList,
-      this.plannedExpenseList,
-      this.actualIrregularList,
-      this.plannedIrregularList) {
+      this.analyticsActualIncomeList,
+      this.analyticsPlannedIncomeList,
+      this.analyticsActualExpenseList,
+      this.analyticsPlannedExpenseList,
+      this.analyticsActualIrregularList,
+      this.analyticsPlannedIrregularList) {
     _monthList = AnalyticsMonthList(
-        actualIncomeList,
-        plannedIncomeList,
-        actualExpenseList,
-        plannedExpenseList,
-        actualIrregularList,
-        plannedIrregularList);
+        analyticsActualIncomeList,
+        analyticsPlannedIncomeList,
+        analyticsActualExpenseList,
+        analyticsPlannedExpenseList,
+        analyticsActualIrregularList,
+        analyticsPlannedIrregularList);
     _perDayExpenses = Map();
     _perMonthIncomes = Map();
   }
@@ -55,17 +57,16 @@ class AnalyticsData {
     await _analyzePlannedExpenseList();
     await _analyzeActualIrregularList();
     await _analyzePlannedIrregularList();
-    print("[AnalyticsData] calc irregular plan");
     await _monthList.calcIrregularPlan();
   }
 
   Future<void> _analyzeActualIncomeList() async {
-    actualIncomeList.forEach((model) => monthList
-        .findMonthByDate(model.date)
-        .addActualIncomeValue(model.currency, model.value));
-    actualIncomeList.forEach((model) {
+    analyticsActualIncomeList.forEach((item) => monthList
+        .findMonthByDate(item.model.date)
+        .addActualIncomeValue(item.model.currency, item.model.value));
+    analyticsActualIncomeList.forEach((item) {
+      IncomeModel model = item.model;
       DateTime rounded = DateTime(model.date.year, model.date.month);
-
       if (_perMonthIncomes[rounded] == null) {
         _perMonthIncomes[rounded] = Map();
       }
@@ -77,7 +78,8 @@ class AnalyticsData {
   }
 
   Future<void> _analyzePlannedIncomeList() async {
-    plannedIncomeList.forEach((model) {
+    analyticsPlannedIncomeList.forEach((item) {
+      PlannedIncomeModel model = item.model;
       if (model.mode == SubjectModeType.monthly) {
         monthList.forEach((month) =>
             month.addPlannedIncomeValue(model.currency, model.value));
@@ -90,11 +92,12 @@ class AnalyticsData {
   }
 
   Future<void> _analyzeActualExpenseList() async {
-    actualExpenseList.forEach((model) => monthList
-        .findMonthByDate(model.date)
-        .addActualExpenseValue(model.currency, model.value));
+    analyticsActualExpenseList.forEach((item) => monthList
+        .findMonthByDate(item.model.date)
+        .addActualExpenseValue(item.model.currency, item.model.value));
 
-    actualExpenseList.forEach((model) {
+    analyticsActualExpenseList.forEach((item) {
+      ExpenseModel model = item.model;
       DateTime rounded =
           DateTime(model.date.year, model.date.month, model.date.day);
 
@@ -109,20 +112,20 @@ class AnalyticsData {
   }
 
   Future<void> _analyzePlannedExpenseList() async {
-    plannedExpenseList.forEach((model) => monthList.forEach(
-        (month) => month.addPlannedExpenseValue(model.currency, model.value)));
+    analyticsPlannedExpenseList.forEach((item) => monthList.forEach((month) =>
+        month.addPlannedExpenseValue(item.model.currency, item.model.value)));
   }
 
   Future<void> _analyzeActualIrregularList() async {
-    actualIrregularList.forEach((model) {
-      AnalyticsMonth month = monthList.findMonthByDate(model.date);
-      month.addActualIrregularValue(model.currency, model.value);
+    analyticsActualIrregularList.forEach((item) {
+      AnalyticsMonth month = monthList.findMonthByDate(item.model.date);
+      month.addActualIrregularValue(item.model.currency, item.model.value);
     });
   }
 
   Future<void> _analyzePlannedIrregularList() async {
-    plannedIrregularList.forEach((model) => monthList
-        .findMonthByDate(model.date)
-        .addPlannedIrregularValue(model.currency, model.value));
+    analyticsPlannedIrregularList.forEach((item) => monthList
+        .findMonthByDate(item.model.date)
+        .addPlannedIrregularValue(item.model.currency, item.model.value));
   }
 }

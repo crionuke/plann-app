@@ -1,4 +1,5 @@
 import 'package:plann_app/services/analytics/analytics_account.dart';
+import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
@@ -21,7 +22,7 @@ class AnalyticsMonth {
   Map<CurrencyType, int> deltaPercentDiff;
   Map<CurrencyType, double> balanceValues;
 
-  AnalyticsAccount<PlannedIrregularModel> plannedIrregularAccount;
+  AnalyticsAccount<AnalyticsItem<PlannedIrregularModel>> plannedIrregularAccount;
 
   AnalyticsMonth(this.index, this.year, this.month)
       : date = DateTime(year, month) {

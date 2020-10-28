@@ -6,32 +6,29 @@ import 'package:plann_app/services/db/models/currency_model.dart';
 class AnalyticsAccount<T> {
   Map<CurrencyType, double> debet;
   Map<CurrencyType, double> credit;
-  Map<T, double> values;
   Map<CurrencyType, double> balance;
+  Map<T, double> valuesInDefaultCurrency;
 
   AnalyticsAccount() {
     debet = Map();
     credit = Map();
-    values = Map();
     balance = Map();
+    valuesInDefaultCurrency = Map();
   }
 
-  void addDebetValue(T item, CurrencyType currency, double value) {
+  void addDebetValue(T item, CurrencyType currency, double value,
+      double valueInDefaultCurrency) {
     AnalyticsUtils.addValueToCurrencyMap(debet, currency, value);
-    values[item] = value;
+    valuesInDefaultCurrency[item] = valueInDefaultCurrency;
   }
 
   void addCreditValue(CurrencyType currency, double value) {
     AnalyticsUtils.addValueToCurrencyMap(credit, currency, value);
   }
 
-  double debetPerCurrency(CurrencyType currency) {
+  double debetInDefaultCurrency() {
     double total = 0;
-    debet.forEach((key, value) {
-      if (key == currency) {
-        total += value;
-      }
-    });
+    valuesInDefaultCurrency.values.forEach((value) => total += value);
     return total;
   }
 
