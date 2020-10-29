@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/main/about_app_bloc.dart';
+import 'package:plann_app/components/main/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -10,7 +11,9 @@ class AboutAppScreen extends StatelessWidget {
 
   static const int MAX_PAGE = 3;
 
-  AboutAppScreen();
+  bool startup;
+
+  AboutAppScreen(this.startup);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,12 @@ class AboutAppScreen extends StatelessWidget {
                 icon: Icon(Icons.close),
                 onPressed: () {
                   bloc.markAsViewed();
-                  Navigator.of(context).pop();
+                  if (startup) {
+                    Navigator.of(context)
+                        .pushReplacementNamed(MainScreen.routeName);
+                  } else {
+                    Navigator.of(context).pop();
+                  }
                 },
               )),
             ]),

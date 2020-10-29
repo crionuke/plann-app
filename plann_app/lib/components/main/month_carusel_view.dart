@@ -290,7 +290,7 @@ class MonthCaruselView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(FlutterI18n.translate(context, "texts.balance") + ":"),
+                  Text(FlutterI18n.translate(context, "texts.free") + ":"),
                 ],
               ),
             ),

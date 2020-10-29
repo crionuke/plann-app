@@ -96,11 +96,12 @@ void main() async {
 
   if (await purchaseService.hasAccess()) {
     print("[main] change to main screen");
-    navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
     if (!valuesService.isExist(ValuesService.VALUE_ABOUT_APP_VIEWED)) {
-      navigatorKey.currentState.pushNamed(AboutAppScreen.routeName);
+      navigatorKey.currentState
+          .pushNamed(AboutAppScreen.routeName, arguments: true);
     } else {
       print("[main] about app already viewed, skip");
+      navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
     }
   } else {
     print("[main] change to blocking screen");
@@ -144,7 +145,7 @@ class App extends StatelessWidget {
               return _buildBlockPageRoute();
 
             case AboutAppScreen.routeName:
-              return _buildTutorialPageRoute();
+              return _buildAppScreenPageRoute(route.arguments);
 
             case IncomeMainScreen.routeName:
               return _buildIncomeListPageRoute();
@@ -216,14 +217,14 @@ class App extends StatelessWidget {
     });
   }
 
-  MaterialPageRoute _buildTutorialPageRoute() {
+  MaterialPageRoute _buildAppScreenPageRoute(bool startup) {
     return MaterialPageRoute(builder: (context) {
 //      return AboutAppScreen(pageIndex);
       return Provider<AboutAppBloc>(
           create: (context) => AboutAppBloc(
               Provider.of<ValuesService>(context, listen: false),
               Provider.of<TrackingService>(context, listen: false)),
-          child: AboutAppScreen());
+          child: AboutAppScreen(startup));
     });
   }
 

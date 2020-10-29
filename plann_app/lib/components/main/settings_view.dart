@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
+import 'package:plann_app/components/main/about_app_screen.dart';
 import 'package:plann_app/components/main/settings_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_screen.dart';
-import 'package:plann_app/components/main/about_app_screen.dart';
 import 'package:provider/provider.dart';
 
 class SettingsView extends StatelessWidget {
@@ -94,7 +94,7 @@ class SettingsView extends StatelessWidget {
     return ListTile(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(AboutAppScreen.routeName);
+            .pushNamed(AboutAppScreen.routeName, arguments: false);
       },
       title: Text(FlutterI18n.translate(context, "texts.about_app")),
       trailing: Icon(Icons.navigate_next),
