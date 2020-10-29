@@ -17,7 +17,14 @@ class DbTestDataSet {
   static Future<void> fill(database) async {
     var random = Random();
 
-    List<String> tickers = ["LSRG", "NLMK", "MTSS", "MOEX", "PHOR", "UPRO"];
+    List<String> tickers = [
+      "ЛСР",
+      "НЛМК",
+      "МТС",
+      "Московская биржа",
+      "ФосАгро",
+      "Юнипро"
+    ];
 
     // Income
     for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {

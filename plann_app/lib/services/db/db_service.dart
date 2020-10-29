@@ -17,7 +17,7 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-    String path = join(await getDatabasesPath(), "plann_132.db");
+    String path = join(await getDatabasesPath(), "plann_133.db");
 //    String path = join(await getDatabasesPath(), "plann.db");
     database =
         await openDatabase(path, version: 2, onConfigure: (database) async {
