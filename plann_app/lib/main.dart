@@ -98,7 +98,7 @@ void main() async {
     print("[main] change to main screen");
     if (!valuesService.isExist(ValuesService.VALUE_ABOUT_APP_VIEWED)) {
       navigatorKey.currentState
-          .pushNamed(AboutAppScreen.routeName, arguments: true);
+          .pushReplacementNamed(AboutAppScreen.routeName, arguments: true);
     } else {
       print("[main] about app already viewed, skip");
       navigatorKey.currentState.pushReplacementNamed(MainScreen.routeName);
