@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class PurchaseService {
@@ -110,7 +110,7 @@ class PurchaseService {
     EntitlementInfo result = purchaserInfo.entitlements.all["Access"];
     if (result != null) {
       if (result.isActive) {
-        trackingService.setPaying();
+        trackingService.setPaid();
         return true;
       } else {
         return false;

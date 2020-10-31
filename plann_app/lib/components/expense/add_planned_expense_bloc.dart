@@ -7,7 +7,7 @@ import 'package:plann_app/components/expense/planned_expense_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 class AddPlannedExpenseBloc {
   final _controller = StreamController<bool>();

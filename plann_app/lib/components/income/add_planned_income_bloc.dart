@@ -6,7 +6,7 @@ import 'package:plann_app/components/income/planned_income_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 import '../app_values.dart';
 

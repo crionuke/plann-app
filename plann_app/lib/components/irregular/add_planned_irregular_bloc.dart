@@ -7,7 +7,7 @@ import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart'
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 class AddPlannedIrregularBloc {
   final _controller = StreamController<bool>();

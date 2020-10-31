@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/emergency_fund_model.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 class EmergencyFundMainBloc {
   final _controller = StreamController<EmergencyFundMainViewState>();

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:package_info/package_info.dart';
 import 'package:plann_app/services/purchase/purchase_service.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsBloc {

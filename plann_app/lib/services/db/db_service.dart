@@ -39,7 +39,7 @@ class DbService {
         await database.execute(ValueModel.createTableSql);
       }
       // Test data set
-      await DbTestDataSet.fill(database);
+//      await DbTestDataSet.fill(database);
       print("[DbService] version $version created");
     }, onUpgrade: (database, oldVersion, newVersion) async {
       if (oldVersion < 2 && newVersion >= 2) {

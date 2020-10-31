@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:plann_app/services/purchase/purchase_service.dart';
-import 'package:plann_app/services/tracking/tracking_service.dart';
+import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 class MainBloc {
   final _controller = StreamController();
