@@ -6,6 +6,7 @@ import 'package:plann_app/components/expense/add_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_screen.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
 import 'package:plann_app/components/income/income_main_screen.dart';
+import 'package:plann_app/components/irregular/add_irregular_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_screen.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/components/main/month_carusel_view.dart';
@@ -44,7 +45,7 @@ class FinancesView extends StatelessWidget {
       divider1,
       _buildTile2(context, monthCaruselBloc, slidableController),
       divider1,
-      _buildTile3(context, monthCaruselBloc),
+      _buildTile3(context, monthCaruselBloc, slidableController),
     ]);
   }
 
@@ -138,15 +139,42 @@ class FinancesView extends StatelessWidget {
 //    );
 //  }
 
-  ListTile _buildTile3(
-      BuildContext context, MonthCaruselBloc monthCaruselBloc) {
-    return ListTile(
-      title: Text(FlutterI18n.translate(context, "texts.irregular")),
-      trailing: Icon(Icons.navigate_next),
-      onTap: () async {
-        await Navigator.pushNamed(context, IrregularMainScreen.routeName);
-        monthCaruselBloc.requestState();
-      },
-    );
+  Widget _buildTile3(BuildContext context, MonthCaruselBloc monthCaruselBloc,
+      SlidableController slidableController) {
+    return Slidable.builder(
+        key: Key("irregular"),
+        controller: slidableController,
+        direction: Axis.horizontal,
+        child: ListTile(
+          title: Text(FlutterI18n.translate(context, "texts.irregular")),
+          trailing: Icon(Icons.navigate_next),
+          onTap: () async {
+            await Navigator.pushNamed(context, IrregularMainScreen.routeName);
+            monthCaruselBloc.requestState();
+          },
+        ),
+        actionPane: SlidableDrawerActionPane(),
+        dismissal: SlidableDismissal(
+            closeOnCanceled: true,
+            onWillDismiss: (actionType) async {
+              await Navigator.pushNamed<bool>(
+                  context, AddIrregularScreen.routeName);
+              monthCaruselBloc.requestState();
+              return false;
+            },
+            child: SlidableDrawerDismissal()),
+        secondaryActionDelegate: SlideActionBuilderDelegate(
+            actionCount: 1,
+            builder: (context, index, animation, renderingMode) {
+              return IconSlideAction(
+                caption: FlutterI18n.translate(context, "texts.add"),
+                color: Colors.blueAccent,
+                icon: Ionicons.md_add,
+                onTap: () async {
+                  var state = Slidable.of(context);
+                  state.dismiss();
+                },
+              );
+            }));
   }
 }
