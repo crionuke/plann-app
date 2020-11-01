@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -67,6 +68,7 @@ class FinancesView extends StatelessWidget {
         dismissal: SlidableDismissal(
             closeOnCanceled: true,
             onWillDismiss: (actionType) async {
+              HapticFeedback.lightImpact();
               await Navigator.pushNamed<bool>(
                   context, AddIncomeScreen.routeName);
               monthCaruselBloc.requestState();
@@ -106,6 +108,7 @@ class FinancesView extends StatelessWidget {
         dismissal: SlidableDismissal(
             closeOnCanceled: true,
             onWillDismiss: (actionType) async {
+              HapticFeedback.lightImpact();
               await Navigator.pushNamed<bool>(
                   context, AddExpenseScreen.routeName);
               monthCaruselBloc.requestState();
@@ -127,18 +130,6 @@ class FinancesView extends StatelessWidget {
             }));
   }
 
-//  ListTile _buildTile3(
-//      BuildContext context, MonthCaruselBloc monthCaruselBloc) {
-//    return ListTile(
-//      title: Text(FlutterI18n.translate(context, "texts.emergency_fund")),
-//      trailing: Icon(Icons.navigate_next),
-//      onTap: () async {
-//        await Navigator.pushNamed(context, EmergencyFundMainScreen.routeName);
-//        monthCaruselBloc.requestState();
-//      },
-//    );
-//  }
-
   Widget _buildTile3(BuildContext context, MonthCaruselBloc monthCaruselBloc,
       SlidableController slidableController) {
     return Slidable.builder(
@@ -157,6 +148,7 @@ class FinancesView extends StatelessWidget {
         dismissal: SlidableDismissal(
             closeOnCanceled: true,
             onWillDismiss: (actionType) async {
+              HapticFeedback.lightImpact();
               await Navigator.pushNamed<bool>(
                   context, AddIrregularScreen.routeName);
               monthCaruselBloc.requestState();

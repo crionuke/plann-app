@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -213,6 +214,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
             dismissal: SlidableDismissal(
                 closeOnCanceled: true,
                 onWillDismiss: (actionType) async {
+                  HapticFeedback.lightImpact();
                   return await showDialog<bool>(
                       context: context,
                       builder: (BuildContext context) {
@@ -283,6 +285,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
               dismissal: SlidableDismissal(
                   closeOnCanceled: true,
                   onWillDismiss: (actionType) async {
+                    HapticFeedback.lightImpact();
                     return await showDialog<bool>(
                         context: context,
                         builder: (BuildContext context) {
