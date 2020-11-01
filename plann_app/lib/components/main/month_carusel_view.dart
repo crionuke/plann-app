@@ -124,10 +124,13 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildIncomeTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    bool next = month.actualIncomePerCategory.isNotEmpty;
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, MonthIncomeScreen.routeName,
-            arguments: month);
+        if (next) {
+          Navigator.pushNamed(context, MonthIncomeScreen.routeName,
+              arguments: month);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -142,7 +145,9 @@ class MonthCaruselView extends StatelessWidget {
                 _prepareCurrencyMapWithPercents(context, currency,
                     month.actualIncomeValues, month.incomePercentDiff),
                 textAlign: TextAlign.left),
-            Icon(Icons.navigate_next, color: Colors.black45)
+            next
+                ? Icon(Icons.navigate_next, color: Colors.black45)
+                : Container()
           ],
         ),
       ),
@@ -151,10 +156,13 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildExpenseTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    bool next = month.actualExpensePerCategory.isNotEmpty;
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, MonthExpenseScreen.routeName,
-            arguments: month);
+        if (next) {
+          Navigator.pushNamed(context, MonthExpenseScreen.routeName,
+              arguments: month);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -169,7 +177,9 @@ class MonthCaruselView extends StatelessWidget {
                 _prepareCurrencyMapWithPercents(context, currency,
                     month.actualExpenseValues, month.expensePercentDiff),
                 textAlign: TextAlign.left),
-            Icon(Icons.navigate_next, color: Colors.black45)
+            next
+                ? Icon(Icons.navigate_next, color: Colors.black45)
+                : Container(),
           ],
         ),
       ),
