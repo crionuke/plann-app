@@ -132,24 +132,17 @@ class MonthCaruselView extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+//          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child:
                   Text(FlutterI18n.translate(context, "texts.income_s") + ":"),
-                ],
-              ),
             ),
-            Column(
-              children: [
-                Text(
-                    _prepareCurrencyMapWithPercents(context, currency,
-                        month.actualIncomeValues, month.incomePercentDiff),
-                    textAlign: TextAlign.left)
-              ],
-            ),
+            Text(
+                _prepareCurrencyMapWithPercents(context, currency,
+                    month.actualIncomeValues, month.incomePercentDiff),
+                textAlign: TextAlign.left),
+            Icon(Icons.navigate_next, color: Colors.black45)
           ],
         ),
       ),
@@ -166,24 +159,17 @@ class MonthCaruselView extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+//          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child:
                   Text(FlutterI18n.translate(context, "texts.regular") + ":"),
-                ],
-              ),
             ),
-            Column(
-              children: [
-                Text(
-                    _prepareCurrencyMapWithPercents(context, currency,
-                        month.actualExpenseValues, month.expensePercentDiff),
-                    textAlign: TextAlign.left)
-              ],
-            ),
+            Text(
+                _prepareCurrencyMapWithPercents(context, currency,
+                    month.actualExpenseValues, month.expensePercentDiff),
+                textAlign: TextAlign.left),
+            Icon(Icons.navigate_next, color: Colors.black45)
           ],
         ),
       ),
@@ -234,21 +220,9 @@ class MonthCaruselView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(FlutterI18n.translate(context, "texts.delta") + ":"),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                Text(
-                    _preparePercentsWithCurrencyMap(context, currency,
-                        month.deltaPercentDiff, month.deltaValues),
-                    textAlign: TextAlign.left)
-              ],
-            ),
+                child:
+                    Text(FlutterI18n.translate(context, "texts.delta") + ":")),
+            Text(FlutterI18n.translate(context, "texts.delta") + ":")
           ],
         ),
       ),
@@ -265,21 +239,13 @@ class MonthCaruselView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child:
                   Text(FlutterI18n.translate(context, "texts.irregular") + ":"),
-                ],
-              ),
             ),
-            Column(
-              children: [
-                Text(
-                    _prepareValueFromCurrencyMap(
-                        context, currency, month.plannedIrregularAccount.debet),
-                    textAlign: TextAlign.left)
-              ],
-            ),
+            Text(
+                _prepareValueFromCurrencyMap(
+                    context, currency, month.plannedIrregularAccount.debet),
+                textAlign: TextAlign.left)
           ],
         ),
       ),
@@ -296,21 +262,12 @@ class MonthCaruselView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(FlutterI18n.translate(context, "texts.free") + ":"),
-                ],
-              ),
+              child: Text(FlutterI18n.translate(context, "texts.free") + ":"),
             ),
-            Column(
-              children: [
-                Text(
-                    _prepareValueFromCurrencyMap(
-                        context, currency, month.balanceValues),
-                    textAlign: TextAlign.left)
-              ],
-            ),
+            Text(
+                _prepareValueFromCurrencyMap(
+                    context, currency, month.balanceValues),
+                textAlign: TextAlign.left)
           ],
         ),
       ),
