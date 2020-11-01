@@ -6,17 +6,18 @@ typedef LogChartBarTapCallback = void Function(
     BuildContext context, int column);
 
 class LogChart extends StatelessWidget {
-  static const double BAR_WIDTH = 60;
+//  static const double barWidth = 60;
   static const Color DEFAULT_COLOR = Colors.blueAccent;
-
+  
   final double height;
+  final double barWidth;
   final List<LogChartBar> bars;
   final int currentColumn;
   final LogChartBarTapCallback barTap;
 
   double _scale;
 
-  LogChart(this.height, this.bars, this.currentColumn, this.barTap) {
+  LogChart(this.height, this.barWidth, this.bars, this.currentColumn, this.barTap) {
     _scale = height * 0.8 / calcSum(bars);
   }
 
@@ -27,7 +28,7 @@ class LogChart extends StatelessWidget {
           height: height + 50,
           child: ListView(
             controller: ScrollController(
-                initialScrollOffset: currentColumn * BAR_WIDTH),
+                initialScrollOffset: currentColumn * barWidth),
             scrollDirection: Axis.horizontal,
             children: bars
                 .map((bar) => _buildColumn(context, bars.indexOf(bar), bar))
@@ -56,7 +57,7 @@ class LogChart extends StatelessWidget {
         children: items.map((item) {
       if (item.value == 0) {
         return Container(
-          width: BAR_WIDTH,
+          width: barWidth,
           height: height,
         );
       } else {
@@ -69,7 +70,7 @@ class LogChart extends StatelessWidget {
     return ClipRRect(
         borderRadius: BorderRadius.circular(4.0),
         child: Container(
-          width: BAR_WIDTH,
+          width: barWidth,
           height: height,
           color: color,
         ));
@@ -87,7 +88,7 @@ class LogChart extends StatelessWidget {
     }
 
     return Container(
-      width: BAR_WIDTH,
+      width: barWidth,
       height: 50,
       child: Center(child: text),
     );

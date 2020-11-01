@@ -178,9 +178,8 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
 
   Widget _buildExpenseList(BuildContext context, ExpenseMainBloc bloc,
       List<ExpenseModel> list, Map<DateTime, double> perDayExpenses) {
-    ColorsMap<ExpenseCategoryType> colorsMap = ColorsMap();
-    ExpenseCategoryType.values
-        .forEach((category) => colorsMap.assign(category));
+    ColorsMap<ExpenseCategoryType> colorsMap =
+        ColorsMap.fromValues(ExpenseCategoryType.values);
     final SlidableController slidableController = SlidableController();
 
     return GroupedListView<ExpenseModel, String>(

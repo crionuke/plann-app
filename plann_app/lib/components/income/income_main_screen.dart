@@ -164,8 +164,8 @@ class _IncomeMainState extends State<IncomeMainScreen>
 
   Widget _buildIncomeList(BuildContext context, IncomeMainBloc bloc,
       List<IncomeModel> list, Map<DateTime, double> perMonthIncomes) {
-    ColorsMap<IncomeCategoryType> colorsMap = ColorsMap();
-    IncomeCategoryType.values.forEach((category) => colorsMap.assign(category));
+    ColorsMap<IncomeCategoryType> colorsMap =
+        ColorsMap.fromValues(IncomeCategoryType.values);
     final SlidableController slidableController = SlidableController();
 
     return GroupedListView<IncomeModel, String>(

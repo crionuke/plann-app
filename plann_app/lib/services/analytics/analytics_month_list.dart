@@ -1,6 +1,7 @@
 import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -120,8 +121,8 @@ class AnalyticsMonthList {
       double metric = _calcMetricWith(
           fromDate,
           model.date,
-          AnalyticsUtils.calcValuePerMonth(model.creationDate, model.date,
-              item.currencyValue.valueInDefaultValue));
+          AnalyticsUtils.calcValuePerMonth(
+              model.creationDate, model.date, item.currencyValue));
       for (DateTime point in points) {
         int pointMonthIndex = AnalyticsUtils.toAbs(point.year, point.month);
         int modelMonthIndex =
@@ -136,8 +137,7 @@ class AnalyticsMonthList {
                 point,
                 model.date,
                 AnalyticsUtils.calcValuePerMonth(
-                    point, model.date, item.currencyValue.valueInDefaultValue));
-            print("${model.title} $currentMetric");
+                    point, model.date, item.currencyValue));
             //  Update best result
             if (currentMetric < metric) {
               metric = currentMetric;
@@ -157,8 +157,7 @@ class AnalyticsMonthList {
       if (monthCount == 0) {
         _monthList[fromMonthIndex - _firstMonthIndex]
             .plannedIrregularAccount
-            .addDebetValue(item, model.currency, model.value,
-                item.currencyValue.valueInDefaultValue);
+            .addDebetValue(item, item.currencyValue);
         _perMonthValues[model.id] = model.value;
       } else {
         double valuePerMonth = model.value / monthCount;
@@ -169,20 +168,22 @@ class AnalyticsMonthList {
             monthIndex++) {
           _monthList[monthIndex - _firstMonthIndex]
               .plannedIrregularAccount
-              .addDebetValue(item, model.currency, valuePerMonth,
-                  valuePerMonthInDefaultCurrency);
+              .addDebetValue(
+                  item,
+                  CurrencyValue(item.currencyValue.currency, valuePerMonth,
+                      valuePerMonthInDefaultCurrency));
           _perMonthValues[model.id] = valuePerMonth;
         }
       }
       // Add credit
       _monthList[toMonthIndex - _firstMonthIndex]
           .plannedIrregularAccount
-          .addCreditValue(model.currency, model.value);
+          .addCreditValue(item.currencyValue);
     });
     // Calc month values
-    Map<CurrencyType, double> prevMonthBalance = Map();
-    Map<CurrencyType, double> prevMonthIncomeValues = Map();
-    Map<CurrencyType, double> prevMonthExpenseValue = Map();
+    Map<CurrencyType, CurrencyValue> prevMonthBalance = Map();
+    Map<CurrencyType, CurrencyValue> prevMonthIncomeValues = Map();
+    Map<CurrencyType, CurrencyValue> prevMonthExpenseValue = Map();
     _monthList.forEach((month) {
       // Planned irregular account balance
       prevMonthBalance =

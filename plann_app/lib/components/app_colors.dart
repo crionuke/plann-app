@@ -35,6 +35,17 @@ class ColorsMap<K> {
     _lastColor = 0;
   }
 
+  ColorsMap.fromValues(List<K> values) {
+    _map = Map();
+    _lastColor = 0;
+    List<K> sorted = List();
+    sorted.addAll(values);
+    sorted.sort((k1, k2) {
+      return k1.toString().compareTo(k2.toString());
+    });
+    sorted.forEach((key) => assign(key));
+  }
+
   void assign(K key) {
     _map[key] = COLORS[_lastColor++];
     if (_lastColor >= COLORS.length) {

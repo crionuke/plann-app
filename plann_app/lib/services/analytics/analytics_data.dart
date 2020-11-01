@@ -61,9 +61,8 @@ class AnalyticsData {
   }
 
   Future<void> _analyzeActualIncomeList() async {
-    analyticsActualIncomeList.forEach((item) => monthList
-        .findMonthByDate(item.model.date)
-        .addActualIncomeValue(item.model.currency, item.model.value));
+    analyticsActualIncomeList.forEach((item) =>
+        monthList.findMonthByDate(item.model.date).addActualIncomeValue(item));
     analyticsActualIncomeList.forEach((item) {
       IncomeModel model = item.model;
       DateTime rounded = DateTime(model.date.year, model.date.month);
@@ -81,20 +80,16 @@ class AnalyticsData {
     analyticsPlannedIncomeList.forEach((item) {
       PlannedIncomeModel model = item.model;
       if (model.mode == SubjectModeType.monthly) {
-        monthList.forEach((month) =>
-            month.addPlannedIncomeValue(model.currency, model.value));
+        monthList.forEach((month) => month.addPlannedIncomeValue(item));
       } else {
-        monthList
-            .findMonthByDate(model.date)
-            .addPlannedIncomeValue(model.currency, model.value);
+        monthList.findMonthByDate(model.date).addPlannedIncomeValue(item);
       }
     });
   }
 
   Future<void> _analyzeActualExpenseList() async {
-    analyticsActualExpenseList.forEach((item) => monthList
-        .findMonthByDate(item.model.date)
-        .addActualExpenseValue(item.model.currency, item.model.value));
+    analyticsActualExpenseList.forEach((item) =>
+        monthList.findMonthByDate(item.model.date).addActualExpenseValue(item));
 
     analyticsActualExpenseList.forEach((item) {
       ExpenseModel model = item.model;
@@ -112,20 +107,20 @@ class AnalyticsData {
   }
 
   Future<void> _analyzePlannedExpenseList() async {
-    analyticsPlannedExpenseList.forEach((item) => monthList.forEach((month) =>
-        month.addPlannedExpenseValue(item.model.currency, item.model.value)));
+    analyticsPlannedExpenseList.forEach((item) =>
+        monthList.forEach((month) => month.addPlannedExpenseValue(item)));
   }
 
   Future<void> _analyzeActualIrregularList() async {
     analyticsActualIrregularList.forEach((item) {
       AnalyticsMonth month = monthList.findMonthByDate(item.model.date);
-      month.addActualIrregularValue(item.model.currency, item.model.value);
+      month.addActualIrregularValue(item);
     });
   }
 
   Future<void> _analyzePlannedIrregularList() async {
     analyticsPlannedIrregularList.forEach((item) => monthList
         .findMonthByDate(item.model.date)
-        .addPlannedIrregularValue(item.model.currency, item.model.value));
+        .addPlannedIrregularValue(item));
   }
 }

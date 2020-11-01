@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/expense/month_expense_screen.dart';
+import 'package:plann_app/components/income/month_income_screen.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/analytics_month.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:provider/provider.dart';
 
@@ -122,7 +125,10 @@ class MonthCaruselView extends StatelessWidget {
   Widget _buildIncomeTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, MonthIncomeScreen.routeName,
+            arguments: month);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -153,7 +159,10 @@ class MonthCaruselView extends StatelessWidget {
   Widget _buildExpenseTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, MonthExpenseScreen.routeName,
+            arguments: month);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -183,10 +192,10 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildIrregularTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
-    double value = month.actualIrregularValues[currency];
+    CurrencyValue currencyValue = month.actualIrregularValues[currency];
     String valueText = "";
-    if (value != null) {
-      valueText = AppTexts.formatValueAsShorten(context, value);
+    if (currencyValue != null) {
+      valueText = AppTexts.formatValueAsShorten(context, currencyValue.value);
     } else {
       valueText = "-";
     }
@@ -311,11 +320,11 @@ class MonthCaruselView extends StatelessWidget {
   String _prepareValueFromCurrencyMap(
     BuildContext context,
     CurrencyType currency,
-    Map<CurrencyType, double> currencyMap,
+    Map<CurrencyType, CurrencyValue> currencyMap,
   ) {
-    double value = currencyMap[currency];
-    if (value != null) {
-      return AppTexts.formatValueAsShorten(context, value);
+    CurrencyValue currencyValue = currencyMap[currency];
+    if (currencyValue != null) {
+      return AppTexts.formatValueAsShorten(context, currencyValue.value);
     } else {
       return "-";
     }
@@ -324,11 +333,11 @@ class MonthCaruselView extends StatelessWidget {
   String _prepareCurrencyMapWithPercents(
       BuildContext context,
       CurrencyType currency,
-      Map<CurrencyType, double> currencyMap,
+      Map<CurrencyType, CurrencyValue> currencyMap,
       Map<CurrencyType, int> percentMap) {
-    double value = currencyMap[currency];
+    CurrencyValue value = currencyMap[currency];
     if (value != null) {
-      return AppTexts.formatValueAsShorten(context, value) +
+      return AppTexts.formatValueAsShorten(context, value.value) +
           " (" +
           (percentMap[currency] > 0
               ? "+" + percentMap[currency].toString()
@@ -343,12 +352,12 @@ class MonthCaruselView extends StatelessWidget {
       BuildContext context,
       CurrencyType currency,
       Map<CurrencyType, int> percentMap,
-      Map<CurrencyType, double> currencyMap) {
+      Map<CurrencyType, CurrencyValue> currencyMap) {
     int value = percentMap[currency];
     if (value != null) {
       return value.toString() +
           "% (" +
-          AppTexts.formatValueAsShorten(context, currencyMap[currency]) +
+          AppTexts.formatValueAsShorten(context, currencyMap[currency].value) +
           ")";
     } else {
       return "-";

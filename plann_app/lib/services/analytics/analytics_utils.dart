@@ -1,3 +1,4 @@
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 
 class AnalyticsUtils {
@@ -21,41 +22,53 @@ class AnalyticsUtils {
   }
 
   static double calcValuePerMonth(
-      DateTime fromDate, DateTime toDate, double value) {
+      DateTime fromDate, DateTime toDate, CurrencyValue currencyValue) {
     int monthCount = calcMonthCount(fromDate, toDate);
     if (monthCount == 0) {
-      return value;
+      return currencyValue.valueInDefaultValue;
     } else {
-      return value / monthCount;
+      return currencyValue.valueInDefaultValue / monthCount;
     }
   }
 
-  static void addValueToCurrencyMap(
-      Map<CurrencyType, double> list, CurrencyType currency, double value) {
-    if (list[currency] == null) {
-      list[currency] = value;
+  static Map<CurrencyType, CurrencyValue> addValueToCurrencyMap(
+      Map<CurrencyType, CurrencyValue> map, CurrencyValue currencyValue) {
+    CurrencyType currency = currencyValue.currency;
+
+    if (map[currency] == null) {
+      map[currency] = CurrencyValue(
+          currency, currencyValue.value, currencyValue.valueInDefaultValue);
     } else {
-      list[currency] += value;
+      map[currency] = CurrencyValue(
+          currency,
+          map[currency].value + currencyValue.value,
+          map[currency].valueInDefaultValue +
+              currencyValue.valueInDefaultValue);
     }
+    return map;
   }
 
-  static Map<CurrencyType, double> addCurrencyMap(
-      Map<CurrencyType, double> map1, Map<CurrencyType, double> map2) {
-    Map<CurrencyType, double> result = Map();
+  static Map<CurrencyType, CurrencyValue> addCurrencyMap(
+      Map<CurrencyType, CurrencyValue> map1,
+      Map<CurrencyType, CurrencyValue> map2) {
+    Map<CurrencyType, CurrencyValue> result = Map();
     map1.forEach((key, value) => result[key] = value);
-    map2.forEach(
-        (key, value) => result[key] == null ? result[key] = 0 : result[key]);
-    map2.forEach((key, value) => result[key] = result[key] + value);
+    map2.forEach((key, value) => result[key] == null
+        ? result[key] = CurrencyValue.zero(key)
+        : result[key]);
+    map2.forEach((key, value) => result[key] = result[key].add(value));
     return result;
   }
 
-  static Map<CurrencyType, double> subCurrencyMap(
-      Map<CurrencyType, double> map1, Map<CurrencyType, double> map2) {
-    Map<CurrencyType, double> result = Map();
+  static Map<CurrencyType, CurrencyValue> subCurrencyMap(
+      Map<CurrencyType, CurrencyValue> map1,
+      Map<CurrencyType, CurrencyValue> map2) {
+    Map<CurrencyType, CurrencyValue> result = Map();
     map1.forEach((key, value) => result[key] = value);
-    map2.forEach(
-        (key, value) => result[key] == null ? result[key] = 0 : result[key]);
-    map2.forEach((key, value) => result[key] = result[key] - value);
+    map2.forEach((key, value) => result[key] == null
+        ? result[key] = CurrencyValue.zero(key)
+        : result[key]);
+    map2.forEach((key, value) => result[key] = result[key].sub(value));
     return result;
   }
 }

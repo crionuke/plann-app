@@ -1,7 +1,15 @@
 import 'package:plann_app/services/analytics/analytics_account.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
+import 'package:plann_app/services/db/models/expense_category_model.dart';
+import 'package:plann_app/services/db/models/expense_model.dart';
+import 'package:plann_app/services/db/models/income_category_model.dart';
+import 'package:plann_app/services/db/models/income_model.dart';
+import 'package:plann_app/services/db/models/irregular_model.dart';
+import 'package:plann_app/services/db/models/planned_expense_model.dart';
+import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 
 class AnalyticsMonth {
@@ -10,25 +18,32 @@ class AnalyticsMonth {
   final int month;
   final DateTime date;
 
-  Map<CurrencyType, double> actualIncomeValues;
-  Map<CurrencyType, double> plannedIncomeValues;
-  Map<CurrencyType, double> actualExpenseValues;
-  Map<CurrencyType, double> plannedExpenseValues;
-  Map<CurrencyType, double> deltaValues;
-  Map<CurrencyType, double> actualIrregularValues;
-  Map<CurrencyType, double> plannedIrregularValues;
+  Map<CurrencyType, CurrencyValue> actualIncomeValues;
+  Map<IncomeCategoryType, Map<CurrencyType, CurrencyValue>>
+      actualIncomePerCategory;
+  Map<CurrencyType, CurrencyValue> plannedIncomeValues;
+  Map<CurrencyType, CurrencyValue> actualExpenseValues;
+  Map<ExpenseCategoryType, Map<CurrencyType, CurrencyValue>>
+      actualExpensePerCategory;
+  Map<CurrencyType, CurrencyValue> plannedExpenseValues;
+  Map<CurrencyType, CurrencyValue> deltaValues;
+  Map<CurrencyType, CurrencyValue> actualIrregularValues;
+  Map<CurrencyType, CurrencyValue> plannedIrregularValues;
   Map<CurrencyType, int> incomePercentDiff;
   Map<CurrencyType, int> expensePercentDiff;
   Map<CurrencyType, int> deltaPercentDiff;
-  Map<CurrencyType, double> balanceValues;
+  Map<CurrencyType, CurrencyValue> balanceValues;
 
-  AnalyticsAccount<AnalyticsItem<PlannedIrregularModel>> plannedIrregularAccount;
+  AnalyticsAccount<AnalyticsItem<PlannedIrregularModel>>
+      plannedIrregularAccount;
 
   AnalyticsMonth(this.index, this.year, this.month)
       : date = DateTime(year, month) {
     actualIncomeValues = Map();
+    actualIncomePerCategory = Map();
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
+    actualExpensePerCategory = Map();
     plannedExpenseValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
@@ -40,45 +55,63 @@ class AnalyticsMonth {
     plannedIrregularAccount = AnalyticsAccount();
   }
 
-  void addActualIncomeValue(CurrencyType currencyType, double value) {
+  void addActualIncomeValue(AnalyticsItem<IncomeModel> item) {
+    IncomeCategoryType category = item.model.category;
+
     AnalyticsUtils.addValueToCurrencyMap(
-        actualIncomeValues, currencyType, value);
+        actualIncomeValues, item.currencyValue);
+    if (actualIncomePerCategory[category] == null) {
+      actualIncomePerCategory[category] =
+          AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+    } else {
+      AnalyticsUtils.addValueToCurrencyMap(
+          actualIncomePerCategory[category], item.currencyValue);
+    }
   }
 
-  void addPlannedIncomeValue(CurrencyType currencyType, double value) {
+  void addPlannedIncomeValue(AnalyticsItem<PlannedIncomeModel> item) {
     AnalyticsUtils.addValueToCurrencyMap(
-        plannedIncomeValues, currencyType, value);
+        plannedIncomeValues, item.currencyValue);
   }
 
-  void addActualExpenseValue(CurrencyType currencyType, double value) {
+  void addActualExpenseValue(AnalyticsItem<ExpenseModel> item) {
     AnalyticsUtils.addValueToCurrencyMap(
-        actualExpenseValues, currencyType, value);
+        actualExpenseValues, item.currencyValue);
+    ExpenseCategoryType category = item.model.category;
+    if (actualExpensePerCategory[category] == null) {
+      actualExpensePerCategory[category] =
+          AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+    } else {
+      AnalyticsUtils.addValueToCurrencyMap(
+          actualExpensePerCategory[category], item.currencyValue);
+    }
   }
 
-  void addPlannedExpenseValue(CurrencyType currencyType, double value) {
+  void addPlannedExpenseValue(AnalyticsItem<PlannedExpenseModel> item) {
     AnalyticsUtils.addValueToCurrencyMap(
-        plannedExpenseValues, currencyType, value);
+        plannedExpenseValues, item.currencyValue);
   }
 
-  void addActualIrregularValue(CurrencyType currencyType, double value) {
+  void addActualIrregularValue(AnalyticsItem<IrregularModel> item) {
     AnalyticsUtils.addValueToCurrencyMap(
-        actualIrregularValues, currencyType, value);
+        actualIrregularValues, item.currencyValue);
   }
 
-  void addPlannedIrregularValue(CurrencyType currencyType, double value) {
+  void addPlannedIrregularValue(AnalyticsItem<PlannedIrregularModel> item) {
     AnalyticsUtils.addValueToCurrencyMap(
-        plannedIrregularValues, currencyType, value);
+        plannedIrregularValues, item.currencyValue);
   }
 
   void calcDelta() {
     deltaValues =
         AnalyticsUtils.subCurrencyMap(actualIncomeValues, actualExpenseValues);
-    deltaValues.forEach((key, value) {
-      double expense = actualExpenseValues[key];
-      double income = actualIncomeValues[key];
+    deltaValues.forEach((key, currencyValue) {
+      CurrencyValue expense = actualExpenseValues[key];
+      CurrencyValue income = actualIncomeValues[key];
       if (expense != null && income != null) {
-        deltaPercentDiff[key] = ((1 - expense / income) * 100).round();
-      } else if (value > 0) {
+        deltaPercentDiff[key] =
+            ((1 - expense.value / income.value) * 100).round();
+      } else if (currencyValue.value > 0) {
         deltaPercentDiff[key] = 100;
       } else {
         deltaPercentDiff[key] = -100;
@@ -91,12 +124,14 @@ class AnalyticsMonth {
         deltaValues, plannedIrregularAccount.debet);
   }
 
-  void calcIncomePercentDiff(Map<CurrencyType, double> prevMonthIncomeValues) {
-    actualIncomeValues.forEach((key, value) {
-      double prevIncome = prevMonthIncomeValues[key];
+  void calcIncomePercentDiff(
+      Map<CurrencyType, CurrencyValue> prevMonthIncomeValues) {
+    actualIncomeValues.forEach((key, currencyValue) {
+      CurrencyValue prevIncome = prevMonthIncomeValues[key];
       if (prevIncome != null) {
-        if (prevIncome > 0) {
-          incomePercentDiff[key] = ((value / prevIncome - 1) * 100).round();
+        if (prevIncome.value > 0) {
+          incomePercentDiff[key] =
+              ((currencyValue.value / prevIncome.value - 1) * 100).round();
         } else {
           incomePercentDiff[key] = 100;
         }
@@ -107,12 +142,13 @@ class AnalyticsMonth {
   }
 
   void calcExpensePercentDiff(
-      Map<CurrencyType, double> prevMonthExpenseValues) {
-    actualExpenseValues.forEach((key, value) {
-      double prevExpense = prevMonthExpenseValues[key];
+      Map<CurrencyType, CurrencyValue> prevMonthExpenseValues) {
+    actualExpenseValues.forEach((key, currencyValue) {
+      CurrencyValue prevExpense = prevMonthExpenseValues[key];
       if (prevExpense != null) {
-        if (prevExpense >= 0) {
-          expensePercentDiff[key] = ((value / prevExpense - 1) * 100).round();
+        if (prevExpense.value >= 0) {
+          expensePercentDiff[key] =
+              ((currencyValue.value / prevExpense.value - 1) * 100).round();
         } else {
           expensePercentDiff[key] = 100;
         }

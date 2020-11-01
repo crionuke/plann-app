@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
 import 'package:plann_app/components/app_values.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -28,15 +29,16 @@ class AppTexts {
     }
   }
 
-  static String formatCurrencyMap(BuildContext context,
-      Map<CurrencyType, double> currencyMap,
+  static String formatCurrencyMap(
+      BuildContext context, Map<CurrencyType, CurrencyValue> currencyMap,
       {String prefix = ""}) {
     if (currencyMap.isNotEmpty) {
       return currencyMap
-          .map((key, value) =>
-          MapEntry<CurrencyType, String>(
+          .map((key, currencyValue) => MapEntry<CurrencyType, String>(
               key,
-              AppTexts.formatCurrencyValue(context, key, value, shorten: true)))
+              AppTexts.formatCurrencyValue(
+                  context, key, currencyValue.value,
+                  shorten: true)))
           .values
           .map((value) => prefix + value)
           .join(", ");
@@ -133,9 +135,7 @@ class AppTexts {
 
     return FlutterI18n.translate(
         context, "texts." + currencyType.toString().split(".")[1] + "_value",
-        translationParams: {
-          "value": displayValue
-        });
+        translationParams: {"value": displayValue});
   }
 
   static String formatValueAsShorten(BuildContext context, num value) {
@@ -153,8 +153,7 @@ class AppTexts {
       shortenValue = value / 1000000000;
     }
 
-    return FlutterI18n.translate(
-        context, "shorten_numbers." + template,
+    return FlutterI18n.translate(context, "shorten_numbers." + template,
         translationParams: {
           "value": AppValues.prepareToDisplay(shortenValue, fixed: 1)
         });

@@ -147,18 +147,18 @@ class _IrregularMainState extends State<IrregularMainScreen>
 
       List<LogChartBar> bars = List();
       state.analytics.monthList.forEach((month) {
-        if (month.plannedIrregularAccount.valuesInDefaultCurrency.length == 0) {
+        if (month.plannedIrregularAccount.values.length == 0) {
           bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
               AppTexts.formatShortMonth(context, month.date))));
         } else {
           bars.add(LogChartBar(
               AppTexts.upFirstLetter(
                   AppTexts.formatShortMonth(context, month.date)),
-              month.plannedIrregularAccount.valuesInDefaultCurrency.entries
+              month.plannedIrregularAccount.values.entries
                   .map((e) {
                     AnalyticsItem<PlannedIrregularModel> item = e.key;
-                    return LogChartItem(
-                        colorsMap.getColor(item.model.id), e.value);
+                    return LogChartItem(colorsMap.getColor(item.model.id),
+                        e.value.valueInDefaultValue);
                   })
                   .toList()
                   .reversed
@@ -173,7 +173,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             Provider<IrregularMonthPanelBloc>(
                 create: (context) => bloc.monthPanelBloc,
                 child: IrregularMonthPanelView()),
-            LogChart(height, bars, state.analytics.monthList.currentMonthOffset,
+            LogChart(height, 60, bars, state.analytics.monthList.currentMonthOffset,
                 (context, column) {
               bloc.monthPanelBloc.setMonthByIndex(column);
             }),
