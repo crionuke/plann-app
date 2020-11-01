@@ -17,9 +17,7 @@ class PlannedIrregularItemView extends StatelessWidget {
               child: SingleChildScrollView(
                   padding: EdgeInsets.all(8),
                   child: Form(
-                    child: Column(children: <Widget>[
-                      _buildForm(context),
-                    ]),
+                    child: _buildForm(context),
                   )))
         ]));
   }
@@ -52,7 +50,7 @@ class PlannedIrregularItemView extends StatelessWidget {
     return TextFormField(
       initialValue: AppTexts.formatDate(context, state.creationDate),
       decoration: InputDecoration(
-        icon: Icon(Icons.date_range),
+//        icon: Icon(Icons.date_range),
         border: OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, "texts.creation_date") + "*",
       ),

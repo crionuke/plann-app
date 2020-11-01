@@ -15,9 +15,7 @@ class IrregularItemView extends StatelessWidget {
               child: SingleChildScrollView(
                   padding: EdgeInsets.all(8),
                   child: Form(
-                    child: Column(children: <Widget>[
-                      _buildForm(context),
-                    ]),
+                    child: _buildForm(context),
                   )))
         ]));
   }

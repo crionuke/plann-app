@@ -10,7 +10,7 @@ class AppFields {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
-        icon: Icon(Icons.account_balance_wallet),
+//        icon: Icon(Icons.account_balance_wallet),
         border: OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, labelTextKey) + "*",
         errorText:
@@ -26,7 +26,7 @@ class AppFields {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
-        icon: Icon(Icons.account_balance_wallet),
+//        icon: Icon(Icons.account_balance_wallet),
         border: OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, labelTextKey) + "*",
         errorText:
@@ -48,7 +48,7 @@ class AppFields {
       return InputDecorator(
           isEmpty: value == null,
           decoration: InputDecoration(
-            icon: Icon(Icons.account_balance),
+//            icon: Icon(Icons.account_balance),
             border: OutlineInputBorder(),
             labelText: FlutterI18n.translate(context, labelKey) + "*",
             errorText: errorKey != null
@@ -157,7 +157,7 @@ class AppFields {
     return DateTimeField(
         initialValue: initialValue,
         decoration: InputDecoration(
-          icon: Icon(Icons.date_range),
+//          icon: Icon(Icons.date_range),
           border: OutlineInputBorder(),
           labelText: FlutterI18n.translate(context, labelKey) + '*',
           errorText: errorKey != null
@@ -180,7 +180,7 @@ class AppFields {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
-        icon: Icon(Icons.comment),
+//        icon: Icon(Icons.comment),
         border: OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, labelKey),
       ),
@@ -204,7 +204,7 @@ class AppFields {
       return InputDecorator(
           isEmpty: currentValue == null,
           decoration: InputDecoration(
-            icon: icon,
+//            icon: icon,
             border: OutlineInputBorder(),
             labelText: FlutterI18n.translate(context, labelKey) + "*",
             errorText: errorKey != null

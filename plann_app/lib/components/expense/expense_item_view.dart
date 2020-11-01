@@ -17,9 +17,7 @@ class ExpenseItemView extends StatelessWidget {
               child: SingleChildScrollView(
                   padding: EdgeInsets.all(8),
                   child: Form(
-                    child: Column(children: <Widget>[
-                      _buildForm(context),
-                    ]),
+                    child: _buildForm(context),
                   )))
         ]));
   }
@@ -52,7 +50,7 @@ class ExpenseItemView extends StatelessWidget {
       autofocus: state.valueAutofocus,
       initialValue: state.value,
       decoration: InputDecoration(
-        icon: Icon(Icons.account_balance_wallet),
+//        icon: Icon(Icons.account_balance_wallet),
         border: OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, 'texts.value') + '*',
         errorText: state.valueErrorKey != null
