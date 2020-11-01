@@ -14,7 +14,7 @@ class EditIrregularScreen extends StatelessWidget {
     final EditIrregularBloc bloc = Provider.of<EditIrregularBloc>(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "texts.irregular_short")),
+          title: Text(FlutterI18n.translate(context, "texts.irregular_one")),
           elevation: 0,
           flexibleSpace: AppViews.buildAppGradientContainer(context),
           actions: <Widget>[
