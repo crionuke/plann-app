@@ -15,7 +15,7 @@ class EditExpenseScreen extends StatelessWidget {
     final EditExpenseBloc bloc = Provider.of<EditExpenseBloc>(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "texts.regular_short")),
+          title: Text(FlutterI18n.translate(context, "texts.expense")),
           elevation: 0,
           flexibleSpace: AppViews.buildAppGradientContainer(context),
           actions: <Widget>[
