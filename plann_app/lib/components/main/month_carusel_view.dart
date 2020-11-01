@@ -232,7 +232,10 @@ class MonthCaruselView extends StatelessWidget {
             Expanded(
                 child:
                     Text(FlutterI18n.translate(context, "texts.delta") + ":")),
-            Text(FlutterI18n.translate(context, "texts.delta") + ":")
+            Text(
+                _preparePercentsWithCurrencyMap(context, currency,
+                    month.deltaPercentDiff, month.deltaValues),
+                textAlign: TextAlign.left)
           ],
         ),
       ),
