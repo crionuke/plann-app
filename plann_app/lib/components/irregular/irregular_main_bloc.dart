@@ -37,6 +37,7 @@ class IrregularMainBloc {
     List<IrregularModel> fact = await dbService.getIrregularList();
     List<PlannedIrregularModel> planned =
         await dbService.getPlannedIrregularList();
+    planned.sort((p1, p2) => p2.date.compareTo(p1.date));
     if (!_controller.isClosed) {
       monthPanelBloc.setCurrentMonth();
       _controller.sink.add(IrregularMainViewState.loaded(
