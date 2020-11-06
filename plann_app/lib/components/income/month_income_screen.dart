@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
-import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -42,9 +42,16 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
     String monthDate = AppTexts.upFirstLetter(
         AppTexts.formatMonthYear(context, bloc.getMonthDate()));
     return AppBar(
-      title: Text(
-        FlutterI18n.translate(context, "texts.income_s") + "\n" + monthDate,
-        textAlign: TextAlign.center,
+      title: Column(
+        children: [
+          Text(FlutterI18n.translate(context, "texts.income_s"),
+              textAlign: TextAlign.center),
+          Text(
+            monthDate,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12),
+          ),
+        ],
       ),
       centerTitle: true,
       elevation: 0,
@@ -127,7 +134,6 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
 
   Widget _buildIncomeList(BuildContext context, MonthIncomeBloc bloc,
       MonthIncomeViewState state, ColorsMap<IncomeCategoryType> colorsMap) {
-
     // Make list
     return ListView.separated(
         separatorBuilder: (context, index) {
@@ -144,11 +150,16 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
           String currencyMapText =
               AppTexts.formatCurrencyMap(context, currencyMap);
 
+          String percentsPerCatetgory = AppValues.prepareToDisplay(
+              state.actualIncomePercentsPerCategory[category] * 100,
+              fixed: 1);
+
           return ListTile(
-            title: Text(categoryText),
-            subtitle: Text(currencyMapText),
-            leading: AppViews.buildRoundedBox(colorsMap.getColor(category)),
-          );
+              title: Text(categoryText),
+              subtitle: Text(currencyMapText),
+              leading: AppViews.buildRoundedBox(colorsMap.getColor(category)),
+              trailing: Text(
+                  (percentsPerCatetgory + "%")));
         });
   }
 }
