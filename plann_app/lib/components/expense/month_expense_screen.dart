@@ -4,8 +4,6 @@ import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
-import 'package:plann_app/components/income/month_income_bloc.dart';
-import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
@@ -87,8 +85,8 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
     ]);
   }
 
-  Widget _buildMonthExpenseView(
-      BuildContext context, MonthExpenseBloc bloc, MonthExpenseViewState state) {
+  Widget _buildMonthExpenseView(BuildContext context, MonthExpenseBloc bloc,
+      MonthExpenseViewState state) {
     ColorsMap<ExpenseCategoryType> colorsMap =
         ColorsMap.fromValues(ExpenseCategoryType.values);
 
@@ -128,21 +126,14 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
 
   Widget _buildExpenseList(BuildContext context, MonthExpenseBloc bloc,
       MonthExpenseViewState state, ColorsMap<ExpenseCategoryType> colorsMap) {
-    // Sort all categories
-    List<ExpenseCategoryType> categories = List();
-    categories.addAll(state.actualExpensePerCategory.keys);
-    categories.sort((c1, c2) {
-      return c1.toString().compareTo(c2.toString());
-    });
-
     // Make list
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
         },
-        itemCount: categories.length,
+        itemCount: state.sortedCategories.length,
         itemBuilder: (context, index) {
-          ExpenseCategoryType category = categories[index];
+          ExpenseCategoryType category = state.sortedCategories[index];
           Map<CurrencyType, CurrencyValue> currencyMap =
               state.actualExpensePerCategory[category];
 

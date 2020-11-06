@@ -127,21 +127,15 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
 
   Widget _buildIncomeList(BuildContext context, MonthIncomeBloc bloc,
       MonthIncomeViewState state, ColorsMap<IncomeCategoryType> colorsMap) {
-    // Sort all categories
-    List<IncomeCategoryType> categories = List();
-    categories.addAll(state.actualIncomePerCategory.keys);
-    categories.sort((c1, c2) {
-      return c1.toString().compareTo(c2.toString());
-    });
 
     // Make list
     return ListView.separated(
         separatorBuilder: (context, index) {
           return Divider(height: 1);
         },
-        itemCount: categories.length,
+        itemCount: state.sortedCategories.length,
         itemBuilder: (context, index) {
-          IncomeCategoryType category = categories[index];
+          IncomeCategoryType category = state.sortedCategories[index];
           Map<CurrencyType, CurrencyValue> currencyMap =
               state.actualIncomePerCategory[category];
 

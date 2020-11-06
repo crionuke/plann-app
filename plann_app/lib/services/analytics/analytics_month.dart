@@ -21,10 +21,14 @@ class AnalyticsMonth {
   Map<CurrencyType, CurrencyValue> actualIncomeValues;
   Map<IncomeCategoryType, Map<CurrencyType, CurrencyValue>>
       actualIncomePerCategory;
+  Map<IncomeCategoryType, double> actualIncomeTotalPerCategory;
+  Map<IncomeCategoryType, double> actualIncomePercentsPerCategory;
   Map<CurrencyType, CurrencyValue> plannedIncomeValues;
   Map<CurrencyType, CurrencyValue> actualExpenseValues;
   Map<ExpenseCategoryType, Map<CurrencyType, CurrencyValue>>
       actualExpensePerCategory;
+  Map<ExpenseCategoryType, double> actualExpenseTotalPerCategory;
+  Map<ExpenseCategoryType, double> actualExpensePercentsPerCategory;
   Map<CurrencyType, CurrencyValue> plannedExpenseValues;
   Map<CurrencyType, CurrencyValue> deltaValues;
   Map<CurrencyType, CurrencyValue> actualIrregularValues;
@@ -41,9 +45,13 @@ class AnalyticsMonth {
       : date = DateTime(year, month) {
     actualIncomeValues = Map();
     actualIncomePerCategory = Map();
+    actualIncomeTotalPerCategory = Map();
+    actualIncomePercentsPerCategory = Map();
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     actualExpensePerCategory = Map();
+    actualExpenseTotalPerCategory = Map();
+    actualExpensePercentsPerCategory = Map();
     plannedExpenseValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
@@ -63,9 +71,13 @@ class AnalyticsMonth {
     if (actualIncomePerCategory[category] == null) {
       actualIncomePerCategory[category] =
           AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+      actualIncomeTotalPerCategory[category] =
+          item.currencyValue.valueInDefaultValue;
     } else {
       AnalyticsUtils.addValueToCurrencyMap(
           actualIncomePerCategory[category], item.currencyValue);
+      actualIncomeTotalPerCategory[category] +=
+          item.currencyValue.valueInDefaultValue;
     }
   }
 
@@ -81,9 +93,13 @@ class AnalyticsMonth {
     if (actualExpensePerCategory[category] == null) {
       actualExpensePerCategory[category] =
           AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+      actualExpenseTotalPerCategory[category] =
+          item.currencyValue.valueInDefaultValue;
     } else {
       AnalyticsUtils.addValueToCurrencyMap(
           actualExpensePerCategory[category], item.currencyValue);
+      actualExpenseTotalPerCategory[category] +=
+          item.currencyValue.valueInDefaultValue;
     }
   }
 
@@ -122,6 +138,23 @@ class AnalyticsMonth {
   void calcBalance() {
     balanceValues = AnalyticsUtils.subCurrencyMap(
         deltaValues, plannedIrregularAccount.debet);
+  }
+
+  void calcPercents() {
+    double totalIncomeInDefaultValue = 0;
+    actualIncomeTotalPerCategory.values
+        .forEach((value) => totalIncomeInDefaultValue += value);
+    actualIncomeTotalPerCategory.keys.forEach((category) =>
+        actualIncomePercentsPerCategory[category] =
+            actualIncomeTotalPerCategory[category] / totalIncomeInDefaultValue);
+
+    double totalExpenseInDefaultValue = 0;
+    actualExpenseTotalPerCategory.values
+        .forEach((value) => totalExpenseInDefaultValue += value);
+    actualExpenseTotalPerCategory.keys.forEach((category) =>
+        actualExpensePercentsPerCategory[category] =
+            actualExpenseTotalPerCategory[category] /
+                totalExpenseInDefaultValue);
   }
 
   void calcIncomePercentDiff(
