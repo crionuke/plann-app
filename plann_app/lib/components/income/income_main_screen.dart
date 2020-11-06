@@ -148,7 +148,12 @@ class _IncomeMainState extends State<IncomeMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_income")),
+        child: Container(
+            width: 300,
+            child: Text(
+              FlutterI18n.translate(context, "texts.no_income"),
+              textAlign: TextAlign.center,
+            )),
       ))
     ]);
   }
@@ -157,7 +162,12 @@ class _IncomeMainState extends State<IncomeMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_planned_income")),
+        child: Container(
+            width: 300,
+            child: Text(
+              FlutterI18n.translate(context, "texts.no_planned_income"),
+              textAlign: TextAlign.center,
+            )),
       ))
     ]);
   }

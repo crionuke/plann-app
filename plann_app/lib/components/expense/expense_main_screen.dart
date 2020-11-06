@@ -162,7 +162,12 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_expense")),
+        child: Container(
+            width: 300,
+            child: Text(
+              FlutterI18n.translate(context, "texts.no_expense"),
+              textAlign: TextAlign.center,
+            )),
       ))
     ]);
   }
@@ -171,8 +176,12 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_planned_expense")),
-      ))
+              child: Container(
+                  width: 300,
+                  child: Text(
+                    FlutterI18n.translate(context, "texts.no_planned_expense"),
+                    textAlign: TextAlign.center,
+                  ))))
     ]);
   }
 

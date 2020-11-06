@@ -173,7 +173,8 @@ class _IrregularMainState extends State<IrregularMainScreen>
             Provider<IrregularMonthPanelBloc>(
                 create: (context) => bloc.monthPanelBloc,
                 child: IrregularMonthPanelView()),
-            LogChart(height, 60, bars, state.analytics.monthList.currentMonthOffset,
+            LogChart(
+                height, 60, bars, state.analytics.monthList.currentMonthOffset,
                 (context, column) {
               bloc.monthPanelBloc.setMonthByIndex(column);
             }),
@@ -190,7 +191,12 @@ class _IrregularMainState extends State<IrregularMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_expense")),
+        child: Container(
+            width: 300,
+            child: Text(
+              FlutterI18n.translate(context, "texts.no_irregular"),
+              textAlign: TextAlign.center,
+            )),
       ))
     ]);
   }
@@ -199,8 +205,12 @@ class _IrregularMainState extends State<IrregularMainScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child:
-            Text(FlutterI18n.translate(context, "texts.no_irregular_planned")),
+        child: Container(
+            width: 300,
+            child: Text(
+              FlutterI18n.translate(context, "texts.no_irregular_planned"),
+              textAlign: TextAlign.center,
+            )),
       ))
     ]);
   }
