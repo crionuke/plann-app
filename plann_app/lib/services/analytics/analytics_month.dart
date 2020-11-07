@@ -23,12 +23,16 @@ class AnalyticsMonth {
       actualIncomePerCategory;
   Map<IncomeCategoryType, double> actualIncomeTotalPerCategory;
   Map<IncomeCategoryType, double> actualIncomePercentsPerCategory;
+  Map<IncomeCategoryType, List<AnalyticsItem<IncomeModel>>>
+      actualIncomeItemsPerCategory;
   Map<CurrencyType, CurrencyValue> plannedIncomeValues;
   Map<CurrencyType, CurrencyValue> actualExpenseValues;
   Map<ExpenseCategoryType, Map<CurrencyType, CurrencyValue>>
       actualExpensePerCategory;
   Map<ExpenseCategoryType, double> actualExpenseTotalPerCategory;
   Map<ExpenseCategoryType, double> actualExpensePercentsPerCategory;
+  Map<ExpenseCategoryType, List<AnalyticsItem<ExpenseModel>>>
+      actualExpenseItemsPerCategory;
   Map<CurrencyType, CurrencyValue> plannedExpenseValues;
   Map<CurrencyType, CurrencyValue> deltaValues;
   Map<CurrencyType, CurrencyValue> actualIrregularValues;
@@ -47,11 +51,13 @@ class AnalyticsMonth {
     actualIncomePerCategory = Map();
     actualIncomeTotalPerCategory = Map();
     actualIncomePercentsPerCategory = Map();
+    actualIncomeItemsPerCategory = Map();
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     actualExpensePerCategory = Map();
     actualExpenseTotalPerCategory = Map();
     actualExpensePercentsPerCategory = Map();
+    actualExpenseItemsPerCategory = Map();
     plannedExpenseValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
@@ -73,12 +79,14 @@ class AnalyticsMonth {
           AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
       actualIncomeTotalPerCategory[category] =
           item.currencyValue.valueInDefaultValue;
+      actualIncomeItemsPerCategory[category] = List();
     } else {
       AnalyticsUtils.addValueToCurrencyMap(
           actualIncomePerCategory[category], item.currencyValue);
       actualIncomeTotalPerCategory[category] +=
           item.currencyValue.valueInDefaultValue;
     }
+    actualIncomeItemsPerCategory[category].add(item);
   }
 
   void addPlannedIncomeValue(AnalyticsItem<PlannedIncomeModel> item) {
@@ -95,12 +103,14 @@ class AnalyticsMonth {
           AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
       actualExpenseTotalPerCategory[category] =
           item.currencyValue.valueInDefaultValue;
+      actualExpenseItemsPerCategory[category] = List();
     } else {
       AnalyticsUtils.addValueToCurrencyMap(
           actualExpensePerCategory[category], item.currencyValue);
       actualExpenseTotalPerCategory[category] +=
           item.currencyValue.valueInDefaultValue;
     }
+    actualExpenseItemsPerCategory[category].add(item);
   }
 
   void addPlannedExpenseValue(AnalyticsItem<PlannedExpenseModel> item) {

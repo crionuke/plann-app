@@ -17,6 +17,8 @@ import 'package:plann_app/components/expense/edit_planned_expense_bloc.dart';
 import 'package:plann_app/components/expense/edit_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_bloc.dart';
 import 'package:plann_app/components/expense/expense_main_screen.dart';
+import 'package:plann_app/components/expense/month_category_expense_bloc.dart';
+import 'package:plann_app/components/expense/month_category_expense_screen.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_expense_screen.dart';
 import 'package:plann_app/components/income/add_income_bloc.dart';
@@ -29,6 +31,8 @@ import 'package:plann_app/components/income/edit_planned_income_bloc.dart';
 import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
 import 'package:plann_app/components/income/income_main_screen.dart';
+import 'package:plann_app/components/income/month_category_income_bloc.dart';
+import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/irregular/add_irregular_bloc.dart';
 import 'package:plann_app/components/irregular/add_irregular_screen.dart';
 import 'package:plann_app/components/irregular/add_planned_irregular_bloc.dart';
@@ -164,6 +168,8 @@ class App extends StatelessWidget {
               return _buildEditPlannedIncomePageRoute(route.arguments);
             case MonthIncomeScreen.routeName:
               return _buildMonthIncomePageRoute(route.arguments);
+            case MonthCategoryIncomeScreen.routeName:
+              return _buildMonthCategoryIncomePageRoute(route.arguments);
 
             case ExpenseMainScreen.routeName:
               return _buildExpenseListPageRoute();
@@ -177,6 +183,8 @@ class App extends StatelessWidget {
               return _buildEditPlannedExpensePageRoute(route.arguments);
             case MonthExpenseScreen.routeName:
               return _buildMonthExpensePageRoute(route.arguments);
+            case MonthCategoryExpenseScreen.routeName:
+              return _buildMonthCategoryExpensePageRoute(route.arguments);
 
             case IrregularMainScreen.routeName:
               return _buildIrregularMainScreenPageRoute();
@@ -313,6 +321,20 @@ class App extends StatelessWidget {
     });
   }
 
+  MaterialPageRoute _buildMonthCategoryIncomePageRoute(
+      MonthCategoryIncomeArguments arguments) {
+    return MaterialPageRoute(builder: (context) {
+      return Provider<MonthCategoryIncomeBloc>(
+          create: (context) => MonthCategoryIncomeBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false),
+              arguments.month,
+              arguments.category),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: MonthCategoryIncomeScreen());
+    });
+  }
+
   // Expense routes
 
   MaterialPageRoute _buildExpenseListPageRoute() {
@@ -386,6 +408,20 @@ class App extends StatelessWidget {
               month),
           dispose: (context, bloc) => bloc.dispose(),
           child: MonthExpenseScreen());
+    });
+  }
+
+  MaterialPageRoute _buildMonthCategoryExpensePageRoute(
+      MonthCategoryExpenseArguments arguments) {
+    return MaterialPageRoute(builder: (context) {
+      return Provider<MonthCategoryExpenseBloc>(
+          create: (context) => MonthCategoryExpenseBloc(
+              Provider.of<DbService>(context, listen: false),
+              Provider.of<AnalyticsService>(context, listen: false),
+              arguments.month,
+              arguments.category),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: MonthCategoryExpenseScreen());
     });
   }
 

@@ -41,6 +41,10 @@ class MonthExpenseBloc {
     }
   }
 
+  AnalyticsMonth getMonth() {
+    return month;
+  }
+
   DateTime getMonthDate() {
     return month.date;
   }

@@ -4,6 +4,8 @@ import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/app_views.dart';
+import 'package:plann_app/components/income/month_category_income_bloc.dart';
+import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
@@ -155,11 +157,22 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
               fixed: 1);
 
           return ListTile(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, MonthCategoryIncomeScreen.routeName,
+                    arguments: MonthCategoryIncomeArguments(
+                        bloc.getMonth(), category));
+              },
               title: Text(categoryText),
               subtitle: Text(currencyMapText),
               leading: AppViews.buildRoundedBox(colorsMap.getColor(category)),
-              trailing: Text(
-                  (percentsPerCatetgory + "%")));
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(percentsPerCatetgory + "%"),
+                  Icon(Icons.navigate_next)
+                ],
+              ));
         });
   }
 }
