@@ -15,6 +15,7 @@ enum ExpenseCategoryType {
   charity,
   credits,
   debts,
+  transport
 }
 
 const EXPENSE_CATEGORY_FROM_DB_MAPPING = {
@@ -34,6 +35,7 @@ const EXPENSE_CATEGORY_FROM_DB_MAPPING = {
   "charity": ExpenseCategoryType.charity,
   "credits": ExpenseCategoryType.credits,
   "debts": ExpenseCategoryType.debts,
+  "transport": ExpenseCategoryType.transport,
 };
 
 const EXPENSE_CATEGORY_TO_DB_MAPPING = {
@@ -53,4 +55,5 @@ const EXPENSE_CATEGORY_TO_DB_MAPPING = {
   ExpenseCategoryType.charity: "charity",
   ExpenseCategoryType.credits: "credits",
   ExpenseCategoryType.debts: "debts",
+  ExpenseCategoryType.transport: "transport",
 };
