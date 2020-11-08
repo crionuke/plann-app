@@ -40,11 +40,15 @@ class _MonthCategoryIncomeState extends State<MonthCategoryIncomeScreen>
   AppBar _buildAppBar(BuildContext context, MonthCategoryIncomeBloc bloc) {
     String monthDate = AppTexts.upFirstLetter(
         AppTexts.formatMonthYear(context, bloc.getMonthDate()));
+    String headerText = FlutterI18n.translate(context, "texts.income_s") +
+        " (" +
+        AppTexts.formatCurrencyType(bloc.currency) +
+        ")";
+
     return AppBar(
       title: Column(
         children: [
-          Text(FlutterI18n.translate(context, "texts.income_s"),
-              textAlign: TextAlign.center),
+          Text(headerText, textAlign: TextAlign.center),
           Text(
             AppTexts.formatIncomeCategoryType(context, bloc.getCategory()) +
                 "/" +

@@ -7,8 +7,6 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/month_category_income_bloc.dart';
 import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
-import 'package:plann_app/services/currency/currency_service.dart';
-import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:provider/provider.dart';
 
@@ -42,12 +40,16 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
 
   AppBar _buildAppBar(BuildContext context, MonthIncomeBloc bloc) {
     String monthDate = AppTexts.upFirstLetter(
-        AppTexts.formatMonthYear(context, bloc.getMonthDate()));
+        AppTexts.formatMonthYear(context, bloc.month.date));
+    String headerText = FlutterI18n.translate(context, "texts.income_s") +
+        " (" +
+        AppTexts.formatCurrencyType(bloc.currency) +
+        ")";
+
     return AppBar(
       title: Column(
         children: [
-          Text(FlutterI18n.translate(context, "texts.income_s"),
-              textAlign: TextAlign.center),
+          Text(headerText, textAlign: TextAlign.center),
           Text(
             monthDate,
             textAlign: TextAlign.center,
@@ -79,7 +81,7 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
 
   Widget _buildListView(
       BuildContext context, MonthIncomeBloc bloc, MonthIncomeViewState state) {
-    if (state.actualIncomePerCategory.isEmpty) {
+    if (state.values.isEmpty) {
       return _buildNoIncome(context);
     } else {
       return _buildMonthIncomeView(context, bloc, state);
@@ -100,34 +102,10 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
     ColorsMap<IncomeCategoryType> colorsMap =
         ColorsMap.fromValues(IncomeCategoryType.values);
 
-//    List<LogChartBar> bars = List();
-//    state.actualIncomePerCategory.keys.forEach((category) {
-//      if (state.actualIncomePerCategory[category].isEmpty) {
-//        bars.add(LogChartBar.empty(""));
-//      } else {
-//        List<LogChartItem> items = List();
-//        Map<CurrencyType, CurrencyValue> currencyMap =
-//            state.actualIncomePerCategory[category];
-//
-//        currencyMap.keys.forEach((currency) => items.add(LogChartItem(
-//            colorsMap.getColor(category),
-//            currencyMap[currency].valueInDefaultValue)));
-//
-//        if (items.isEmpty) {
-//          bars.add(LogChartBar.empty(""));
-//        } else {
-//          bars.add(LogChartBar("", items));
-//        }
-//      }
-//    });
-//
-//    double height = 120;
-
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Column(
         children: [
-//          LogChart(height, 30, bars, 1, (context, column) {}),
           Expanded(child: _buildIncomeList(context, bloc, state, colorsMap)),
         ],
       ))
@@ -144,27 +122,25 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
         itemCount: state.sortedCategories.length,
         itemBuilder: (context, index) {
           IncomeCategoryType category = state.sortedCategories[index];
-          Map<CurrencyType, CurrencyValue> currencyMap =
-              state.actualIncomePerCategory[category];
 
           String categoryText =
               AppTexts.formatIncomeCategoryType(context, category);
-          String currencyMapText =
-              AppTexts.formatCurrencyMap(context, currencyMap);
+          String valueText = AppTexts.formatCurrencyValue(
+              context, bloc.currency, state.values[category].value,
+              shorten: true);
 
-          String percentsPerCatetgory = AppValues.prepareToDisplay(
-              state.actualIncomePercentsPerCategory[category] * 100,
-              fixed: 1);
+          String percentsPerCatetgory =
+              AppValues.prepareToDisplay(state.percents[category], fixed: 1);
 
           return ListTile(
               onTap: () {
                 Navigator.pushNamed(
                     context, MonthCategoryIncomeScreen.routeName,
                     arguments: MonthCategoryIncomeArguments(
-                        bloc.getMonth(), category));
+                        bloc.currency, bloc.month, category));
               },
               title: Text(categoryText),
-              subtitle: Text(currencyMapText),
+              subtitle: Text(valueText),
               leading: AppViews.buildRoundedBox(colorsMap.getColor(category)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,

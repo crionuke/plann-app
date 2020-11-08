@@ -52,7 +52,6 @@ import 'package:plann_app/components/subscriptions/block_bloc.dart';
 import 'package:plann_app/components/subscriptions/block_screen.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_screen.dart';
-import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -309,13 +308,14 @@ class App extends StatelessWidget {
     });
   }
 
-  MaterialPageRoute _buildMonthIncomePageRoute(AnalyticsMonth month) {
+  MaterialPageRoute _buildMonthIncomePageRoute(MonthIncomeArguments arguments) {
     return MaterialPageRoute(builder: (context) {
       return Provider<MonthIncomeBloc>(
           create: (context) => MonthIncomeBloc(
               Provider.of<DbService>(context, listen: false),
               Provider.of<AnalyticsService>(context, listen: false),
-              month),
+              arguments.currency,
+              arguments.month),
           dispose: (context, bloc) => bloc.dispose(),
           child: MonthIncomeScreen());
     });
@@ -328,6 +328,7 @@ class App extends StatelessWidget {
           create: (context) => MonthCategoryIncomeBloc(
               Provider.of<DbService>(context, listen: false),
               Provider.of<AnalyticsService>(context, listen: false),
+              arguments.currency,
               arguments.month,
               arguments.category),
           dispose: (context, bloc) => bloc.dispose(),
@@ -399,13 +400,15 @@ class App extends StatelessWidget {
     });
   }
 
-  MaterialPageRoute _buildMonthExpensePageRoute(AnalyticsMonth month) {
+  MaterialPageRoute _buildMonthExpensePageRoute(
+      MonthExpenseArguments arguments) {
     return MaterialPageRoute(builder: (context) {
       return Provider<MonthExpenseBloc>(
           create: (context) => MonthExpenseBloc(
               Provider.of<DbService>(context, listen: false),
               Provider.of<AnalyticsService>(context, listen: false),
-              month),
+              arguments.currency,
+              arguments.month),
           dispose: (context, bloc) => bloc.dispose(),
           child: MonthExpenseScreen());
     });
@@ -418,6 +421,7 @@ class App extends StatelessWidget {
           create: (context) => MonthCategoryExpenseBloc(
               Provider.of<DbService>(context, listen: false),
               Provider.of<AnalyticsService>(context, listen: false),
+              arguments.currency,
               arguments.month,
               arguments.category),
           dispose: (context, bloc) => bloc.dispose(),

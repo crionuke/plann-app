@@ -14,9 +14,11 @@ class MonthIncomeBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final CurrencyType currency;
   final AnalyticsMonth month;
 
-  MonthIncomeBloc(this.dbService, this.analyticsService, this.month);
+  MonthIncomeBloc(
+      this.dbService, this.analyticsService, this.currency, this.month);
 
   void dispose() {
     _controller.close();
@@ -25,45 +27,52 @@ class MonthIncomeBloc {
   Future<void> requestState() async {
     _controller.sink.add(MonthIncomeViewState.loading());
     if (!_controller.isClosed) {
-      // Sort all categories
-      Map<IncomeCategoryType, double> totalPerCategory =
-          month.actualIncomePercentsPerCategory;
+      // Filter by currency
+      Map<IncomeCategoryType, CurrencyValue> values = Map();
+      month.actualIncomePerCategory.forEach((category, currencyMap) {
+        if (currencyMap.containsKey(currency)) {
+          values[category] = currencyMap[currency];
+        }
+      });
+      // Sort categories by values
       List<IncomeCategoryType> sortedCategories = List();
-      sortedCategories.addAll(totalPerCategory.keys);
+      sortedCategories.addAll(values.keys);
       sortedCategories.sort((c1, c2) {
-        return totalPerCategory[c2].compareTo(totalPerCategory[c1]);
+        return values[c2].value.compareTo(values[c1].value);
+      });
+      // Calc percents
+      Map<IncomeCategoryType, double> percents = Map();
+      double total = 0;
+      values.values.forEach((currencyValue) => total += currencyValue.value);
+      values.forEach((category, currencyValue) {
+        percents[category] = currencyValue.value / total * 100;
       });
 
-      _controller.sink.add(MonthIncomeViewState.loaded(
-          sortedCategories,
-          month.actualIncomePerCategory,
-          month.actualIncomePercentsPerCategory));
+      _controller.sink
+          .add(MonthIncomeViewState.loaded(sortedCategories, values, percents));
     }
   }
+}
 
-  AnalyticsMonth getMonth() {
-    return month;
-  }
+class MonthIncomeArguments {
+  final CurrencyType currency;
+  final AnalyticsMonth month;
 
-  DateTime getMonthDate() {
-    return month.date;
-  }
+  MonthIncomeArguments(this.currency, this.month);
 }
 
 class MonthIncomeViewState {
   final bool loaded;
   final List<IncomeCategoryType> sortedCategories;
-  final Map<IncomeCategoryType, Map<CurrencyType, CurrencyValue>>
-      actualIncomePerCategory;
-  final Map<IncomeCategoryType, double> actualIncomePercentsPerCategory;
+  final Map<IncomeCategoryType, CurrencyValue> values;
+  final Map<IncomeCategoryType, double> percents;
 
   MonthIncomeViewState.loading()
       : loaded = false,
         sortedCategories = null,
-        actualIncomePerCategory = null,
-        actualIncomePercentsPerCategory = null;
+        values = null,
+        percents = null;
 
-  MonthIncomeViewState.loaded(this.sortedCategories,
-      this.actualIncomePerCategory, this.actualIncomePercentsPerCategory)
+  MonthIncomeViewState.loaded(this.sortedCategories, this.values, this.percents)
       : loaded = true;
 }

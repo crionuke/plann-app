@@ -14,9 +14,11 @@ class MonthExpenseBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final CurrencyType currency;
   final AnalyticsMonth month;
 
-  MonthExpenseBloc(this.dbService, this.analyticsService, this.month);
+  MonthExpenseBloc(
+      this.dbService, this.analyticsService, this.currency, this.month);
 
   void dispose() {
     _controller.close();
@@ -25,45 +27,53 @@ class MonthExpenseBloc {
   Future<void> requestState() async {
     _controller.sink.add(MonthExpenseViewState.loading());
     if (!_controller.isClosed) {
-      // Sort all categories
-      Map<ExpenseCategoryType, double> totalPerCategory =
-          month.actualExpenseTotalPerCategory;
+      // Filter by currency
+      Map<ExpenseCategoryType, CurrencyValue> values = Map();
+      month.actualExpensePerCategory.forEach((category, currencyMap) {
+        if (currencyMap.containsKey(currency)) {
+          values[category] = currencyMap[currency];
+        }
+      });
+      // Sort categories by values
       List<ExpenseCategoryType> sortedCategories = List();
-      sortedCategories.addAll(totalPerCategory.keys);
+      sortedCategories.addAll(values.keys);
       sortedCategories.sort((c1, c2) {
-        return totalPerCategory[c2].compareTo(totalPerCategory[c1]);
+        return values[c2].value.compareTo(values[c1].value);
+      });
+      // Calc percents
+      Map<ExpenseCategoryType, double> percents = Map();
+      double total = 0;
+      values.values.forEach((currencyValue) => total += currencyValue.value);
+      values.forEach((category, currencyValue) {
+        percents[category] = currencyValue.value / total * 100;
       });
 
-      _controller.sink.add(MonthExpenseViewState.loaded(
-          sortedCategories,
-          month.actualExpensePerCategory,
-          month.actualExpensePercentsPerCategory));
+      _controller.sink.add(
+          MonthExpenseViewState.loaded(sortedCategories, values, percents));
     }
   }
+}
 
-  AnalyticsMonth getMonth() {
-    return month;
-  }
+class MonthExpenseArguments {
+  final CurrencyType currency;
+  final AnalyticsMonth month;
 
-  DateTime getMonthDate() {
-    return month.date;
-  }
+  MonthExpenseArguments(this.currency, this.month);
 }
 
 class MonthExpenseViewState {
   final bool loaded;
   final List<ExpenseCategoryType> sortedCategories;
-  final Map<ExpenseCategoryType, Map<CurrencyType, CurrencyValue>>
-      actualExpensePerCategory;
-  final Map<ExpenseCategoryType, double> actualExpensePercentsPerCategory;
+  final Map<ExpenseCategoryType, CurrencyValue> values;
+  final Map<ExpenseCategoryType, double> percents;
 
   MonthExpenseViewState.loading()
       : loaded = false,
         sortedCategories = null,
-        actualExpensePerCategory = null,
-        actualExpensePercentsPerCategory = null;
+        values = null,
+        percents = null;
 
-  MonthExpenseViewState.loaded(this.sortedCategories,
-      this.actualExpensePerCategory, this.actualExpensePercentsPerCategory)
+  MonthExpenseViewState.loaded(
+      this.sortedCategories, this.values, this.percents)
       : loaded = true;
 }

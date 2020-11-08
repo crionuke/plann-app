@@ -198,8 +198,6 @@ class AnalyticsMonthList {
       month.calcDelta();
       // Balance map
       month.calcBalance();
-      // Percents map
-      month.calcPercents();
     });
   }
 

@@ -40,11 +40,14 @@ class _MonthCategoryExpenseState extends State<MonthCategoryExpenseScreen>
   AppBar _buildAppBar(BuildContext context, MonthCategoryExpenseBloc bloc) {
     String monthDate = AppTexts.upFirstLetter(
         AppTexts.formatMonthYear(context, bloc.getMonthDate()));
+    String headerText = FlutterI18n.translate(context, "texts.regular") +
+        " (" +
+        AppTexts.formatCurrencyType(bloc.currency) +
+        ")";
     return AppBar(
       title: Column(
         children: [
-          Text(FlutterI18n.translate(context, "texts.regular"),
-              textAlign: TextAlign.center),
+          Text(headerText, textAlign: TextAlign.center),
           Text(
             AppTexts.formatExpenseCategoryType(context, bloc.getCategory()) +
                 "/" +

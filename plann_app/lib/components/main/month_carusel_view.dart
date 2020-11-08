@@ -3,7 +3,9 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/expense/month_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_expense_screen.dart';
+import 'package:plann_app/components/income/month_income_bloc.dart';
 import 'package:plann_app/components/income/month_income_screen.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
@@ -125,12 +127,14 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildIncomeTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
-    bool next = month.actualIncomePerCategory.isNotEmpty;
+    bool next = false;
+    month.actualIncomePerCategory.values
+        .forEach((currencyMap) => next |= currencyMap.containsKey(currency));
     return InkWell(
       onTap: () {
         if (next) {
           Navigator.pushNamed(context, MonthIncomeScreen.routeName,
-              arguments: month);
+              arguments: MonthIncomeArguments(currency, month));
         }
       },
       child: Container(
@@ -157,12 +161,14 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildExpenseTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
-    bool next = month.actualExpensePerCategory.isNotEmpty;
+    bool next = false;
+    month.actualExpensePerCategory.values
+        .forEach((currencyMap) => next |= currencyMap.containsKey(currency));
     return InkWell(
       onTap: () {
         if (next) {
           Navigator.pushNamed(context, MonthExpenseScreen.routeName,
-              arguments: month);
+              arguments: MonthExpenseArguments(currency, month));
         }
       },
       child: Container(
@@ -245,7 +251,10 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildBudgetIrregularTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
-    bool next = month.plannedIrregularAccount.debet.isNotEmpty;
+    bool next = false;
+    month.plannedIrregularAccount.values.values.forEach(
+        (currencyValue) => next |= (currencyValue.currency == currency));
+
     return InkWell(
       onTap: () {
         if (next) {

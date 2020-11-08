@@ -21,15 +21,12 @@ class AnalyticsMonth {
   Map<CurrencyType, CurrencyValue> actualIncomeValues;
   Map<IncomeCategoryType, Map<CurrencyType, CurrencyValue>>
       actualIncomePerCategory;
-  Map<IncomeCategoryType, double> actualIncomeTotalPerCategory;
-  Map<IncomeCategoryType, double> actualIncomePercentsPerCategory;
   Map<IncomeCategoryType, List<AnalyticsItem<IncomeModel>>>
       actualIncomeItemsPerCategory;
   Map<CurrencyType, CurrencyValue> plannedIncomeValues;
   Map<CurrencyType, CurrencyValue> actualExpenseValues;
   Map<ExpenseCategoryType, Map<CurrencyType, CurrencyValue>>
       actualExpensePerCategory;
-  Map<ExpenseCategoryType, double> actualExpenseTotalPerCategory;
   Map<ExpenseCategoryType, double> actualExpensePercentsPerCategory;
   Map<ExpenseCategoryType, List<AnalyticsItem<ExpenseModel>>>
       actualExpenseItemsPerCategory;
@@ -49,14 +46,10 @@ class AnalyticsMonth {
       : date = DateTime(year, month) {
     actualIncomeValues = Map();
     actualIncomePerCategory = Map();
-    actualIncomeTotalPerCategory = Map();
-    actualIncomePercentsPerCategory = Map();
     actualIncomeItemsPerCategory = Map();
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     actualExpensePerCategory = Map();
-    actualExpenseTotalPerCategory = Map();
-    actualExpensePercentsPerCategory = Map();
     actualExpenseItemsPerCategory = Map();
     plannedExpenseValues = Map();
     actualIrregularValues = Map();
@@ -71,20 +64,19 @@ class AnalyticsMonth {
 
   void addActualIncomeValue(AnalyticsItem<IncomeModel> item) {
     IncomeCategoryType category = item.model.category;
-
+    // Calc total income per category
     AnalyticsUtils.addValueToCurrencyMap(
         actualIncomeValues, item.currencyValue);
     if (actualIncomePerCategory[category] == null) {
       actualIncomePerCategory[category] =
           AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
-      actualIncomeTotalPerCategory[category] =
-          item.currencyValue.valueInDefaultValue;
-      actualIncomeItemsPerCategory[category] = List();
     } else {
       AnalyticsUtils.addValueToCurrencyMap(
           actualIncomePerCategory[category], item.currencyValue);
-      actualIncomeTotalPerCategory[category] +=
-          item.currencyValue.valueInDefaultValue;
+    }
+    // Save item
+    if (actualIncomeItemsPerCategory[category] == null) {
+      actualIncomeItemsPerCategory[category] = List();
     }
     actualIncomeItemsPerCategory[category].add(item);
   }
@@ -98,17 +90,17 @@ class AnalyticsMonth {
     AnalyticsUtils.addValueToCurrencyMap(
         actualExpenseValues, item.currencyValue);
     ExpenseCategoryType category = item.model.category;
+    // Calc total expense per category
     if (actualExpensePerCategory[category] == null) {
       actualExpensePerCategory[category] =
           AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
-      actualExpenseTotalPerCategory[category] =
-          item.currencyValue.valueInDefaultValue;
-      actualExpenseItemsPerCategory[category] = List();
     } else {
       AnalyticsUtils.addValueToCurrencyMap(
           actualExpensePerCategory[category], item.currencyValue);
-      actualExpenseTotalPerCategory[category] +=
-          item.currencyValue.valueInDefaultValue;
+    }
+    // Save item
+    if (actualExpenseItemsPerCategory[category] == null) {
+      actualExpenseItemsPerCategory[category] = List();
     }
     actualExpenseItemsPerCategory[category].add(item);
   }
@@ -151,20 +143,20 @@ class AnalyticsMonth {
   }
 
   void calcPercents() {
-    double totalIncomeInDefaultValue = 0;
-    actualIncomeTotalPerCategory.values
-        .forEach((value) => totalIncomeInDefaultValue += value);
-    actualIncomeTotalPerCategory.keys.forEach((category) =>
-        actualIncomePercentsPerCategory[category] =
-            actualIncomeTotalPerCategory[category] / totalIncomeInDefaultValue);
-
-    double totalExpenseInDefaultValue = 0;
-    actualExpenseTotalPerCategory.values
-        .forEach((value) => totalExpenseInDefaultValue += value);
-    actualExpenseTotalPerCategory.keys.forEach((category) =>
-        actualExpensePercentsPerCategory[category] =
-            actualExpenseTotalPerCategory[category] /
-                totalExpenseInDefaultValue);
+//    double totalIncomeInDefaultValue = 0;
+//    actualIncomeTotalPerCategory.values
+//        .forEach((value) => totalIncomeInDefaultValue += value);
+//    actualIncomeTotalPerCategory.keys.forEach((category) =>
+//        actualIncomePercentsPerCategory[category] =
+//            actualIncomeTotalPerCategory[category] / totalIncomeInDefaultValue);
+//
+//    double totalExpenseInDefaultValue = 0;
+//    actualExpenseTotalPerCategory.values
+//        .forEach((value) => totalExpenseInDefaultValue += value);
+//    actualExpenseTotalPerCategory.keys.forEach((category) =>
+//        actualExpensePercentsPerCategory[category] =
+//            actualExpenseTotalPerCategory[category] /
+//                totalExpenseInDefaultValue);
   }
 
   void calcIncomePercentDiff(

@@ -7,8 +7,6 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/expense/month_category_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_category_expense_screen.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
-import 'package:plann_app/services/currency/currency_service.dart';
-import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:provider/provider.dart';
 
@@ -42,12 +40,16 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
 
   AppBar _buildAppBar(BuildContext context, MonthExpenseBloc bloc) {
     String monthDate = AppTexts.upFirstLetter(
-        AppTexts.formatMonthYear(context, bloc.getMonthDate()));
+        AppTexts.formatMonthYear(context, bloc.month.date));
+    String headerText = FlutterI18n.translate(context, "texts.regular") +
+        " (" +
+        AppTexts.formatCurrencyType(bloc.currency) +
+        ")";
+
     return AppBar(
       title: Column(
         children: [
-          Text(FlutterI18n.translate(context, "texts.regular"),
-              textAlign: TextAlign.center),
+          Text(headerText, textAlign: TextAlign.center),
           Text(
             monthDate,
             textAlign: TextAlign.center,
@@ -79,7 +81,7 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
 
   Widget _buildListView(BuildContext context, MonthExpenseBloc bloc,
       MonthExpenseViewState state) {
-    if (state.actualExpensePerCategory.isEmpty) {
+    if (state.values.isEmpty) {
       return _buildNoIncome(context);
     } else {
       return _buildMonthExpenseView(context, bloc, state);
@@ -100,34 +102,10 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
     ColorsMap<ExpenseCategoryType> colorsMap =
         ColorsMap.fromValues(ExpenseCategoryType.values);
 
-//    List<LogChartBar> bars = List();
-//    state.actualExpensePerCategory.keys.forEach((category) {
-//      if (state.actualExpensePerCategory[category].isEmpty) {
-//        bars.add(LogChartBar.empty(""));
-//      } else {
-//        List<LogChartItem> items = List();
-//        Map<CurrencyType, CurrencyValue> currencyMap =
-//            state.actualExpensePerCategory[category];
-//
-//        currencyMap.keys.forEach((currency) => items.add(LogChartItem(
-//            colorsMap.getColor(category),
-//            currencyMap[currency].valueInDefaultValue)));
-//
-//        if (items.isEmpty) {
-//          bars.add(LogChartBar.empty(""));
-//        } else {
-//          bars.add(LogChartBar("", items));
-//        }
-//      }
-//    });
-//
-//    double height = 120;
-
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Column(
         children: [
-//          LogChart(height, 30, bars, 1, (context, column) {}),
           Expanded(child: _buildExpenseList(context, bloc, state, colorsMap)),
         ],
       ))
@@ -144,26 +122,25 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
         itemCount: state.sortedCategories.length,
         itemBuilder: (context, index) {
           ExpenseCategoryType category = state.sortedCategories[index];
-          Map<CurrencyType, CurrencyValue> currencyMap =
-              state.actualExpensePerCategory[category];
 
           String categoryText =
               AppTexts.formatExpenseCategoryType(context, category);
-          String currencyMapText =
-              AppTexts.formatCurrencyMap(context, currencyMap);
-          String percentsPerCatetgory = AppValues.prepareToDisplay(
-              state.actualExpensePercentsPerCategory[category] * 100,
-              fixed: 1);
+          String valueText = AppTexts.formatCurrencyValue(
+              context, bloc.currency, state.values[category].value,
+              shorten: true);
+
+          String percentsPerCatetgory =
+              AppValues.prepareToDisplay(state.percents[category], fixed: 1);
 
           return ListTile(
               onTap: () {
                 Navigator.pushNamed(
                     context, MonthCategoryExpenseScreen.routeName,
                     arguments: MonthCategoryExpenseArguments(
-                        bloc.getMonth(), category));
+                        bloc.currency, bloc.month, category));
               },
               title: Text(categoryText),
-              subtitle: Text(currencyMapText),
+              subtitle: Text(valueText),
               leading: AppViews.buildRoundedBox(colorsMap.getColor(category)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
