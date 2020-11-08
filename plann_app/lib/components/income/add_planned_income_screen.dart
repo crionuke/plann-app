@@ -15,7 +15,8 @@ class AddPlannedIncomeScreen extends StatelessWidget {
         Provider.of<AddPlannedIncomeBloc>(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "texts.income")),
+          title:
+              Text(FlutterI18n.translate(context, "texts.add_planned_income")),
           elevation: 0,
           flexibleSpace: AppViews.buildAppGradientContainer(context),
           actions: <Widget>[

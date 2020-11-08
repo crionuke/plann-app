@@ -49,7 +49,7 @@ class FinancesView extends StatelessWidget {
       _buildTile3(context, monthCaruselBloc, slidableController),
 //      divider1,
       Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
         child: Text(
           FlutterI18n.translate(context, "texts.safety_info"),
           textAlign: TextAlign.center,

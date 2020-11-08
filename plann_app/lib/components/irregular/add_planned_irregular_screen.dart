@@ -15,7 +15,8 @@ class AddPlannedIrregularScreen extends StatelessWidget {
         Provider.of<AddPlannedIrregularBloc>(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "texts.irregular_one")),
+          title: Text(
+              FlutterI18n.translate(context, "texts.add_planned_irregular")),
           elevation: 0,
           flexibleSpace: AppViews.buildAppGradientContainer(context),
           actions: <Widget>[

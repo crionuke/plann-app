@@ -65,51 +65,13 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
       elevation: 0,
       flexibleSpace: AppViews.buildAppGradientContainer(context),
       actions: <Widget>[
-        PopupMenuButton<int>(
-          onSelected: (index) {
-            switch (index) {
-              case 0:
-                _addExpense(context, bloc);
-                break;
-              case 1:
-                _addPlannedExpense(context, bloc);
-                break;
-              case 2:
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AppDialogs.buildHelpDialog(
-                          context, "texts.regular", "texts.regular_help");
-                    });
-                break;
-            }
-          },
-          itemBuilder: (BuildContext context) => [
-            PopupMenuItem<int>(
-              value: 0,
-              child: ListTile(
-                title:
-                    Text(FlutterI18n.translate(context, "texts.add_to_list")),
-                leading: Icon(Ionicons.md_add),
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 1,
-              child: ListTile(
-                title: Text(
-                    FlutterI18n.translate(context, "texts.create_template")),
-                leading: Icon(Icons.create),
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 2,
-              child: ListTile(
-                title: Text(FlutterI18n.translate(context, "texts.help")),
-                leading: Icon(Icons.help_outline),
-              ),
-            )
-          ],
-        ),
+        IconButton(icon: Icon(Icons.add), onPressed: () {
+          if (_tabController.index == 0) {
+            _addExpense(context, bloc);
+          } else if (_tabController.index == 1) {
+            _addPlannedExpense(context, bloc);
+          }
+        }),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
         Tab(text: FlutterI18n.translate(context, "texts.list")),
