@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
+import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/expense/month_expense_screen.dart';
 import 'package:plann_app/components/income/month_income_screen.dart';
@@ -235,7 +236,7 @@ class MonthCaruselView extends StatelessWidget {
             Text(
                 _preparePercentsWithCurrencyMap(context, currency,
                     month.deltaPercentDiff, month.deltaValues),
-                textAlign: TextAlign.left)
+                textAlign: TextAlign.left),
           ],
         ),
       ),
@@ -244,12 +245,29 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildBudgetIrregularTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    bool next = month.plannedIrregularAccount.debet.isNotEmpty;
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        if (next) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AppDialogs.buildHelpDialog(
+                    context,
+                    "texts.irregular",
+                    FlutterI18n.translate(
+                        context, "texts.irregular_budget_help",
+                        translationParams: {
+                          "value": AppTexts.formatCurrencyMap(
+                              context, month.plannedIrregularAccount.debet),
+                        }));
+              });
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+//          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child:
@@ -258,7 +276,7 @@ class MonthCaruselView extends StatelessWidget {
             Text(
                 _prepareValueFromCurrencyMap(
                     context, currency, month.plannedIrregularAccount.debet),
-                textAlign: TextAlign.left)
+                textAlign: TextAlign.left),
           ],
         ),
       ),

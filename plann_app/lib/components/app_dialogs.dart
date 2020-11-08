@@ -24,13 +24,13 @@ class AppDialogs {
   }
 
   static Widget buildHelpDialog(
-      BuildContext context, String titleKey, String contentKey) {
+      BuildContext context, String titleKey, String contentText) {
     return AlertDialog(
       title: Text(FlutterI18n.translate(context, titleKey)),
       content: SingleChildScrollView(
           child: ListBody(
         children: <Widget>[
-          Text(FlutterI18n.translate(context, contentKey)),
+          Text(FlutterI18n.translate(context, contentText)),
         ],
       )),
       actions: <Widget>[
