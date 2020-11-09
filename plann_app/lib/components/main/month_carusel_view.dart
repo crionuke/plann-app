@@ -267,8 +267,12 @@ class MonthCaruselView extends StatelessWidget {
                     FlutterI18n.translate(
                         context, "texts.irregular_budget_help",
                         translationParams: {
-                          "value": AppTexts.formatCurrencyMap(
-                              context, month.plannedIrregularAccount.debet),
+                          "value": AppTexts.formatCurrencyValue(
+                              context,
+                              currency,
+                              month.plannedIrregularAccount.debet[currency]
+                                  .value,
+                              shorten: true),
                         }));
               });
         }
