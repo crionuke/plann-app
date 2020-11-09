@@ -26,13 +26,12 @@ class AppDialogs {
   static Widget buildHelpDialog(
       BuildContext context, String titleKey, String contentText) {
     return AlertDialog(
-      title: Text(FlutterI18n.translate(context, titleKey)),
-      content: SingleChildScrollView(
-          child: ListBody(
-        children: <Widget>[
-          Text(FlutterI18n.translate(context, contentText)),
-        ],
-      )),
+      contentPadding: EdgeInsets.all(16),
+      titlePadding: EdgeInsets.all(16),
+      title: Text(FlutterI18n.translate(context, titleKey),
+          style: TextStyle(fontSize: 18)),
+      content: Text(FlutterI18n.translate(context, contentText),
+          style: TextStyle(fontSize: 14), textAlign: TextAlign.justify,),
       actions: <Widget>[
         FlatButton(
           child: Text(FlutterI18n.translate(context, "texts.close")),

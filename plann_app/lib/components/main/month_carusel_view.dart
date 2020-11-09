@@ -229,8 +229,31 @@ class MonthCaruselView extends StatelessWidget {
 
   Widget _buildBudgetDeltaTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
+    bool next = month.deltaValues[currency] != null;
+
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        if (next) {
+          String info = "";
+          if (month.deltaPercentDiff[currency] >= 0) {
+            info = FlutterI18n.translate(context, "texts.delta_info_positive",
+                translationParams: {
+                  "value": month.deltaPercentDiff[currency].toString(),
+                });
+          } else {
+            info = FlutterI18n.translate(context, "texts.delta_info_negative",
+                translationParams: {
+                  "value": month.deltaPercentDiff[currency].abs().toString(),
+                });
+          }
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AppDialogs.buildHelpDialog(
+                    context, "texts.delta_info_header", info);
+              });
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -299,7 +322,34 @@ class MonthCaruselView extends StatelessWidget {
   Widget _buildBudgetBalanceTitle(
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        double balance = month.balanceValues[currency].value;
+        String info = "";
+        if (balance >= 0) {
+          info = FlutterI18n.translate(context, "texts.balance_info_positive",
+              translationParams: {
+                "value": AppTexts.formatCurrencyValue(
+                    context, currency, balance,
+                    shorten: true),
+              });
+        } else {
+          info = FlutterI18n.translate(context, "texts.balance_info_negative",
+              translationParams: {
+                "value": AppTexts.formatCurrencyValue(
+                    context, currency, balance,
+                    shorten: true),
+              });
+        }
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AppDialogs.buildHelpDialog(
+                context,
+                "texts.free",
+                info,
+              );
+            });
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
