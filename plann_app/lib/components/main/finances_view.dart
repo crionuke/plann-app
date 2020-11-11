@@ -11,6 +11,8 @@ import 'package:plann_app/components/irregular/add_irregular_screen.dart';
 import 'package:plann_app/components/irregular/irregular_main_screen.dart';
 import 'package:plann_app/components/main/month_carusel_bloc.dart';
 import 'package:plann_app/components/main/month_carusel_view.dart';
+import 'package:plann_app/components/main/tips_bloc.dart';
+import 'package:plann_app/components/main/tips_view.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +38,7 @@ class FinancesView extends StatelessWidget {
     final SlidableController slidableController = SlidableController();
     return Column(children: <Widget>[
       Container(
-          margin: EdgeInsets.all(10),
+//          margin: EdgeInsets.all(10),
           height: 335,
           child: Provider<MonthCaruselBloc>(
               create: (context) => monthCaruselBloc,
@@ -47,6 +49,9 @@ class FinancesView extends StatelessWidget {
       _buildTile2(context, monthCaruselBloc, slidableController),
       divider1,
       _buildTile3(context, monthCaruselBloc, slidableController),
+      divider1,
+      _buildTips(context),
+
 //      divider1,
       Padding(
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
@@ -177,5 +182,10 @@ class FinancesView extends StatelessWidget {
                 },
               );
             }));
+  }
+
+  Widget _buildTips(BuildContext context) {
+    TipsBloc bloc = TipsBloc();
+    return Provider<TipsBloc>(create: (context) => bloc, child: TipsView());
   }
 }

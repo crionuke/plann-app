@@ -50,8 +50,7 @@ class MonthCaruselView extends StatelessWidget {
       MonthCaruselViewState state,
       AnalyticsMonth month) {
     return Container(
-        child: Column(children: [
-      Card(
+      child: Card(
           child: Column(children: [
         _buildMonthHeader(context, bloc, pageController, state, month),
         _buildIncomeTitle(context, state.currency, month),
@@ -67,7 +66,7 @@ class MonthCaruselView extends StatelessWidget {
         _buildBudgetIrregularTitle(context, state.currency, month),
         _buildBudgetBalanceTitle(context, state.currency, month),
       ])),
-    ]));
+    );
   }
 
   String _getMonthTitle(BuildContext context, AnalyticsMonth month) {
