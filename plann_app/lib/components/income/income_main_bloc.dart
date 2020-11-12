@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -29,18 +30,8 @@ class IncomeMainBloc {
     List<IncomeModel> fact = await dbService.getIncomeList();
     List<PlannedIncomeModel> planned = await dbService.getPlannedIncomeList();
     if (!_controller.isClosed) {
-      CurrencyType defaultCurrency = CurrencyType.rubles;
-
-      Map<DateTime, double> perMonthIncomes = analyticsService
-          .analytics.perMonthIncomes
-          .map((dateTime, currencyMap) => MapEntry<DateTime, double>(
-              dateTime,
-              currencyMap.containsKey(defaultCurrency)
-                  ? currencyMap[defaultCurrency]
-                  : 0));
-
-      _controller.sink
-          .add(IncomeMainViewState.loaded(fact, perMonthIncomes, planned));
+      _controller.sink.add(IncomeMainViewState.loaded(
+          fact, analyticsService.analytics.perMonthIncomes, planned));
     }
   }
 
@@ -69,16 +60,16 @@ class IncomeMainBloc {
 
 class IncomeMainViewState {
   final bool loaded;
-  final List<IncomeModel> fact;
-  final Map<DateTime, double> perMonthIncomes;
+  final List<IncomeModel> incomeList;
+  final Map<DateTime, Map<CurrencyType, CurrencyValue>> perMonthIncomes;
   final List<PlannedIncomeModel> planned;
 
   IncomeMainViewState.loading()
       : loaded = false,
-        fact = null,
+        incomeList = null,
         perMonthIncomes = null,
         planned = null;
 
-  IncomeMainViewState.loaded(this.fact, this.perMonthIncomes, this.planned)
+  IncomeMainViewState.loaded(this.incomeList, this.perMonthIncomes, this.planned)
       : loaded = true;
 }

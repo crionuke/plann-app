@@ -1,6 +1,8 @@
 import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_month_list.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/analytics/analytics_utils.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -21,8 +23,8 @@ class AnalyticsData {
 
   AnalyticsMonthList _monthList;
 
-  Map<DateTime, Map<CurrencyType, double>> _perDayExpenses;
-  Map<DateTime, Map<CurrencyType, double>> _perMonthIncomes;
+  Map<DateTime, Map<CurrencyType, CurrencyValue>> _perDayExpenses;
+  Map<DateTime, Map<CurrencyType, CurrencyValue>> _perMonthIncomes;
 
   AnalyticsData(
       this.analyticsActualIncomeList,
@@ -44,10 +46,10 @@ class AnalyticsData {
 
   AnalyticsMonthList get monthList => _monthList;
 
-  Map<DateTime, Map<CurrencyType, double>> get perDayExpenses =>
+  Map<DateTime, Map<CurrencyType, CurrencyValue>> get perDayExpenses =>
       _perDayExpenses;
 
-  Map<DateTime, Map<CurrencyType, double>> get perMonthIncomes =>
+  Map<DateTime, Map<CurrencyType, CurrencyValue>> get perMonthIncomes =>
       _perMonthIncomes;
 
   Future<void> analyze() async {
@@ -67,12 +69,12 @@ class AnalyticsData {
       IncomeModel model = item.model;
       DateTime rounded = DateTime(model.date.year, model.date.month);
       if (_perMonthIncomes[rounded] == null) {
-        _perMonthIncomes[rounded] = Map();
+        _perMonthIncomes[rounded] =
+            AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+      } else {
+        AnalyticsUtils.addValueToCurrencyMap(
+            _perMonthIncomes[rounded], item.currencyValue);
       }
-      if (_perMonthIncomes[rounded][model.currency] == null) {
-        _perMonthIncomes[rounded][model.currency] = 0;
-      }
-      _perMonthIncomes[rounded][model.currency] += model.value;
     });
   }
 
@@ -95,14 +97,13 @@ class AnalyticsData {
       ExpenseModel model = item.model;
       DateTime rounded =
           DateTime(model.date.year, model.date.month, model.date.day);
-
       if (_perDayExpenses[rounded] == null) {
-        _perDayExpenses[rounded] = Map();
+        _perDayExpenses[rounded] =
+            AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+      } else {
+        AnalyticsUtils.addValueToCurrencyMap(
+            _perDayExpenses[rounded], item.currencyValue);
       }
-      if (_perDayExpenses[rounded][model.currency] == null) {
-        _perDayExpenses[rounded][model.currency] = 0;
-      }
-      _perDayExpenses[rounded][model.currency] += model.value;
     });
   }
 

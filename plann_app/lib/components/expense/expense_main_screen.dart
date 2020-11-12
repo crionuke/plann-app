@@ -13,6 +13,7 @@ import 'package:plann_app/components/expense/add_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_bloc.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
@@ -65,13 +66,15 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
       elevation: 0,
       flexibleSpace: AppViews.buildAppGradientContainer(context),
       actions: <Widget>[
-        IconButton(icon: Icon(Icons.add), onPressed: () {
-          if (_tabController.index == 0) {
-            _addExpense(context, bloc);
-          } else if (_tabController.index == 1) {
-            _addPlannedExpense(context, bloc);
-          }
-        }),
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              if (_tabController.index == 0) {
+                _addExpense(context, bloc);
+              } else if (_tabController.index == 1) {
+                _addPlannedExpense(context, bloc);
+              }
+            }),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
         Tab(text: FlutterI18n.translate(context, "texts.list")),
@@ -92,7 +95,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             var state = snapshot.data;
             if (state.loaded) {
               return TabBarView(controller: _tabController, children: [
-                _buildListView(context, bloc, state.fact, state.perDayExpenses),
+                _buildListView(context, bloc, state),
                 _buildPlannedListView(context, bloc, state.planned),
               ]);
             }
@@ -102,12 +105,12 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
         });
   }
 
-  Widget _buildListView(BuildContext context, ExpenseMainBloc bloc,
-      List<ExpenseModel> list, Map<DateTime, double> perDayExpenses) {
-    if (list.isEmpty) {
+  Widget _buildListView(
+      BuildContext context, ExpenseMainBloc bloc, ExpenseMainViewState state) {
+    if (state.expenseList.isEmpty) {
       return _buildNoExpense(context);
     } else {
-      return _buildExpenseList(context, bloc, list, perDayExpenses);
+      return _buildExpenseList(context, bloc, state);
     }
   }
 
@@ -147,25 +150,26 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     ]);
   }
 
-  Widget _buildExpenseList(BuildContext context, ExpenseMainBloc bloc,
-      List<ExpenseModel> list, Map<DateTime, double> perDayExpenses) {
+  Widget _buildExpenseList(
+      BuildContext context, ExpenseMainBloc bloc, ExpenseMainViewState state) {
     ColorsMap<ExpenseCategoryType> colorsMap =
         ColorsMap.fromValues(ExpenseCategoryType.values);
     final SlidableController slidableController = SlidableController();
 
     return GroupedListView<ExpenseModel, String>(
-      elements: list,
+      elements: state.expenseList,
       groupBy: (model) {
         DateTime rounded =
             DateTime(model.date.year, model.date.month, model.date.day);
 
-        if (perDayExpenses[rounded] != null && perDayExpenses[rounded] > 0) {
+        Map<CurrencyType, CurrencyValue> currencyMap =
+            state.perDayExpenses[rounded];
+
+        if (currencyMap != null) {
           return AppTexts.upFirstLetter(
                   AppTexts.formatDate(context, model.date)) +
               " (" +
-              AppTexts.formatCurrencyValue(
-                  context, CurrencyType.rubles, perDayExpenses[rounded],
-                  shorten: true) +
+              AppTexts.formatCurrencyMap(context, currencyMap) +
               ")";
         } else {
           return AppTexts.upFirstLetter(

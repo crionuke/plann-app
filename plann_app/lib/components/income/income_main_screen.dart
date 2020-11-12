@@ -13,6 +13,7 @@ import 'package:plann_app/components/income/add_planned_income_screen.dart';
 import 'package:plann_app/components/income/edit_income_screen.dart';
 import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
+import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -67,13 +68,15 @@ class _IncomeMainState extends State<IncomeMainScreen>
       elevation: 0,
       flexibleSpace: AppViews.buildAppGradientContainer(context),
       actions: <Widget>[
-        IconButton(icon: Icon(Icons.add), onPressed: () {
-          if (_tabController.index == 0) {
-            _addIncome(context, bloc);
-          } else if (_tabController.index == 1) {
-            _addPlannedIncome(context, bloc);
-          }
-        }),
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              if (_tabController.index == 0) {
+                _addIncome(context, bloc);
+              } else if (_tabController.index == 1) {
+                _addPlannedIncome(context, bloc);
+              }
+            }),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
         Tab(text: FlutterI18n.translate(context, "texts.list")),
@@ -93,8 +96,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
 
             if (state.loaded) {
               return TabBarView(controller: _tabController, children: [
-                _buildListView(
-                    context, bloc, state.fact, state.perMonthIncomes),
+                _buildListView(context, bloc, state),
                 _buildPlannedListView(context, bloc, state.planned),
               ]);
             }
@@ -104,12 +106,12 @@ class _IncomeMainState extends State<IncomeMainScreen>
         });
   }
 
-  Widget _buildListView(BuildContext context, IncomeMainBloc bloc,
-      List<IncomeModel> list, Map<DateTime, double> perMonthIncomes) {
-    if (list.isEmpty) {
+  Widget _buildListView(
+      BuildContext context, IncomeMainBloc bloc, IncomeMainViewState state) {
+    if (state.incomeList.isEmpty) {
       return _buildNoIncome(context);
     } else {
-      return _buildIncomeList(context, bloc, list, perMonthIncomes);
+      return _buildIncomeList(context, bloc, state);
     }
   }
 
@@ -150,24 +152,23 @@ class _IncomeMainState extends State<IncomeMainScreen>
     ]);
   }
 
-  Widget _buildIncomeList(BuildContext context, IncomeMainBloc bloc,
-      List<IncomeModel> list, Map<DateTime, double> perMonthIncomes) {
+  Widget _buildIncomeList(
+      BuildContext context, IncomeMainBloc bloc, IncomeMainViewState state) {
     ColorsMap<IncomeCategoryType> colorsMap =
         ColorsMap.fromValues(IncomeCategoryType.values);
     final SlidableController slidableController = SlidableController();
 
     return GroupedListView<IncomeModel, String>(
-      elements: list,
+      elements: state.incomeList,
       groupBy: (model) {
         DateTime rounded = DateTime(model.date.year, model.date.month);
-
-        if (perMonthIncomes[rounded] != null && perMonthIncomes[rounded] > 0) {
+        Map<CurrencyType, CurrencyValue> currencyMap =
+            state.perMonthIncomes[rounded];
+        if (currencyMap != null) {
           return AppTexts.upFirstLetter(
                   AppTexts.formatMonth(context, model.date)) +
               " (" +
-              AppTexts.formatCurrencyValue(
-                  context, CurrencyType.rubles, perMonthIncomes[rounded],
-                  shorten: true) +
+              AppTexts.formatCurrencyMap(context, currencyMap) +
               ")";
         } else {
           return AppTexts.upFirstLetter(
