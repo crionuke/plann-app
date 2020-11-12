@@ -13,6 +13,9 @@ import 'package:plann_app/components/income/add_planned_income_screen.dart';
 import 'package:plann_app/components/income/edit_income_screen.dart';
 import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
+import 'package:plann_app/components/income/income_month_panel_bloc.dart';
+import 'package:plann_app/components/income/income_month_panel_view.dart';
+import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -111,7 +114,44 @@ class _IncomeMainState extends State<IncomeMainScreen>
     if (state.incomeList.isEmpty) {
       return _buildNoIncome(context);
     } else {
-      return _buildIncomeList(context, bloc, state);
+      double height = 100;
+
+      List<LogChartBar> bars = List();
+
+      state.monthList.forEach((month) {
+        Map<CurrencyType, CurrencyValue> currencyMap = month.actualIncomeValues;
+
+        if (currencyMap.isEmpty) {
+          bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
+              AppTexts.formatShortMonth(context, month.date))));
+        } else {
+          bars.add(LogChartBar(
+              AppTexts.upFirstLetter(
+                  AppTexts.formatShortMonth(context, month.date)),
+              currencyMap.values
+                  .map((currencyValue) => LogChartItem(
+                      AppColors.APP_COLOR_2, currencyValue.valueInDefaultValue))
+                  .toList()
+                  .reversed
+                  .toList()));
+        }
+      });
+
+      return CustomScrollView(slivers: <Widget>[
+        SliverFillRemaining(
+            child: Column(
+          children: [
+            Provider<IncomeMonthPanelBloc>(
+                create: (context) => bloc.incomeMonthPanelBloc,
+                child: IncomeMonthPanelView()),
+            LogChart(height, 60, bars, state.monthList.currentMonthOffset,
+                (context, column) {
+              bloc.incomeMonthPanelBloc.setMonthByIndex(column);
+            }),
+            Expanded(child: _buildIncomeList(context, bloc, state)),
+          ],
+        ))
+      ]);
     }
   }
 
@@ -161,9 +201,8 @@ class _IncomeMainState extends State<IncomeMainScreen>
     return GroupedListView<IncomeModel, String>(
       elements: state.incomeList,
       groupBy: (model) {
-        DateTime rounded = DateTime(model.date.year, model.date.month);
         Map<CurrencyType, CurrencyValue> currencyMap =
-            state.perMonthIncomes[rounded];
+            state.monthList.findMonthByDate(model.date).actualIncomeValues;
         if (currencyMap != null) {
           return AppTexts.upFirstLetter(
                   AppTexts.formatMonth(context, model.date)) +

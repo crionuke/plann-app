@@ -24,7 +24,6 @@ class AnalyticsData {
   AnalyticsMonthList _monthList;
 
   Map<DateTime, Map<CurrencyType, CurrencyValue>> _perDayExpenses;
-  Map<DateTime, Map<CurrencyType, CurrencyValue>> _perMonthIncomes;
 
   AnalyticsData(
       this.analyticsActualIncomeList,
@@ -41,16 +40,12 @@ class AnalyticsData {
         analyticsActualIrregularList,
         analyticsPlannedIrregularList);
     _perDayExpenses = Map();
-    _perMonthIncomes = Map();
   }
 
   AnalyticsMonthList get monthList => _monthList;
 
   Map<DateTime, Map<CurrencyType, CurrencyValue>> get perDayExpenses =>
       _perDayExpenses;
-
-  Map<DateTime, Map<CurrencyType, CurrencyValue>> get perMonthIncomes =>
-      _perMonthIncomes;
 
   Future<void> analyze() async {
     await _analyzeActualIncomeList();
@@ -65,17 +60,6 @@ class AnalyticsData {
   Future<void> _analyzeActualIncomeList() async {
     analyticsActualIncomeList.forEach((item) =>
         monthList.findMonthByDate(item.model.date).addActualIncomeValue(item));
-    analyticsActualIncomeList.forEach((item) {
-      IncomeModel model = item.model;
-      DateTime rounded = DateTime(model.date.year, model.date.month);
-      if (_perMonthIncomes[rounded] == null) {
-        _perMonthIncomes[rounded] =
-            AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
-      } else {
-        AnalyticsUtils.addValueToCurrencyMap(
-            _perMonthIncomes[rounded], item.currencyValue);
-      }
-    });
   }
 
   Future<void> _analyzePlannedIncomeList() async {

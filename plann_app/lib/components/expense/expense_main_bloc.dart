@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/expense/expense_month_panel_bloc.dart';
+import 'package:plann_app/services/analytics/analytics_month_list.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -19,20 +21,29 @@ class ExpenseMainBloc {
   final AnalyticsService analyticsService;
   final TrackingService trackingService;
 
-  ExpenseMainBloc(this.dbService, this.analyticsService, this.trackingService);
+  ExpenseMonthPanelBloc expenseMonthPanelBloc;
+
+  ExpenseMainBloc(this.dbService, this.analyticsService, this.trackingService) {
+    expenseMonthPanelBloc = ExpenseMonthPanelBloc(analyticsService);
+  }
 
   @override
   void dispose() {
     _controller.close();
+    expenseMonthPanelBloc.dispose();
   }
 
   void requestState() async {
     _controller.sink.add(ExpenseMainViewState.loading());
-    List<ExpenseModel> fact = await dbService.getExpenseList();
-    List<PlannedExpenseModel> planned = await dbService.getPlannedExpenseList();
+    List<ExpenseModel> expenseList = await dbService.getExpenseList();
+    List<PlannedExpenseModel> plannedExpenseList =
+        await dbService.getPlannedExpenseList();
     if (!_controller.isClosed) {
       _controller.sink.add(ExpenseMainViewState.loaded(
-          fact, analyticsService.analytics.perDayExpenses, planned));
+          analyticsService.analytics.monthList,
+          expenseList,
+          analyticsService.analytics.perDayExpenses,
+          plannedExpenseList));
     }
   }
 
@@ -60,16 +71,19 @@ class ExpenseMainBloc {
 
 class ExpenseMainViewState {
   final bool loaded;
+  final AnalyticsMonthList monthList;
   final List<ExpenseModel> expenseList;
   final Map<DateTime, Map<CurrencyType, CurrencyValue>> perDayExpenses;
-  final List<PlannedExpenseModel> planned;
+  final List<PlannedExpenseModel> plannedExpenseList;
 
   ExpenseMainViewState.loading()
       : loaded = false,
+        monthList = null,
         expenseList = null,
         perDayExpenses = null,
-        planned = null;
+        plannedExpenseList = null;
 
-  ExpenseMainViewState.loaded(this.expenseList, this.perDayExpenses, this.planned)
+  ExpenseMainViewState.loaded(this.monthList, this.expenseList,
+      this.perDayExpenses, this.plannedExpenseList)
       : loaded = true;
 }

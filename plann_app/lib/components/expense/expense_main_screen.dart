@@ -13,6 +13,9 @@ import 'package:plann_app/components/expense/add_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_expense_screen.dart';
 import 'package:plann_app/components/expense/edit_planned_expense_screen.dart';
 import 'package:plann_app/components/expense/expense_main_bloc.dart';
+import 'package:plann_app/components/expense/expense_month_panel_bloc.dart';
+import 'package:plann_app/components/expense/expense_month_panel_view.dart';
+import 'package:plann_app/components/widgets/log_chart.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
@@ -96,7 +99,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             if (state.loaded) {
               return TabBarView(controller: _tabController, children: [
                 _buildListView(context, bloc, state),
-                _buildPlannedListView(context, bloc, state.planned),
+                _buildPlannedListView(context, bloc, state.plannedExpenseList),
               ]);
             }
           }
@@ -110,7 +113,45 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
     if (state.expenseList.isEmpty) {
       return _buildNoExpense(context);
     } else {
-      return _buildExpenseList(context, bloc, state);
+      double height = 100;
+
+      List<LogChartBar> bars = List();
+
+      state.monthList.forEach((month) {
+        Map<CurrencyType, CurrencyValue> currencyMap =
+            month.actualExpenseValues;
+
+        if (currencyMap.isEmpty) {
+          bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
+              AppTexts.formatShortMonth(context, month.date))));
+        } else {
+          bars.add(LogChartBar(
+              AppTexts.upFirstLetter(
+                  AppTexts.formatShortMonth(context, month.date)),
+              currencyMap.values
+                  .map((currencyValue) => LogChartItem(
+                      AppColors.APP_COLOR_2, currencyValue.valueInDefaultValue))
+                  .toList()
+                  .reversed
+                  .toList()));
+        }
+      });
+
+      return CustomScrollView(slivers: <Widget>[
+        SliverFillRemaining(
+            child: Column(
+          children: [
+            Provider<ExpenseMonthPanelBloc>(
+                create: (context) => bloc.expenseMonthPanelBloc,
+                child: ExpenseMonthPanelView()),
+            LogChart(height, 60, bars, state.monthList.currentMonthOffset,
+                (context, column) {
+              bloc.expenseMonthPanelBloc.setMonthByIndex(column);
+            }),
+            Expanded(child: _buildExpenseList(context, bloc, state)),
+          ],
+        ))
+      ]);
     }
   }
 
@@ -161,7 +202,6 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
       groupBy: (model) {
         DateTime rounded =
             DateTime(model.date.year, model.date.month, model.date.day);
-
         Map<CurrencyType, CurrencyValue> currencyMap =
             state.perDayExpenses[rounded];
 

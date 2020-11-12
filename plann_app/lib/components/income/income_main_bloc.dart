@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/income/income_month_panel_bloc.dart';
+import 'package:plann_app/services/analytics/analytics_month_list.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
-import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -19,10 +20,15 @@ class IncomeMainBloc {
   final AnalyticsService analyticsService;
   final TrackingService trackingService;
 
-  IncomeMainBloc(this.dbService, this.analyticsService, this.trackingService);
+  IncomeMonthPanelBloc incomeMonthPanelBloc;
+
+  IncomeMainBloc(this.dbService, this.analyticsService, this.trackingService) {
+    incomeMonthPanelBloc = IncomeMonthPanelBloc(analyticsService);
+  }
 
   void dispose() {
     _controller.close();
+    incomeMonthPanelBloc.dispose();
   }
 
   Future<void> requestState() async {
@@ -31,7 +37,7 @@ class IncomeMainBloc {
     List<PlannedIncomeModel> planned = await dbService.getPlannedIncomeList();
     if (!_controller.isClosed) {
       _controller.sink.add(IncomeMainViewState.loaded(
-          fact, analyticsService.analytics.perMonthIncomes, planned));
+          fact, analyticsService.analytics.monthList, planned));
     }
   }
 
@@ -61,15 +67,15 @@ class IncomeMainBloc {
 class IncomeMainViewState {
   final bool loaded;
   final List<IncomeModel> incomeList;
-  final Map<DateTime, Map<CurrencyType, CurrencyValue>> perMonthIncomes;
+  final AnalyticsMonthList monthList;
   final List<PlannedIncomeModel> planned;
 
   IncomeMainViewState.loading()
       : loaded = false,
         incomeList = null,
-        perMonthIncomes = null,
+        monthList = null,
         planned = null;
 
-  IncomeMainViewState.loaded(this.incomeList, this.perMonthIncomes, this.planned)
+  IncomeMainViewState.loaded(this.incomeList, this.monthList, this.planned)
       : loaded = true;
 }
