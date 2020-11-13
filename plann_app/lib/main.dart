@@ -95,6 +95,10 @@ void main() async {
     child: App(navigatorKey, trackingService),
   ));
 
+  while (navigatorKey.currentState == null) {
+    await Future.delayed(Duration(seconds: 1));
+  }
+
   await dbService.start();
   await trackingService.start();
   await purchaseService.start();
