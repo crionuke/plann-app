@@ -177,8 +177,9 @@ class DbTestDataSet {
                   "Коммунальные платежи")
               .toMap());
 
+      int count = 20 + random.nextInt(20);
       for (int randomIndex = 0;
-          randomIndex <= 40 + random.nextInt(20);
+          randomIndex <= count;
           randomIndex++) {
         ExpenseCategoryType category = ExpenseCategoryType
             .values[random.nextInt(ExpenseCategoryType.values.length)];
@@ -193,7 +194,7 @@ class DbTestDataSet {
             ExpenseModel.EXPENSE_TABLE,
             ExpenseModel(
                     null,
-                    1000 + random.nextInt(1000),
+                    1000 + random.nextInt(10000),
                     CurrencyType.rubles,
                     DateTime(2020, monthIndex, random.nextInt(28)),
                     category,
