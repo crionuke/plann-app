@@ -9,7 +9,7 @@ class TipsView extends StatelessWidget {
     TipsBloc bloc = Provider.of<TipsBloc>(context);
     return Container(
         margin: EdgeInsets.all(10),
-        height: 140,
+        height: 85,
         child: _buildTips(context, bloc));
   }
 
@@ -18,14 +18,13 @@ class TipsView extends StatelessWidget {
       return Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ListTile(
-              title: Text(FlutterI18n.translate(context, "tips.header")),
-            ),
-            ListTile(
-                subtitle: Text(
-                    FlutterI18n.translate(context, bloc.getKey(itemIndex)) +
-                        "\n")),
+                title: Text(
+              FlutterI18n.translate(context, bloc.getKey(itemIndex)),
+              style: TextStyle(fontSize: 14, color: Colors.black45),
+            ))
           ],
         ),
       );

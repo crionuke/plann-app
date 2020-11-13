@@ -42,7 +42,6 @@ class _IncomeMainState extends State<IncomeMainScreen>
     _tabController = TabController(vsync: this, length: 2);
   }
 
-  @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
@@ -119,6 +118,10 @@ class _IncomeMainState extends State<IncomeMainScreen>
       List<LogChartBar> bars = List();
 
       state.monthList.forEach((month) {
+        if (month.index > state.monthList.currentMonthIndex) {
+          return;
+        }
+
         Map<CurrencyType, CurrencyValue> currencyMap = month.actualIncomeValues;
 
         if (currencyMap.isEmpty) {

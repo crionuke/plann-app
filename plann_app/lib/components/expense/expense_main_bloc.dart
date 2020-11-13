@@ -27,7 +27,6 @@ class ExpenseMainBloc {
     expenseMonthPanelBloc = ExpenseMonthPanelBloc(analyticsService);
   }
 
-  @override
   void dispose() {
     _controller.close();
     expenseMonthPanelBloc.dispose();

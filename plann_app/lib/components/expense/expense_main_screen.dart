@@ -118,6 +118,10 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
       List<LogChartBar> bars = List();
 
       state.monthList.forEach((month) {
+        if (month.index > state.monthList.currentMonthIndex) {
+          return;
+        }
+
         Map<CurrencyType, CurrencyValue> currencyMap =
             month.actualExpenseValues;
 

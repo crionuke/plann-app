@@ -38,6 +38,7 @@ class FinancesView extends StatelessWidget {
     final SlidableController slidableController = SlidableController();
     return Column(children: <Widget>[
       Container(
+        margin: EdgeInsets.symmetric(vertical: 16),
 //          margin: EdgeInsets.all(10),
           height: 335,
           child: Provider<MonthCaruselBloc>(
@@ -49,16 +50,13 @@ class FinancesView extends StatelessWidget {
       _buildTile2(context, monthCaruselBloc, slidableController),
       divider1,
       _buildTile3(context, monthCaruselBloc, slidableController),
-      divider1,
       _buildTips(context),
-
-//      divider1,
       Padding(
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
         child: Text(
           FlutterI18n.translate(context, "texts.safety_info"),
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black54),
+          style: TextStyle(color: Colors.black45),
         ),
       ),
     ]);

@@ -74,6 +74,7 @@ class AnalyticsMonthList {
     }
   }
 
+  int get currentMonthIndex => _currentMonthIndex;
   int get currentMonthOffset => _currentMonthIndex - _firstMonthIndex;
 
   double perMonthValue(PlannedIrregularModel model) {
