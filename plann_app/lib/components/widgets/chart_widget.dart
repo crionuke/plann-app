@@ -2,22 +2,22 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-typedef LogChartBarTapCallback = void Function(
+typedef ChartBarTapCallback = void Function(
     BuildContext context, int column);
 
-class LogChart extends StatelessWidget {
+class Chart extends StatelessWidget {
 //  static const double barWidth = 60;
   static const Color DEFAULT_COLOR = Colors.blueAccent;
   
   final double height;
   final double barWidth;
-  final List<LogChartBar> bars;
+  final List<ChartBar> bars;
   final int currentColumn;
-  final LogChartBarTapCallback barTap;
+  final ChartBarTapCallback barTap;
 
   double _scale;
 
-  LogChart(this.height, this.barWidth, this.bars, this.currentColumn, this.barTap) {
+  Chart(this.height, this.barWidth, this.bars, this.currentColumn, this.barTap) {
     _scale = height * 0.8 / calcSum(bars);
   }
 
@@ -37,7 +37,7 @@ class LogChart extends StatelessWidget {
     );
   }
 
-  Widget _buildColumn(BuildContext context, int index, LogChartBar bar) {
+  Widget _buildColumn(BuildContext context, int index, ChartBar bar) {
     return Container(
         height: height + 50,
 //        padding: const EdgeInsets.all(2),
@@ -52,7 +52,7 @@ class LogChart extends StatelessWidget {
             )));
   }
 
-  Widget _buildBar(BuildContext context, int index, List<LogChartItem> items) {
+  Widget _buildBar(BuildContext context, int index, List<ChartItem> items) {
     return Column(
         children: items.map((item) {
       if (item.value == 0) {
@@ -94,11 +94,11 @@ class LogChart extends StatelessWidget {
     );
   }
 
-  double calcSum(List<LogChartBar> data) {
+  double calcSum(List<ChartBar> data) {
     return data
         .map((bar) {
           double sum = 0;
-          for (LogChartItem item in bar.items) {
+          for (ChartItem item in bar.items) {
             sum += item.value;
           }
           return sum;
@@ -108,21 +108,21 @@ class LogChart extends StatelessWidget {
   }
 }
 
-class LogChartBar {
+class ChartBar {
   final String title;
-  final List<LogChartItem> items;
+  final List<ChartItem> items;
 
-  LogChartBar(this.title, this.items);
+  ChartBar(this.title, this.items);
 
-  LogChartBar.empty(this.title)
-      : items = [LogChartItem(LogChart.DEFAULT_COLOR, 0)];
+  ChartBar.empty(this.title)
+      : items = [ChartItem(Chart.DEFAULT_COLOR, 0)];
 }
 
-class LogChartItem {
+class ChartItem {
   final Color color;
   final double value;
 
-  LogChartItem(this.color, this.value);
+  ChartItem(this.color, this.value);
 
-  LogChartItem.defaultColor(this.value) : color = LogChart.DEFAULT_COLOR;
+  ChartItem.defaultColor(this.value) : color = Chart.DEFAULT_COLOR;
 }

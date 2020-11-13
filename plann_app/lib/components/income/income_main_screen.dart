@@ -15,7 +15,7 @@ import 'package:plann_app/components/income/edit_planned_income_screen.dart';
 import 'package:plann_app/components/income/income_main_bloc.dart';
 import 'package:plann_app/components/income/income_month_panel_bloc.dart';
 import 'package:plann_app/components/income/income_month_panel_view.dart';
-import 'package:plann_app/components/widgets/log_chart.dart';
+import 'package:plann_app/components/widgets/chart_widget.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -115,7 +115,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
     } else {
       double height = 100;
 
-      List<LogChartBar> bars = List();
+      List<ChartBar> bars = List();
 
       state.monthList.forEach((month) {
         if (month.index > state.monthList.currentMonthIndex) {
@@ -125,14 +125,14 @@ class _IncomeMainState extends State<IncomeMainScreen>
         Map<CurrencyType, CurrencyValue> currencyMap = month.actualIncomeValues;
 
         if (currencyMap.isEmpty) {
-          bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
+          bars.add(ChartBar.empty(AppTexts.upFirstLetter(
               AppTexts.formatShortMonth(context, month.date))));
         } else {
-          bars.add(LogChartBar(
+          bars.add(ChartBar(
               AppTexts.upFirstLetter(
                   AppTexts.formatShortMonth(context, month.date)),
               currencyMap.values
-                  .map((currencyValue) => LogChartItem(
+                  .map((currencyValue) => ChartItem(
                       AppColors.APP_COLOR_2, currencyValue.valueInDefaultValue))
                   .toList()
                   .reversed
@@ -147,7 +147,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
             Provider<IncomeMonthPanelBloc>(
                 create: (context) => bloc.incomeMonthPanelBloc,
                 child: IncomeMonthPanelView()),
-            LogChart(height, 60, bars, state.monthList.currentMonthOffset,
+            Chart(height, 60, bars, state.monthList.currentMonthOffset,
                 (context, column) {
               bloc.incomeMonthPanelBloc.setMonthByIndex(column);
             }),

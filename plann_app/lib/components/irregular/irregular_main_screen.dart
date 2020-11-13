@@ -14,7 +14,7 @@ import 'package:plann_app/components/irregular/edit_planned_irregular_screen.dar
 import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
-import 'package:plann_app/components/widgets/log_chart.dart';
+import 'package:plann_app/components/widgets/chart_widget.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
@@ -123,19 +123,19 @@ class _IrregularMainState extends State<IrregularMainScreen>
       state.analytics.analyticsPlannedIrregularList
           .forEach((item) => colorsMap.assign(item.model.id));
 
-      List<LogChartBar> bars = List();
+      List<ChartBar> bars = List();
       state.analytics.monthList.forEach((month) {
         if (month.plannedIrregularAccount.values.length == 0) {
-          bars.add(LogChartBar.empty(AppTexts.upFirstLetter(
+          bars.add(ChartBar.empty(AppTexts.upFirstLetter(
               AppTexts.formatShortMonth(context, month.date))));
         } else {
-          bars.add(LogChartBar(
+          bars.add(ChartBar(
               AppTexts.upFirstLetter(
                   AppTexts.formatShortMonth(context, month.date)),
               month.plannedIrregularAccount.values.entries
                   .map((e) {
                     AnalyticsItem<PlannedIrregularModel> item = e.key;
-                    return LogChartItem(colorsMap.getColor(item.model.id),
+                    return ChartItem(colorsMap.getColor(item.model.id),
                         e.value.valueInDefaultValue);
                   })
                   .toList()
@@ -151,7 +151,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             Provider<IrregularMonthPanelBloc>(
                 create: (context) => bloc.monthPanelBloc,
                 child: IrregularMonthPanelView()),
-            LogChart(
+            Chart(
                 height, 60, bars, state.analytics.monthList.currentMonthOffset,
                 (context, column) {
               bloc.monthPanelBloc.setMonthByIndex(column);
