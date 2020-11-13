@@ -27,7 +27,7 @@ class DbTestDataSet {
     ];
 
     // Income
-    for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {
+    for (int monthIndex = 1; monthIndex <= 11; monthIndex++) {
       // Prepaid
       await database.insert(
           IncomeModel.INCOME_TABLE,
@@ -155,7 +155,7 @@ class DbTestDataSet {
             .toMap());
 
     // Expense
-    for (int monthIndex = 1; monthIndex <= 12; monthIndex++) {
+    for (int monthIndex = 1; monthIndex <= 11; monthIndex++) {
       await database.insert(
           ExpenseModel.EXPENSE_TABLE,
           ExpenseModel(

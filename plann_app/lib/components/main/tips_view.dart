@@ -15,17 +15,13 @@ class TipsView extends StatelessWidget {
 
   Widget _buildTips(BuildContext context, TipsBloc bloc) {
     return PageView.builder(itemBuilder: (BuildContext context, int itemIndex) {
+      Text title = Text(FlutterI18n.translate(context, bloc.getKey(itemIndex)),
+          style: TextStyle(fontSize: 14, color: Colors.black45));
       return Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ListTile(
-                title: Text(
-              FlutterI18n.translate(context, bloc.getKey(itemIndex)),
-              style: TextStyle(fontSize: 14, color: Colors.black45),
-            ))
-          ],
+          children: [ListTile(title: title)],
         ),
       );
     });

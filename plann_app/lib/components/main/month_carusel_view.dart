@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
-import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_expense_screen.dart';
@@ -232,26 +231,26 @@ class MonthCaruselView extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (next) {
-          String info = "";
-          if (month.deltaPercentDiff[currency] >= 0) {
-            info = FlutterI18n.translate(context, "texts.delta_info_positive",
-                translationParams: {
-                  "value": month.deltaPercentDiff[currency].toString(),
-                });
-          } else {
-            info = FlutterI18n.translate(context, "texts.delta_info_negative",
-                translationParams: {
-                  "value": month.deltaPercentDiff[currency].abs().toString(),
-                });
-          }
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AppDialogs.buildHelpDialog(
-                    context, "texts.delta_info_header", info);
-              });
-        }
+//        if (next) {
+//          String info = "";
+//          if (month.deltaPercentDiff[currency] >= 0) {
+//            info = FlutterI18n.translate(context, "texts.delta_info_positive",
+//                translationParams: {
+//                  "value": month.deltaPercentDiff[currency].toString(),
+//                });
+//          } else {
+//            info = FlutterI18n.translate(context, "texts.delta_info_negative",
+//                translationParams: {
+//                  "value": month.deltaPercentDiff[currency].abs().toString(),
+//                });
+//          }
+//          showDialog(
+//              context: context,
+//              builder: (BuildContext context) {
+//                return AppDialogs.buildHelpDialog(
+//                    context, "texts.delta_info_header", info);
+//              });
+//        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -279,25 +278,25 @@ class MonthCaruselView extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (next) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AppDialogs.buildHelpDialog(
-                    context,
-                    "texts.irregular",
-                    FlutterI18n.translate(
-                        context, "texts.irregular_budget_help",
-                        translationParams: {
-                          "value": AppTexts.formatCurrencyValue(
-                              context,
-                              currency,
-                              month.plannedIrregularAccount.debet[currency]
-                                  .value,
-                              shorten: true),
-                        }));
-              });
-        }
+//        if (next) {
+//          showDialog(
+//              context: context,
+//              builder: (BuildContext context) {
+//                return AppDialogs.buildHelpDialog(
+//                    context,
+//                    "texts.irregular",
+//                    FlutterI18n.translate(
+//                        context, "texts.irregular_budget_help",
+//                        translationParams: {
+//                          "value": AppTexts.formatCurrencyValue(
+//                              context,
+//                              currency,
+//                              month.plannedIrregularAccount.debet[currency]
+//                                  .value,
+//                              shorten: true),
+//                        }));
+//              });
+//        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -322,32 +321,32 @@ class MonthCaruselView extends StatelessWidget {
       BuildContext context, CurrencyType currency, AnalyticsMonth month) {
     return InkWell(
       onTap: () {
-        double balance = month.balanceValues[currency].value;
-        String info = "";
-        if (balance >= 0) {
-          info = FlutterI18n.translate(context, "texts.balance_info_positive",
-              translationParams: {
-                "value": AppTexts.formatCurrencyValue(
-                    context, currency, balance,
-                    shorten: true),
-              });
-        } else {
-          info = FlutterI18n.translate(context, "texts.balance_info_negative",
-              translationParams: {
-                "value": AppTexts.formatCurrencyValue(
-                    context, currency, balance,
-                    shorten: true),
-              });
-        }
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AppDialogs.buildHelpDialog(
-                context,
-                "texts.free",
-                info,
-              );
-            });
+//        double balance = month.balanceValues[currency].value;
+//        String info = "";
+//        if (balance >= 0) {
+//          info = FlutterI18n.translate(context, "texts.balance_info_positive",
+//              translationParams: {
+//                "value": AppTexts.formatCurrencyValue(
+//                    context, currency, balance,
+//                    shorten: true),
+//              });
+//        } else {
+//          info = FlutterI18n.translate(context, "texts.balance_info_negative",
+//              translationParams: {
+//                "value": AppTexts.formatCurrencyValue(
+//                    context, currency, balance,
+//                    shorten: true),
+//              });
+//        }
+//        showDialog(
+//            context: context,
+//            builder: (BuildContext context) {
+//              return AppDialogs.buildHelpDialog(
+//                context,
+//                "texts.free",
+//                info,
+//              );
+//            });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
