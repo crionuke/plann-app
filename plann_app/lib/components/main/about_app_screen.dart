@@ -11,7 +11,7 @@ class AboutAppScreen extends StatelessWidget {
 
   static const int MAX_PAGE = 3;
 
-  bool startup;
+  final bool startup;
 
   AboutAppScreen(this.startup);
 

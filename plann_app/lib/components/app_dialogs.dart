@@ -31,7 +31,7 @@ class AppDialogs {
       title: Text(FlutterI18n.translate(context, titleKey),
           style: TextStyle(fontSize: 18)),
       content: Text(FlutterI18n.translate(context, contentText),
-          style: TextStyle(fontSize: 14), textAlign: TextAlign.justify,),
+          style: TextStyle(fontSize: 14)),
       actions: <Widget>[
         FlatButton(
           child: Text(FlutterI18n.translate(context, "texts.close")),

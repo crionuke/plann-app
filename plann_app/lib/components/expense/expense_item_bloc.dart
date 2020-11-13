@@ -10,7 +10,7 @@ class ExpenseItemBloc {
 
   Stream get stream => _controller.stream;
 
-  bool _valueAutofocus;
+  bool _valueAutoFocus;
 
   String _value;
   CurrencyType _currency;
@@ -19,14 +19,14 @@ class ExpenseItemBloc {
   String _comment = "";
 
   ExpenseItemBloc() {
-    _valueAutofocus = true;
+    _valueAutoFocus = true;
     // Setup default values
     _currency = CurrencyType.rubles;
     _date = DateTime.now();
   }
 
   ExpenseItemBloc.from(ExpenseModel model) {
-    _valueAutofocus = false;
+    _valueAutoFocus = false;
     _value = AppValues.prepareToDisplay(model.value);
     _currency = model.currency;
     _date = model.date;
@@ -41,7 +41,7 @@ class ExpenseItemBloc {
 
   ExpenseItemViewState get currentState {
     return ExpenseItemViewState(
-        _valueAutofocus, _value, _currency, _date, _category, _comment);
+        _valueAutoFocus, _value, _currency, _date, _category, _comment);
   }
 
   void valueChanged(String value) {
@@ -81,7 +81,7 @@ class ExpenseItemBloc {
     String categoryErrorKey = _category == null ? "texts.field_empty" : null;
 
     ExpenseItemViewState state = ExpenseItemViewState(
-        _valueAutofocus, _value, _currency, _date, _category, _comment,
+        _valueAutoFocus, _value, _currency, _date, _category, _comment,
         valueErrorKey: valueErrorKey,
         dateErrorKey: dateErrorKey,
         currencyErrorKey: currencyErrorKey,
