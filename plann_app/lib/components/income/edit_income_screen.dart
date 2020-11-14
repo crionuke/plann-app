@@ -4,6 +4,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/edit_income_bloc.dart';
 import 'package:plann_app/components/income/income_item_bloc.dart';
 import 'package:plann_app/components/income/income_item_view.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,7 @@ class EditIncomeScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "texts.income")),
           elevation: 0,
-          flexibleSpace: AppViews.buildAppGradientContainer(context),
+          flexibleSpace: GradientContainerWidget(),
           actions: <Widget>[
             PopupMenuButton<int>(
               onSelected: (index) {

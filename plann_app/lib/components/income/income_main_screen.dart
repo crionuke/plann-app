@@ -16,6 +16,7 @@ import 'package:plann_app/components/income/income_main_bloc.dart';
 import 'package:plann_app/components/income/income_month_panel_bloc.dart';
 import 'package:plann_app/components/income/income_month_panel_view.dart';
 import 'package:plann_app/components/widgets/chart_widget.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
@@ -69,7 +70,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
     return AppBar(
       title: Text(FlutterI18n.translate(context, "texts.income_s")),
       elevation: 0,
-      flexibleSpace: AppViews.buildAppGradientContainer(context),
+      flexibleSpace: GradientContainerWidget(),
       actions: <Widget>[
         IconButton(
             icon: Icon(Icons.add),

@@ -5,6 +5,7 @@ import 'package:plann_app/components/subscriptions/access_etitlement_view.dart';
 import 'package:plann_app/components/subscriptions/purchase_result_view.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_view.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -69,7 +70,7 @@ class SubscriptionsScreen extends StatelessWidget {
     return AppBar(
       title: Text(FlutterI18n.translate(context, "texts.subscriptions")),
       elevation: 0,
-      flexibleSpace: AppViews.buildAppGradientContainer(context),
+      flexibleSpace: GradientContainerWidget(),
     );
   }
 }

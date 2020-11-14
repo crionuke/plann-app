@@ -4,6 +4,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/add_planned_income_bloc.dart';
 import 'package:plann_app/components/income/planned_income_item_bloc.dart';
 import 'package:plann_app/components/income/planned_income_item_view.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class AddPlannedIncomeScreen extends StatelessWidget {
           title:
               Text(FlutterI18n.translate(context, "texts.add_planned_income")),
           elevation: 0,
-          flexibleSpace: AppViews.buildAppGradientContainer(context),
+          flexibleSpace: GradientContainerWidget(),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.done),

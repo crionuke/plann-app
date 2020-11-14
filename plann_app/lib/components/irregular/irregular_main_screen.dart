@@ -15,6 +15,7 @@ import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/chart_widget.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
@@ -67,7 +68,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
     return AppBar(
       title: Text(FlutterI18n.translate(context, "texts.irregular_short")),
       elevation: 0,
-      flexibleSpace: AppViews.buildAppGradientContainer(context),
+      flexibleSpace: GradientContainerWidget(),
       actions: <Widget>[
         IconButton(icon: Icon(Icons.add), onPressed: () {
           if (_tabController.index == 0) {

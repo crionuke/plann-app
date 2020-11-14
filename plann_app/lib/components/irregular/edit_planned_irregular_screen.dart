@@ -5,6 +5,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_bloc.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_view.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class EditPlannedIrregularScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "texts.irregular_one")),
           elevation: 0,
-          flexibleSpace: AppViews.buildAppGradientContainer(context),
+          flexibleSpace: GradientContainerWidget(),
           actions: <Widget>[
             PopupMenuButton<int>(
               onSelected: (index) {

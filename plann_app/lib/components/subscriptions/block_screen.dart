@@ -4,6 +4,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/subscriptions/block_bloc.dart';
 import 'package:plann_app/components/subscriptions/purchase_result_view.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_view.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/purchase/purchase_service.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,7 @@ class BlockScreen extends StatelessWidget {
     return AppBar(
       title: Text(FlutterI18n.translate(context, "texts.blocking")),
       elevation: 0,
-      flexibleSpace: AppViews.buildAppGradientContainer(context),
+      flexibleSpace: GradientContainerWidget(),
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/month_category_income_bloc.dart';
 import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
       ),
       centerTitle: true,
       elevation: 0,
-      flexibleSpace: AppViews.buildAppGradientContainer(context),
+      flexibleSpace: GradientContainerWidget(),
     );
   }
 

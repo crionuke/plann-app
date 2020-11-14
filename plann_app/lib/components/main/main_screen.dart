@@ -5,6 +5,7 @@ import 'package:plann_app/components/main/finances_view.dart';
 import 'package:plann_app/components/main/main_bloc.dart';
 import 'package:plann_app/components/main/settings_bloc.dart';
 import 'package:plann_app/components/main/settings_view.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +42,7 @@ class MainScreen extends StatelessWidget {
         appBar: AppBar(
             title: Text(FlutterI18n.translate(context, "texts.finances")),
             elevation: 0,
-            flexibleSpace: AppViews.buildAppGradientContainer(context)),
+            flexibleSpace: GradientContainerWidget()),
         body: FinancesView(),
         bottomNavigationBar:
             _buildBottomNavigationBar(context, bloc, selectedIndex));
@@ -53,7 +54,7 @@ class MainScreen extends StatelessWidget {
         appBar: AppBar(
             title: Text(FlutterI18n.translate(context, "texts.settings")),
             elevation: 0,
-            flexibleSpace: AppViews.buildAppGradientContainer(context)),
+            flexibleSpace: GradientContainerWidget()),
         body: SettingsView(),
         bottomNavigationBar:
             _buildBottomNavigationBar(context, bloc, selectedIndex));

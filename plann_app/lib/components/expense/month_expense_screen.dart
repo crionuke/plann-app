@@ -7,6 +7,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/expense/month_category_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_category_expense_screen.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
+import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
       ),
       centerTitle: true,
       elevation: 0,
-      flexibleSpace: AppViews.buildAppGradientContainer(context),
+      flexibleSpace: GradientContainerWidget(),
     );
   }
 
