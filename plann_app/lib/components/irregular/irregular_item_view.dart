@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/irregular/irregular_item_bloc.dart';
+import 'package:plann_app/components/widgets/string_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
 class IrregularItemView extends StatelessWidget {
@@ -33,7 +34,8 @@ class IrregularItemView extends StatelessWidget {
             _sizedBox,
             _buildCurrencyDropDownButton(context, bloc, state),
             _sizedBox,
-            _buildTitleTextField(context, bloc, state),
+            StringTextFieldWidget(state.title, "texts.title",
+                state.titleErrorKey, (value) => bloc.titleChanged(value)),
             _sizedBox,
             _buildDateTextField(context, bloc, state),
           ]);
@@ -54,12 +56,6 @@ class IrregularItemView extends StatelessWidget {
         state.currencyErrorKey,
         state.currency,
         (value) => bloc.currencyChanged(value));
-  }
-
-  Widget _buildTitleTextField(BuildContext context, IrregularItemBloc bloc,
-      IrregularItemViewState state) {
-    return AppFields.buildStringTextField(context, state.title, "texts.title",
-        state.titleErrorKey, (value) => bloc.titleChanged(value));
   }
 
   Widget _buildDateTextField(BuildContext context, IrregularItemBloc bloc,

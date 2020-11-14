@@ -5,22 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 
 class AppFields {
-  static Widget buildStringTextField(BuildContext context, String initialValue,
-      String labelTextKey, String errorKey, ValueChanged<String> onChanged) {
-    return TextFormField(
-      initialValue: initialValue,
-      decoration: InputDecoration(
-//        icon: Icon(Icons.account_balance_wallet),
-        border: OutlineInputBorder(),
-        labelText: FlutterI18n.translate(context, labelTextKey) + "*",
-        errorText:
-            errorKey != null ? FlutterI18n.translate(context, errorKey) : null,
-      ),
-      onChanged: onChanged,
-      maxLength: 128,
-    );
-  }
-
   static Widget buildDecimalTextField(BuildContext context, String initialValue,
       String labelTextKey, String errorKey, ValueChanged<String> onChanged) {
     return TextFormField(

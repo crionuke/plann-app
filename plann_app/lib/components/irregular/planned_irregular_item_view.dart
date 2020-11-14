@@ -3,6 +3,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
+import 'package:plann_app/components/widgets/string_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
 class PlannedIrregularItemView extends StatelessWidget {
@@ -25,7 +26,7 @@ class PlannedIrregularItemView extends StatelessWidget {
   Widget _buildForm(BuildContext context) {
     final PlannedIrregularItemBloc bloc =
         Provider.of<PlannedIrregularItemBloc>(context);
-    final _sizedBox = SizedBox(height: 10);
+    const _sizedBox = SizedBox(height: 10);
     return StreamBuilder(
         stream: bloc.stream,
         initialData: bloc.currentState,
@@ -38,7 +39,8 @@ class PlannedIrregularItemView extends StatelessWidget {
             _sizedBox,
             _buildCurrencyDropDownButton(context, bloc, state),
             _sizedBox,
-            _buildTitleTextField(context, bloc, state),
+            StringTextFieldWidget(state.title, "texts.title",
+                state.titleErrorKey, (value) => bloc.titleChanged(value)),
             _sizedBox,
             _buildDateTextField(context, bloc, state),
           ]);
@@ -72,12 +74,6 @@ class PlannedIrregularItemView extends StatelessWidget {
         state.currencyErrorKey,
         state.currency,
         (value) => bloc.currencyChanged(value));
-  }
-
-  Widget _buildTitleTextField(BuildContext context,
-      PlannedIrregularItemBloc bloc, PlannedIrregularItemViewState state) {
-    return AppFields.buildStringTextField(context, state.title, "texts.title",
-        state.titleErrorKey, (value) => bloc.titleChanged(value));
   }
 
   Widget _buildDateTextField(BuildContext context,
