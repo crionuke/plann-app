@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plann_app/components/app_views.dart';
+import 'package:plann_app/components/widgets/gradient_overlay_widget.dart';
 
 class LoadingScreen extends StatelessWidget {
   @override
@@ -30,13 +30,13 @@ class LoadingScreen extends StatelessWidget {
 
   Widget _buildText() {
     return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-          padding: EdgeInsets.all(20),
-          child: AppViews.buildAppGradientOverlay(Text(
-            "PLANNing App",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ))),
-    );
+        alignment: Alignment.bottomCenter,
+        child: Container(
+            padding: EdgeInsets.all(20),
+            child: GradientOverlayWidget(Text(
+              "PLANNing App",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ))));
   }
 }

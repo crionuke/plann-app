@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/main/about_app_bloc.dart';
 import 'package:plann_app/components/main/main_screen.dart';
+import 'package:plann_app/components/widgets/gradient_overlay_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -26,7 +26,7 @@ class AboutAppScreen extends StatelessWidget {
             elevation: 0,
             automaticallyImplyLeading: false,
             actions: <Widget>[
-              AppViews.buildAppGradientOverlay(IconButton(
+              GradientOverlayWidget(IconButton(
                 color: Colors.white,
                 icon: Icon(Icons.close),
                 onPressed: () {
@@ -75,12 +75,12 @@ class AboutAppScreen extends StatelessWidget {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            AppViews.buildAppGradientOverlay(Text(
+            GradientOverlayWidget(Text(
               FlutterI18n.translate(
                   context, "about_app.page" + pageIndex.toString()),
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 18),
-            ))
+            )),
           ],
         )));
   }

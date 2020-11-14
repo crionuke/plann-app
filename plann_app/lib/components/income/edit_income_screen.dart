@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/edit_income_bloc.dart';
 import 'package:plann_app/components/income/income_item_bloc.dart';
 import 'package:plann_app/components/income/income_item_view.dart';

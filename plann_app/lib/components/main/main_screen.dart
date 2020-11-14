@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_views.dart';
+import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/main/finances_view.dart';
 import 'package:plann_app/components/main/main_bloc.dart';
 import 'package:plann_app/components/main/settings_bloc.dart';
 import 'package:plann_app/components/main/settings_view.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
+import 'package:plann_app/components/widgets/gradient_overlay_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -60,22 +61,20 @@ class MainScreen extends StatelessWidget {
             _buildBottomNavigationBar(context, bloc, selectedIndex));
   }
 
-  BottomNavigationBar _buildBottomNavigationBar(
+  Widget _buildBottomNavigationBar(
       BuildContext context, MainBloc bloc, int selectedIndex) {
     return BottomNavigationBar(
+      selectedItemColor: AppColors.APP_COLOR_1,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
       items: [
         BottomNavigationBarItem(
-          icon: AppViews.buildAppGradientOverlay(
-              Icon(Icons.account_balance_wallet)),
-          title: AppViews.buildAppGradientOverlay(
-              Text(FlutterI18n.translate(context, "texts.finances"))),
+          icon: GradientOverlayWidget(Icon(Icons.account_balance_wallet)),
+          label: FlutterI18n.translate(context, "texts.finances"),
         ),
         BottomNavigationBarItem(
-          icon: AppViews.buildAppGradientOverlay(Icon(Icons.settings)),
-          title: AppViews.buildAppGradientOverlay(
-              Text(FlutterI18n.translate(context, "texts.settings"))),
+          icon: GradientOverlayWidget(Icon(Icons.settings)),
+          label: FlutterI18n.translate(context, "texts.settings"),
         ),
       ],
       currentIndex: selectedIndex,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/subscriptions/block_bloc.dart';
 import 'package:plann_app/components/subscriptions/purchase_result_view.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_view.dart';

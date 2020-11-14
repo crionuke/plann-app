@@ -3,7 +3,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/emergency/add_emergency_fund_screen.dart';
 import 'package:plann_app/components/emergency/edit_emergency_fund_screen.dart';
 import 'package:plann_app/components/emergency/emergency_fund_main_bloc.dart';

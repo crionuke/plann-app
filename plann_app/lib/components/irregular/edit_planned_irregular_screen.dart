@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_dialogs.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_bloc.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_view.dart';
