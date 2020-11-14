@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:plann_app/components/app_values.dart';
+import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 
@@ -21,7 +21,7 @@ class IrregularItemBloc {
   }
 
   IrregularItemBloc.from(IrregularModel model) {
-    _value = AppValues.prepareToDisplay(model.value);
+    _value = AppTexts.prepareToDisplay(model.value);
     _currency = model.currency;
     _title = model.title;
     _date = model.date;
@@ -60,7 +60,7 @@ class IrregularItemBloc {
     String valueErrorKey;
     if (_value == null || _value.trim() == "") {
       valueErrorKey = "texts.field_empty";
-    } else if (num.tryParse(AppValues.prepareToParse(_value)) == null) {
+    } else if (num.tryParse(AppTexts.prepareToParse(_value)) == null) {
       valueErrorKey = "texts.field_invalid";
     }
     String titleErrorKey =

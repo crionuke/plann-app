@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/income/month_category_income_bloc.dart';
 import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
@@ -132,7 +131,7 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
               shorten: true);
 
           String percentsPerCatetgory =
-              AppValues.prepareToDisplay(state.percents[category], fixed: 1);
+              AppTexts.prepareToDisplay(state.percents[category], fixed: 1);
 
           return ListTile(
               onTap: () {

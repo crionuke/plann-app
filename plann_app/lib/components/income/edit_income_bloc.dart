@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/income/income_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -43,7 +42,7 @@ class EditIncomeBloc {
           model.id,
           IncomeModel(
               null,
-              num.parse(AppValues.prepareToParse(state.value)),
+              num.parse(AppTexts.prepareToParse(state.value)),
               state.currency,
               state.dateTime,
               state.category,

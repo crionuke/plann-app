@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:plann_app/components/app_values.dart';
+import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/emergency/emergency_fund_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -34,8 +34,8 @@ class AddEmergencyFundBloc {
       await dbService.addEmergencyFund(EmergencyFundModel(
         null,
         state.currency,
-        num.parse(AppValues.prepareToParse(state.currentValue)),
-        num.parse(AppValues.prepareToParse(state.targetValue)),
+        num.parse(AppTexts.prepareToParse(state.currentValue)),
+        num.parse(AppTexts.prepareToParse(state.targetValue)),
         state.startDate,
         state.finishDate,
       ));

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:plann_app/components/app_values.dart';
+import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/emergency_fund_model.dart';
 
@@ -23,8 +23,8 @@ class EmergencyFundItemBloc {
 
   EmergencyFundItemBloc.from(EmergencyFundModel model) {
     _currency = model.currency;
-    _currentValue = AppValues.prepareToDisplay(model.currentValue);
-    _targetValue = AppValues.prepareToDisplay(model.targetValue);
+    _currentValue = AppTexts.prepareToDisplay(model.currentValue);
+    _targetValue = AppTexts.prepareToDisplay(model.targetValue);
     _startDate = model.startDate;
     _finishDate = model.finishDate;
   }
@@ -69,13 +69,13 @@ class EmergencyFundItemBloc {
     String currentValueErrorKey;
     if (_currentValue == null || _currentValue.trim() == "") {
       currentValueErrorKey = "texts.field_empty";
-    } else if (num.tryParse(AppValues.prepareToParse(_currentValue)) == null) {
+    } else if (num.tryParse(AppTexts.prepareToParse(_currentValue)) == null) {
       currentValueErrorKey = "texts.field_invalid";
     }
     String targetValueErrorKey;
     if (_targetValue == null || _targetValue.trim() == "") {
       targetValueErrorKey = "texts.field_empty";
-    } else if (num.tryParse(AppValues.prepareToParse(_targetValue)) == null) {
+    } else if (num.tryParse(AppTexts.prepareToParse(_targetValue)) == null) {
       targetValueErrorKey = "texts.field_invalid";
     }
     String startDateErrorKey = _startDate == null ? "texts.field_empty" : null;

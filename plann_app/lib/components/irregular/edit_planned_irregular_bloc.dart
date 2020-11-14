@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -44,7 +43,7 @@ class EditPlannedIrregularBloc {
           PlannedIrregularModel(
               null,
               state.creationDate,
-              num.parse(AppValues.prepareToParse(state.value)),
+              num.parse(AppTexts.prepareToParse(state.value)),
               state.currency,
               AppTexts.upFirstLetter(state.title),
               state.date));

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/expense/month_category_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_category_expense_screen.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
@@ -132,7 +131,7 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
               shorten: true);
 
           String percentsPerCatetgory =
-              AppValues.prepareToDisplay(state.percents[category], fixed: 1);
+              AppTexts.prepareToDisplay(state.percents[category], fixed: 1);
 
           return ListTile(
               onTap: () {

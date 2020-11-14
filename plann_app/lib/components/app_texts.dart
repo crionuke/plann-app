@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:intl/intl.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
@@ -130,7 +129,7 @@ class AppTexts {
     if (shorten) {
       displayValue = formatValueAsShorten(context, value);
     } else {
-      displayValue = AppValues.prepareToDisplay(value);
+      displayValue = prepareToDisplay(value);
     }
 
     return FlutterI18n.translate(
@@ -155,7 +154,7 @@ class AppTexts {
 
     return FlutterI18n.translate(context, "shorten_numbers." + template,
         translationParams: {
-          "value": AppValues.prepareToDisplay(shortenValue, fixed: 1)
+          "value": prepareToDisplay(shortenValue, fixed: 1)
         });
   }
 
@@ -179,5 +178,21 @@ class AppTexts {
       BuildContext context, SubjectModeType subjectModeType) {
     return FlutterI18n.translate(context,
         "subject_mode_type_enum." + subjectModeType.toString().split(".")[1]);
+  }
+
+  static String prepareToParse(String value) {
+    if (value != null) {
+      return value.trim().replaceAll(" ", "").replaceAll(",", ".");
+    } else {
+      return null;
+    }
+  }
+
+  static String prepareToDisplay(num value, {num fixed = 2}) {
+    // TODO detect what use "." or ","
+    return value
+        .toStringAsFixed(fixed)
+        .replaceAll(new RegExp("[.,]0*\$"), "")
+        .replaceAll(".", ",");
   }
 }

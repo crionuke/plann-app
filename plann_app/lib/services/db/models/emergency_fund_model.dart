@@ -1,5 +1,4 @@
 import 'package:plann_app/services/db/models/currency_model.dart';
-import 'package:plann_app/services/db/models/expense_category_model.dart';
 
 class EmergencyFundModel {
   static const EMERGENY_FUND_TABLE = "e_fund";

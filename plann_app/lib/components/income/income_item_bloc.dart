@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:plann_app/components/app_values.dart';
+import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
@@ -23,7 +23,7 @@ class IncomeItemBloc {
   }
 
   IncomeItemBloc.from(IncomeModel model) {
-    _value = AppValues.prepareToDisplay(model.value);
+    _value = AppTexts.prepareToDisplay(model.value);
     _currency = model.currency;
     _dateTime = model.date;
     _category = model.category;
@@ -69,7 +69,7 @@ class IncomeItemBloc {
     String valueErrorKey;
     if (_value == null || _value.trim() == "") {
       valueErrorKey = "texts.field_empty";
-    } else if (num.tryParse(AppValues.prepareToParse(_value)) == null) {
+    } else if (num.tryParse(AppTexts.prepareToParse(_value)) == null) {
       valueErrorKey = "texts.field_invalid";
     }
     String currencyErrorKey = _currency == null ? "texts.field_empty" : null;

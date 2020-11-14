@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_values.dart';
 import 'package:plann_app/components/expense/planned_expense_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -35,7 +34,7 @@ class AddPlannedExpenseBloc {
       _controller.sink.add(true);
       await dbService.addPlannedExpense(PlannedExpenseModel(
           null,
-          num.parse(AppValues.prepareToParse(state.value)),
+          num.parse(AppTexts.prepareToParse(state.value)),
           state.currency,
           state.category,
           AppTexts.upFirstLetter(state.comment)));

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:plann_app/components/app_values.dart';
+import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
@@ -18,7 +18,7 @@ class PlannedExpenseItemBloc {
   PlannedExpenseItemBloc();
 
   PlannedExpenseItemBloc.from(PlannedExpenseModel model) {
-    _value = AppValues.prepareToDisplay(model.value);
+    _value = AppTexts.prepareToDisplay(model.value);
     _currency = model.currency;
     _category = model.category;
     _comment = model.comment;
@@ -57,7 +57,7 @@ class PlannedExpenseItemBloc {
     String valueErrorKey;
     if (_value == null || _value.trim() == "") {
       valueErrorKey = "texts.field_empty";
-    } else if (num.tryParse(AppValues.prepareToParse(_value)) == null) {
+    } else if (num.tryParse(AppTexts.prepareToParse(_value)) == null) {
       valueErrorKey = "texts.field_invalid";
     }
     String currencyErrorKey = _currency == null ? "texts.field_empty" : null;

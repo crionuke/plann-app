@@ -8,8 +8,6 @@ import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
-import '../app_values.dart';
-
 class AddPlannedIncomeBloc {
   final _controller = StreamController<bool>();
 
@@ -35,7 +33,7 @@ class AddPlannedIncomeBloc {
       _controller.sink.add(true);
       await dbService.addPlannedIncome(PlannedIncomeModel(
           null,
-          num.parse(AppValues.prepareToParse(state.value)),
+          num.parse(AppTexts.prepareToParse(state.value)),
           state.currency,
           state.mode,
           state.date,
