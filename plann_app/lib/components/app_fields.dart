@@ -6,15 +6,6 @@ import 'package:plann_app/services/db/models/currency_model.dart';
 
 class AppFields {
 
-  static Widget buildCurrencyDropDownButton(
-      BuildContext context,
-      String labelKey,
-      String errorKey,
-      CurrencyType value,
-      ValueChanged<CurrencyType> onChanged) {
-
-  }
-
   static Widget buildDateTextField(BuildContext context, DateTime initialValue,
       String labelKey, String errorKey, Function(DateTime value) onChanged) {
     DateTime now = DateTime.now();
