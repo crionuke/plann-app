@@ -98,22 +98,6 @@ class AppFields {
         onChanged: onChanged);
   }
 
-  static Widget buildCommentTextField(BuildContext context, String initialValue,
-      String labelKey, ValueChanged<String> onChanged) {
-    return TextFormField(
-      initialValue: initialValue,
-      decoration: InputDecoration(
-//        icon: Icon(Icons.comment),
-        border: OutlineInputBorder(),
-        labelText: FlutterI18n.translate(context, labelKey),
-      ),
-      onChanged: onChanged,
-      minLines: 5,
-      maxLines: 5,
-      maxLength: 256,
-    );
-  }
-
   static Widget buildEnumTextField<T>(
       BuildContext context,
       List<T> values,

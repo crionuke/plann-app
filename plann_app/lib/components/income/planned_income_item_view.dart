@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/income/planned_income_item_bloc.dart';
+import 'package:plann_app/components/widgets/comment_text_field_widget.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
@@ -45,7 +46,8 @@ class PlannedIncomeItemView extends StatelessWidget {
             _sizedBox,
             _buildCategoryDropDownButton(context, bloc, state),
             _sizedBox,
-            _buildCommentTextField(context, bloc, state),
+            CommentTextFieldWidget(
+                state.comment, (value) => bloc.commentChanged(value)),
           ]);
         });
   }
@@ -101,11 +103,5 @@ class PlannedIncomeItemView extends StatelessWidget {
         state.categoryErrorKey,
         (value) => bloc.categoryChanged(value),
         "income_category_type_enum");
-  }
-
-  Widget _buildCommentTextField(BuildContext context,
-      PlannedIncomeItemBloc bloc, PlannedIncomeItemViewState state) {
-    return AppFields.buildCommentTextField(context, state.comment,
-        "texts.comment", (value) => bloc.commentChanged(value));
   }
 }
