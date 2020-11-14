@@ -2,24 +2,32 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-typedef ChartBarTapCallback = void Function(
-    BuildContext context, int column);
+typedef ChartBarTapCallback = void Function(BuildContext context, int column);
 
-class Chart extends StatelessWidget {
-//  static const double barWidth = 60;
+class ChartWidget extends StatelessWidget {
   static const Color DEFAULT_COLOR = Colors.blueAccent;
-  
+
   final double height;
   final double barWidth;
   final List<ChartBar> bars;
   final int currentColumn;
   final ChartBarTapCallback barTap;
 
-  double _scale;
+  final double _scale;
 
-  Chart(this.height, this.barWidth, this.bars, this.currentColumn, this.barTap) {
-    _scale = height * 0.8 / calcSum(bars);
-  }
+  ChartWidget(this.height, this.barWidth, this.bars, this.currentColumn, this.barTap)
+      : _scale = height *
+            0.8 /
+            bars
+                .map((bar) {
+                  double sum = 0;
+                  for (ChartItem item in bar.items) {
+                    sum += item.value;
+                  }
+                  return sum;
+                })
+                .toList()
+                .reduce(max);
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +35,8 @@ class Chart extends StatelessWidget {
       child: Container(
           height: height + 50,
           child: ListView(
-            controller: ScrollController(
-                initialScrollOffset: currentColumn * barWidth),
+            controller:
+                ScrollController(initialScrollOffset: currentColumn * barWidth),
             scrollDirection: Axis.horizontal,
             children: bars
                 .map((bar) => _buildColumn(context, bars.indexOf(bar), bar))
@@ -114,8 +122,7 @@ class ChartBar {
 
   ChartBar(this.title, this.items);
 
-  ChartBar.empty(this.title)
-      : items = [ChartItem(Chart.DEFAULT_COLOR, 0)];
+  ChartBar.empty(this.title) : items = [ChartItem(ChartWidget.DEFAULT_COLOR, 0)];
 }
 
 class ChartItem {
@@ -124,5 +131,5 @@ class ChartItem {
 
   ChartItem(this.color, this.value);
 
-  ChartItem.defaultColor(this.value) : color = Chart.DEFAULT_COLOR;
+  ChartItem.defaultColor(this.value) : color = ChartWidget.DEFAULT_COLOR;
 }
