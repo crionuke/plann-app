@@ -13,7 +13,7 @@ class CommentTextFieldWidget extends StatelessWidget {
       initialValue: initialValue,
       decoration: InputDecoration(
 //        icon: Icon(Icons.comment),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, "texts.comment"),
       ),
       onChanged: onChanged,

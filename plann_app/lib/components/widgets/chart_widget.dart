@@ -101,19 +101,6 @@ class ChartWidget extends StatelessWidget {
       child: Center(child: text),
     );
   }
-
-  double calcSum(List<ChartBar> data) {
-    return data
-        .map((bar) {
-          double sum = 0;
-          for (ChartItem item in bar.items) {
-            sum += item.value;
-          }
-          return sum;
-        })
-        .toList()
-        .reduce(max);
-  }
 }
 
 class ChartBar {

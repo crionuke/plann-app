@@ -19,17 +19,19 @@ class CurrencyDropDownWidget extends StatelessWidget {
             "currency_type_enum." + currency.toString().split(".")[1])),
       );
     }).toList();
-
+    final String labelText = FlutterI18n.translate(context, "texts.currency") +
+        "*";
+    final String errorText = errorKey != null
+        ? FlutterI18n.translate(context, errorKey)
+        : null;
     return new FormField<CurrencyType>(
         builder: (FormFieldState<CurrencyType> state) {
       return InputDecorator(
           isEmpty: value == null,
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: FlutterI18n.translate(context, "texts.currency") + "*",
-            errorText: errorKey != null
-                ? FlutterI18n.translate(context, errorKey)
-                : null,
+            border: const OutlineInputBorder(),
+            labelText: labelText,
+            errorText: errorText,
           ),
           child: DropdownButtonHideUnderline(
               child: DropdownButton<CurrencyType>(

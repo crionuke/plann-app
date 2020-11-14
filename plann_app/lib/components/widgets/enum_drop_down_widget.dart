@@ -23,16 +23,18 @@ class EnumDropDownWidget<T> extends StatelessWidget {
         ),
       );
     }).toList();
+    final String labelText = FlutterI18n.translate(context, labelKey) + "*";
+    final String errorText = errorKey != null
+        ? FlutterI18n.translate(context, errorKey)
+        : null;
+
     return FormField<T>(builder: (FormFieldState<T> value) {
       return InputDecorator(
           isEmpty: currentValue == null,
           decoration: InputDecoration(
-//            icon: icon,
-            border: OutlineInputBorder(),
-            labelText: FlutterI18n.translate(context, labelKey) + "*",
-            errorText: errorKey != null
-                ? FlutterI18n.translate(context, errorKey)
-                : null,
+            border: const OutlineInputBorder(),
+            labelText: labelText,
+            errorText: errorText,
           ),
           child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(

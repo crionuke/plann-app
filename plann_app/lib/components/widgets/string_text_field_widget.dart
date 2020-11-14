@@ -16,7 +16,7 @@ class StringTextFieldWidget extends StatelessWidget {
       initialValue: initialValue,
       decoration: InputDecoration(
 //        icon: Icon(Icons.account_balance_wallet),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, labelTextKey) + "*",
         errorText:
             errorKey != null ? FlutterI18n.translate(context, errorKey) : null,

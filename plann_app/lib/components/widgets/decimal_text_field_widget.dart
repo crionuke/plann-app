@@ -17,13 +17,12 @@ class DecimalTextFieldWidget extends StatelessWidget {
       autofocus: autoFocus,
       initialValue: initialValue,
       decoration: InputDecoration(
-//        icon: Icon(Icons.account_balance_wallet),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, labelTextKey) + "*",
         errorText:
         errorKey != null ? FlutterI18n.translate(context, errorKey) : null,
       ),
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onChanged: onChanged,
     );
   }

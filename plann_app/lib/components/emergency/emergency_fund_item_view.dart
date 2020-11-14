@@ -64,13 +64,13 @@ class EmergencyFundItemView extends StatelessWidget {
       initialValue: state.currentValue,
       decoration: InputDecoration(
         icon: Icon(Icons.account_balance_wallet),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, 'texts.value') + '*',
         errorText: state.currentValueErrorKey != null
             ? FlutterI18n.translate(context, state.currentValueErrorKey)
             : null,
       ),
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onChanged: (value) => bloc.currentValueChanged(value),
     );
   }
@@ -81,13 +81,13 @@ class EmergencyFundItemView extends StatelessWidget {
       initialValue: state.targetValue,
       decoration: InputDecoration(
         icon: Icon(Icons.account_balance_wallet),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, 'texts.value') + '*',
         errorText: state.targetValueErrorKey != null
             ? FlutterI18n.translate(context, state.targetValueErrorKey)
             : null,
       ),
-      keyboardType: TextInputType.numberWithOptions(decimal: true),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onChanged: (value) => bloc.targetValueChanged(value),
     );
   }

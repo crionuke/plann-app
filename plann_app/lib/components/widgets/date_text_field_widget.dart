@@ -23,7 +23,7 @@ class DateTextFieldWidget extends StatelessWidget {
     return DateTimeField(
         initialValue: initialValue,
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           labelText: FlutterI18n.translate(context, labelKey) + '*',
           errorText: errorKey != null
               ? FlutterI18n.translate(context, errorKey)

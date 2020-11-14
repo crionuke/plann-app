@@ -64,7 +64,7 @@ class PlannedIrregularItemView extends StatelessWidget {
       initialValue: AppTexts.formatDate(context, state.creationDate),
       decoration: InputDecoration(
 //        icon: Icon(Icons.date_range),
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         labelText: FlutterI18n.translate(context, "texts.creation_date") + "*",
       ),
       enabled: false,
