@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/emergency/emergency_fund_item_bloc.dart';
+import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:provider/provider.dart';
 
 class EmergencyFundItemView extends StatelessWidget {
@@ -26,14 +27,15 @@ class EmergencyFundItemView extends StatelessWidget {
   Widget _buildForm(BuildContext context) {
     final EmergencyFundItemBloc bloc =
         Provider.of<EmergencyFundItemBloc>(context);
-    final _sizedBox = SizedBox(height: 10);
+    const _sizedBox = SizedBox(height: 10);
     return StreamBuilder(
         stream: bloc.stream,
         initialData: bloc.currentState,
         builder: (context, snapshot) {
           var state = snapshot.data as EmergencyFundItemViewState;
           return Column(children: <Widget>[
-            _buildCurrencyDropDownButton(context, bloc, state),
+            CurrencyDropDownWidget(state.currencyErrorKey,
+                state.currency, (value) => bloc.currencyChanged(value)),
             _sizedBox,
             _buildCurrentValueTextField(context, bloc, state),
             _sizedBox,
@@ -44,16 +46,6 @@ class EmergencyFundItemView extends StatelessWidget {
             _buildFinishDateTextField(context, bloc, state),
           ]);
         });
-  }
-
-  Widget _buildCurrencyDropDownButton(BuildContext context,
-      EmergencyFundItemBloc bloc, EmergencyFundItemViewState state) {
-    return AppFields.buildCurrencyDropDownButton(
-        context,
-        "texts.currency",
-        state.currencyErrorKey,
-        state.currency,
-        (value) => bloc.currencyChanged(value));
   }
 
   Widget _buildCurrentValueTextField(BuildContext context,

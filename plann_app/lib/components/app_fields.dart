@@ -12,33 +12,7 @@ class AppFields {
       String errorKey,
       CurrencyType value,
       ValueChanged<CurrencyType> onChanged) {
-    return new FormField<CurrencyType>(
-        builder: (FormFieldState<CurrencyType> state) {
-      return InputDecorator(
-          isEmpty: value == null,
-          decoration: InputDecoration(
-//            icon: Icon(Icons.account_balance),
-            border: OutlineInputBorder(),
-            labelText: FlutterI18n.translate(context, labelKey) + "*",
-            errorText: errorKey != null
-                ? FlutterI18n.translate(context, errorKey)
-                : null,
-          ),
-          child: DropdownButtonHideUnderline(
-              child: DropdownButton<CurrencyType>(
-            value: value,
-            isDense: true,
-            onChanged: onChanged,
-            items: CurrencyType.values
-                .map<DropdownMenuItem<CurrencyType>>((currency) {
-              return DropdownMenuItem<CurrencyType>(
-                value: currency,
-                child: new Text(FlutterI18n.translate(context,
-                    "currency_type_enum." + currency.toString().split(".")[1])),
-              );
-            }).toList(),
-          )));
-    });
+
   }
 
   static Widget buildDateTextField(BuildContext context, DateTime initialValue,

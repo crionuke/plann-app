@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/expense/planned_expense_item_bloc.dart';
+import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +26,7 @@ class PlannedExpenseItemView extends StatelessWidget {
   Widget _buildForm(BuildContext context) {
     final PlannedExpenseItemBloc bloc =
         Provider.of<PlannedExpenseItemBloc>(context);
-    final _sizedBox = SizedBox(height: 10);
+    const _sizedBox = SizedBox(height: 10);
     return StreamBuilder(
         stream: bloc.stream,
         initialData: bloc.currentState,
@@ -34,7 +35,8 @@ class PlannedExpenseItemView extends StatelessWidget {
           return Column(children: <Widget>[
             _buildValueTextField(context, bloc, state),
             _sizedBox,
-            _buildCurrencyDropDownButton(context, bloc, state),
+            CurrencyDropDownWidget(state.currencyErrorKey,
+                state.currency, (value) => bloc.currencyChanged(value)),
             _sizedBox,
             _buildCategoryDropDownButton(context, bloc, state),
             _sizedBox,
@@ -58,16 +60,6 @@ class PlannedExpenseItemView extends StatelessWidget {
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       onChanged: (value) => bloc.valueChanged(value),
     );
-  }
-
-  Widget _buildCurrencyDropDownButton(BuildContext context,
-      PlannedExpenseItemBloc bloc, PlannedExpenseItemViewState state) {
-    return AppFields.buildCurrencyDropDownButton(
-        context,
-        "texts.currency",
-        state.currencyErrorKey,
-        state.currency,
-        (value) => bloc.currencyChanged(value));
   }
 
   Widget _buildCategoryDropDownButton(BuildContext context,

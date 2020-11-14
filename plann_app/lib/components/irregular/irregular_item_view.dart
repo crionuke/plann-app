@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/irregular/irregular_item_bloc.dart';
+import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:plann_app/components/widgets/decimal_text_field_widget.dart';
 import 'package:plann_app/components/widgets/string_text_field_widget.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class IrregularItemView extends StatelessWidget {
 
   Widget _buildForm(BuildContext context) {
     final IrregularItemBloc bloc = Provider.of<IrregularItemBloc>(context);
-    final _sizedBox = SizedBox(height: 10);
+    const _sizedBox = SizedBox(height: 10);
     return StreamBuilder(
         stream: bloc.stream,
         initialData: bloc.currentState,
@@ -34,7 +35,8 @@ class IrregularItemView extends StatelessWidget {
             DecimalTextFieldWidget(state.value, "texts.value",
                 state.valueErrorKey, (value) => bloc.valueChanged(value)),
             _sizedBox,
-            _buildCurrencyDropDownButton(context, bloc, state),
+            CurrencyDropDownWidget(state.currencyErrorKey,
+                state.currency, (value) => bloc.currencyChanged(value)),
             _sizedBox,
             StringTextFieldWidget(state.title, "texts.title",
                 state.titleErrorKey, (value) => bloc.titleChanged(value)),
@@ -42,16 +44,6 @@ class IrregularItemView extends StatelessWidget {
             _buildDateTextField(context, bloc, state),
           ]);
         });
-  }
-
-  Widget _buildCurrencyDropDownButton(BuildContext context,
-      IrregularItemBloc bloc, IrregularItemViewState state) {
-    return AppFields.buildCurrencyDropDownButton(
-        context,
-        "texts.currency",
-        state.currencyErrorKey,
-        state.currency,
-        (value) => bloc.currencyChanged(value));
   }
 
   Widget _buildDateTextField(BuildContext context, IrregularItemBloc bloc,
