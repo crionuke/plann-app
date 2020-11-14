@@ -24,7 +24,7 @@ class SettingsView extends StatelessWidget {
             }
           }
 
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

@@ -38,7 +38,7 @@ class AddIncomeScreen extends StatelessWidget {
         builder: (context, snapshot) {
           bool progress = snapshot.data;
           if (progress) {
-            return AppProgressIndicator();
+            return ProgressIndicatorWidget();
           } else {
             return SafeArea(
                 child: Provider<IncomeItemBloc>(

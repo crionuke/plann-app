@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:plann_app/components/app_colors.dart';
 
 class AppViews {
-  static Widget buildProgressIndicator(BuildContext context) {
-    return CustomScrollView(slivers: <Widget>[
-      SliverFillRemaining(
-          child: Center(
-        child: CircularProgressIndicator(),
-      ))
-    ]);
-  }
 
   static Widget buildAppGradientContainer(BuildContext context) {
     return Container(

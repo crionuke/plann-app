@@ -76,7 +76,7 @@ class _MonthCategoryExpenseState extends State<MonthCategoryExpenseScreen>
               return _buildListView(context, bloc, state);
             }
           }
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

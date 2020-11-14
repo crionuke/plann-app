@@ -105,7 +105,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             }
           }
 
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

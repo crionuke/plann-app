@@ -100,7 +100,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             }
           }
 
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

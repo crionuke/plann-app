@@ -105,7 +105,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
             }
           }
 
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

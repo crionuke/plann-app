@@ -61,7 +61,7 @@ class BlockScreen extends StatelessWidget {
                       }
                     }
 
-                    return AppProgressIndicator();
+                    return ProgressIndicatorWidget();
                   }))
         ]));
   }

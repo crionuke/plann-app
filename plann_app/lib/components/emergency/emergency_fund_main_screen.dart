@@ -76,7 +76,7 @@ class _EmergencyFundMainState extends State<EmergencyFundMainScreen>
             }
           }
 
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

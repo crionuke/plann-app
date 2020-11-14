@@ -60,7 +60,7 @@ class SubscriptionsScreen extends StatelessWidget {
                       }
                     }
 
-                    return AppProgressIndicator();
+                    return ProgressIndicatorWidget();
                   }))
         ]));
   }

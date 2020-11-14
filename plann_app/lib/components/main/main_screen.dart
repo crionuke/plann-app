@@ -31,7 +31,7 @@ class MainScreen extends StatelessWidget {
             }
           }
 
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 

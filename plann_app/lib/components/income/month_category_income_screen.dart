@@ -77,7 +77,7 @@ class _MonthCategoryIncomeState extends State<MonthCategoryIncomeScreen>
               return _buildListView(context, bloc, state);
             }
           }
-          return AppProgressIndicator();
+          return ProgressIndicatorWidget();
         });
   }
 
