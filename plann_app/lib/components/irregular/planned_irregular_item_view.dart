@@ -3,6 +3,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
+import 'package:plann_app/components/widgets/decimal_text_field_widget.dart';
 import 'package:plann_app/components/widgets/string_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,8 @@ class PlannedIrregularItemView extends StatelessWidget {
           return Column(children: <Widget>[
             _buildCreationDateTextField(context, bloc, state),
             _sizedBox,
-            _buildValueTextField(context, bloc, state),
+            DecimalTextFieldWidget(state.value, "texts.value",
+                state.valueErrorKey, (value) => bloc.valueChanged(value)),
             _sizedBox,
             _buildCurrencyDropDownButton(context, bloc, state),
             _sizedBox,
@@ -58,12 +60,6 @@ class PlannedIrregularItemView extends StatelessWidget {
       ),
       enabled: false,
     );
-  }
-
-  Widget _buildValueTextField(BuildContext context,
-      PlannedIrregularItemBloc bloc, PlannedIrregularItemViewState state) {
-    return AppFields.buildDecimalTextField(context, state.value, "texts.value",
-        state.valueErrorKey, (value) => bloc.valueChanged(value));
   }
 
   Widget _buildCurrencyDropDownButton(BuildContext context,
