@@ -3,10 +3,10 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/app_values.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/month_category_income_bloc.dart';
 import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
+import 'package:plann_app/components/widgets/color_rounded_box_widget.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
@@ -143,7 +143,7 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
               },
               title: Text(categoryText),
               subtitle: Text(valueText),
-              leading: AppViews.buildRoundedBox(colorsMap.getColor(category)),
+              leading: ColorRoundedBoxWidget(colorsMap.getColor(category)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

@@ -6,7 +6,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/irregular/add_irregular_screen.dart';
 import 'package:plann_app/components/irregular/add_planned_irregular_screen.dart';
 import 'package:plann_app/components/irregular/edit_irregular_screen.dart';
@@ -15,6 +14,7 @@ import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/chart_widget.dart';
+import 'package:plann_app/components/widgets/color_rounded_box_widget.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
@@ -70,13 +70,15 @@ class _IrregularMainState extends State<IrregularMainScreen>
       elevation: 0,
       flexibleSpace: GradientContainerWidget(),
       actions: <Widget>[
-        IconButton(icon: Icon(Icons.add), onPressed: () {
-          if (_tabController.index == 0) {
-            _addIrregular(context, bloc);
-          } else if (_tabController.index == 1) {
-            _addPlannedIrregular(context, bloc);
-          }
-        }),
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              if (_tabController.index == 0) {
+                _addIrregular(context, bloc);
+              } else if (_tabController.index == 1) {
+                _addPlannedIrregular(context, bloc);
+              }
+            }),
       ],
       bottom: TabBar(controller: _tabController, tabs: [
         Tab(text: FlutterI18n.translate(context, "texts.list")),
@@ -294,7 +296,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
               controller: slidableController,
               direction: Axis.horizontal,
               child: ListTile(
-                leading: AppViews.buildRoundedBox(colorsMap.getColor(model.id)),
+                leading: ColorRoundedBoxWidget(colorsMap.getColor(model.id)),
                 title: Text(model.title),
 //            isThreeLine: true,
                 subtitle: Text("$sizeInfo\n${perMonthInfo}"),

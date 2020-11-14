@@ -13,14 +13,4 @@ class AppViews {
             .createShader(bounds),
         child: child);
   }
-
-  static Widget buildRoundedBox(Color color) {
-    return ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: Container(
-          width: 32,
-          height: 32,
-          color: color,
-        ));
-  }
 }

@@ -7,7 +7,6 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:plann_app/components/app_colors.dart';
 import 'package:plann_app/components/app_dialogs.dart';
 import 'package:plann_app/components/app_texts.dart';
-import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
 import 'package:plann_app/components/income/add_planned_income_screen.dart';
 import 'package:plann_app/components/income/edit_income_screen.dart';
@@ -16,6 +15,7 @@ import 'package:plann_app/components/income/income_main_bloc.dart';
 import 'package:plann_app/components/income/income_month_panel_bloc.dart';
 import 'package:plann_app/components/income/income_month_panel_view.dart';
 import 'package:plann_app/components/widgets/chart_widget.dart';
+import 'package:plann_app/components/widgets/color_rounded_box_widget.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
@@ -234,7 +234,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
             direction: Axis.horizontal,
             child: ListTile(
               leading:
-                  AppViews.buildRoundedBox(colorsMap.getColor(model.category)),
+                  ColorRoundedBoxWidget(colorsMap.getColor(model.category)),
               title: Text("+" + itemValue),
               subtitle: Text(
                   "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
