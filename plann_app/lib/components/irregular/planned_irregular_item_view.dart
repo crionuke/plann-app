@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_fields.dart';
+import 'package:plann_app/components/app_date_fields.dart';
 import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
@@ -38,7 +38,8 @@ class PlannedIrregularItemView extends StatelessWidget {
             _buildCreationDateTextField(context, bloc, state),
             _sizedBox,
             DecimalTextFieldWidget(state.value, "texts.value",
-                state.valueErrorKey, (value) => bloc.valueChanged(value)),
+                state.valueErrorKey, (value) => bloc.valueChanged(value),
+                false),
             _sizedBox,
             CurrencyDropDownWidget(state.currencyErrorKey,
                 state.currency, (value) => bloc.currencyChanged(value)),
@@ -46,7 +47,13 @@ class PlannedIrregularItemView extends StatelessWidget {
             StringTextFieldWidget(state.title, "texts.title",
                 state.titleErrorKey, (value) => bloc.titleChanged(value)),
             _sizedBox,
-            _buildDateTextField(context, bloc, state),
+            AppDateFields.buildFromDateTextField(
+                context,
+                state.creationDate,
+                state.date,
+                'texts.date',
+                state.dateErrorKey,
+                    (value) => bloc.dateChanged(value))
           ]);
         });
   }
@@ -62,16 +69,5 @@ class PlannedIrregularItemView extends StatelessWidget {
       ),
       enabled: false,
     );
-  }
-
-  Widget _buildDateTextField(BuildContext context,
-      PlannedIrregularItemBloc bloc, PlannedIrregularItemViewState state) {
-    return AppFields.buildDateTextFieldFrom(
-        context,
-        state.creationDate,
-        state.date,
-        'texts.date',
-        state.dateErrorKey,
-        (value) => bloc.dateChanged(value));
   }
 }

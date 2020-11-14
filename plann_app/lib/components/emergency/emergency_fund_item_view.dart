@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_fields.dart';
+import 'package:plann_app/components/app_date_fields.dart';
 import 'package:plann_app/components/emergency/emergency_fund_item_bloc.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:provider/provider.dart';
@@ -41,9 +41,19 @@ class EmergencyFundItemView extends StatelessWidget {
             _sizedBox,
             _buildTargetValueTextField(context, bloc, state),
             _sizedBox,
-            _buildStartDateTextField(context, bloc, state),
+            AppDateFields.buildPastDateTextField(
+                context,
+                state.startDate,
+                'texts.date',
+                state.startDateErrorKey,
+                    (value) => bloc.startDateChanged(value)),
             _sizedBox,
-            _buildFinishDateTextField(context, bloc, state),
+            AppDateFields.buildFutureDateTextField(
+                context,
+                state.finishDate,
+                "texts.date",
+                state.finishDateErrorKey,
+                    (value) => bloc.finishDateChanged(value))
           ]);
         });
   }
@@ -80,25 +90,5 @@ class EmergencyFundItemView extends StatelessWidget {
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       onChanged: (value) => bloc.targetValueChanged(value),
     );
-  }
-
-  Widget _buildStartDateTextField(BuildContext context,
-      EmergencyFundItemBloc bloc, EmergencyFundItemViewState state) {
-    return AppFields.buildDateTextFieldPast(
-        context,
-        state.startDate,
-        'texts.date',
-        state.startDateErrorKey,
-        (value) => bloc.startDateChanged(value));
-  }
-
-  Widget _buildFinishDateTextField(BuildContext context,
-      EmergencyFundItemBloc bloc, EmergencyFundItemViewState state) {
-    return AppFields.buildDateTextFieldFuture(
-        context,
-        state.finishDate,
-        "texts.date",
-        state.finishDateErrorKey,
-        (value) => bloc.finishDateChanged(value));
   }
 }

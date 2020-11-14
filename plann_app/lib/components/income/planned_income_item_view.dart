@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_fields.dart';
+import 'package:plann_app/components/app_date_fields.dart';
 import 'package:plann_app/components/income/planned_income_item_bloc.dart';
 import 'package:plann_app/components/widgets/comment_text_field_widget.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
+import 'package:plann_app/components/widgets/enum_drop_down_widget.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
 import 'package:provider/provider.dart';
@@ -40,11 +41,25 @@ class PlannedIncomeItemView extends StatelessWidget {
             CurrencyDropDownWidget(state.currencyErrorKey,
                 state.currency, (value) => bloc.currencyChanged(value)),
             _sizedBox,
-            _buildModeDropDownButton(context, bloc, state),
+            EnumDropDownWidget<SubjectModeType>(
+                SubjectModeType.values,
+                state.mode,
+                Icon(Icons.update),
+                "texts.mode",
+                state.modeErrorKey,
+                    (value) => bloc.modeChanged(value),
+                "subject_mode_type_enum"),
             _sizedBox,
             _buildDateTextField(context, bloc, state),
             _sizedBox,
-            _buildCategoryDropDownButton(context, bloc, state),
+            EnumDropDownWidget<IncomeCategoryType>(
+                IncomeCategoryType.values,
+                state.category,
+                Icon(Icons.category),
+                "texts.category",
+                state.categoryErrorKey,
+                    (value) => bloc.categoryChanged(value),
+                "income_category_type_enum"),
             _sizedBox,
             CommentTextFieldWidget(
                 state.comment, (value) => bloc.commentChanged(value)),
@@ -69,39 +84,13 @@ class PlannedIncomeItemView extends StatelessWidget {
     );
   }
 
-  Widget _buildModeDropDownButton(BuildContext context,
-      PlannedIncomeItemBloc bloc, PlannedIncomeItemViewState state) {
-    return AppFields.buildEnumTextField<SubjectModeType>(
-        context,
-        SubjectModeType.values,
-        state.mode,
-        Icon(Icons.update),
-        "texts.mode",
-        state.modeErrorKey,
-        (value) => bloc.modeChanged(value),
-        "subject_mode_type_enum");
-  }
-
   Widget _buildDateTextField(BuildContext context, PlannedIncomeItemBloc bloc,
       PlannedIncomeItemViewState state) {
     if (state.mode == SubjectModeType.onetime) {
-      return AppFields.buildDateTextFieldFuture(context, state.date,
+      return AppDateFields.buildFutureDateTextField(context, state.date,
           "texts.date", state.dateErrorKey, (value) => bloc.dateChanged(value));
     } else {
       return Container();
     }
-  }
-
-  Widget _buildCategoryDropDownButton(BuildContext context,
-      PlannedIncomeItemBloc bloc, PlannedIncomeItemViewState state) {
-    return AppFields.buildEnumTextField<IncomeCategoryType>(
-        context,
-        IncomeCategoryType.values,
-        state.category,
-        Icon(Icons.category),
-        "texts.category",
-        state.categoryErrorKey,
-        (value) => bloc.categoryChanged(value),
-        "income_category_type_enum");
   }
 }

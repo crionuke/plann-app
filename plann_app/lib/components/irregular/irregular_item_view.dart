@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plann_app/components/app_fields.dart';
+import 'package:plann_app/components/app_date_fields.dart';
 import 'package:plann_app/components/irregular/irregular_item_bloc.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:plann_app/components/widgets/decimal_text_field_widget.dart';
@@ -18,12 +18,16 @@ class IrregularItemView extends StatelessWidget {
               child: SingleChildScrollView(
                   padding: EdgeInsets.all(8),
                   child: Form(
-                    child: _buildForm(context),
+                    child: IrregularItemForm(),
                   )))
         ]));
   }
+}
 
-  Widget _buildForm(BuildContext context) {
+class IrregularItemForm extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
     final IrregularItemBloc bloc = Provider.of<IrregularItemBloc>(context);
     const _sizedBox = SizedBox(height: 10);
     return StreamBuilder(
@@ -33,7 +37,8 @@ class IrregularItemView extends StatelessWidget {
           var state = snapshot.data as IrregularItemViewState;
           return Column(children: <Widget>[
             DecimalTextFieldWidget(state.value, "texts.value",
-                state.valueErrorKey, (value) => bloc.valueChanged(value)),
+                state.valueErrorKey, (value) => bloc.valueChanged(value),
+                false),
             _sizedBox,
             CurrencyDropDownWidget(state.currencyErrorKey,
                 state.currency, (value) => bloc.currencyChanged(value)),
@@ -41,14 +46,10 @@ class IrregularItemView extends StatelessWidget {
             StringTextFieldWidget(state.title, "texts.title",
                 state.titleErrorKey, (value) => bloc.titleChanged(value)),
             _sizedBox,
-            _buildDateTextField(context, bloc, state),
+            AppDateFields.buildPastDateTextField(
+                context, state.date, 'texts.date',
+                state.dateTimeErrorKey, (value) => bloc.dateTimeChanged(value)),
           ]);
         });
-  }
-
-  Widget _buildDateTextField(BuildContext context, IrregularItemBloc bloc,
-      IrregularItemViewState state) {
-    return AppFields.buildDateTextFieldPast(context, state.date, 'texts.date',
-        state.dateTimeErrorKey, (value) => bloc.dateTimeChanged(value));
   }
 }

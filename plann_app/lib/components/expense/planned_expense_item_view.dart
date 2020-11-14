@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:plann_app/components/app_fields.dart';
 import 'package:plann_app/components/expense/planned_expense_item_bloc.dart';
 import 'package:plann_app/components/widgets/comment_text_field_widget.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
+import 'package:plann_app/components/widgets/enum_drop_down_widget.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +39,14 @@ class PlannedExpenseItemView extends StatelessWidget {
             CurrencyDropDownWidget(state.currencyErrorKey,
                 state.currency, (value) => bloc.currencyChanged(value)),
             _sizedBox,
-            _buildCategoryDropDownButton(context, bloc, state),
+            EnumDropDownWidget<ExpenseCategoryType>(
+                ExpenseCategoryType.values,
+                state.category,
+                Icon(Icons.category),
+                "texts.category",
+                state.categoryErrorKey,
+                    (value) => bloc.categoryChanged(value),
+                "expense_category_type_enum"),
             _sizedBox,
             CommentTextFieldWidget(state.comment, (value) => bloc.commentChanged(value)),
           ]);
@@ -61,18 +68,5 @@ class PlannedExpenseItemView extends StatelessWidget {
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       onChanged: (value) => bloc.valueChanged(value),
     );
-  }
-
-  Widget _buildCategoryDropDownButton(BuildContext context,
-      PlannedExpenseItemBloc bloc, PlannedExpenseItemViewState state) {
-    return AppFields.buildEnumTextField(
-        context,
-        ExpenseCategoryType.values,
-        state.category,
-        Icon(Icons.category),
-        "texts.category",
-        state.categoryErrorKey,
-        (value) => bloc.categoryChanged(value),
-        "expense_category_type_enum");
   }
 }
