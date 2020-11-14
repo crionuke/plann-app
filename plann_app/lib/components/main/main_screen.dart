@@ -5,6 +5,7 @@ import 'package:plann_app/components/main/finances_view.dart';
 import 'package:plann_app/components/main/main_bloc.dart';
 import 'package:plann_app/components/main/settings_bloc.dart';
 import 'package:plann_app/components/main/settings_view.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class MainScreen extends StatelessWidget {
             }
           }
 
-          return AppViews.buildProgressIndicator(context);
+          return AppProgressIndicator();
         });
   }
 

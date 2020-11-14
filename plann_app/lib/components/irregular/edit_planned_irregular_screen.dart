@@ -5,6 +5,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/irregular/edit_planned_irregular_bloc.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_bloc.dart';
 import 'package:plann_app/components/irregular/planned_irregular_item_view.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
 class EditPlannedIrregularScreen extends StatelessWidget {
@@ -69,7 +70,7 @@ class EditPlannedIrregularScreen extends StatelessWidget {
         builder: (context, snapshot) {
           bool progress = snapshot.data;
           if (progress) {
-            return AppViews.buildProgressIndicator(context);
+            return AppProgressIndicator();
           } else {
             return SafeArea(
                 child: Provider<PlannedIrregularItemBloc>(

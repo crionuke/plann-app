@@ -4,6 +4,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/expense/add_planned_expense_bloc.dart';
 import 'package:plann_app/components/expense/planned_expense_item_bloc.dart';
 import 'package:plann_app/components/expense/planned_expense_item_view.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
 class AddPlannedExpenseScreen extends StatelessWidget {
@@ -38,7 +39,7 @@ class AddPlannedExpenseScreen extends StatelessWidget {
         builder: (context, snapshot) {
           bool progress = snapshot.data;
           if (progress) {
-            return AppViews.buildProgressIndicator(context);
+            return AppProgressIndicator();
           } else {
             return SafeArea(
                 child: Provider<PlannedExpenseItemBloc>(

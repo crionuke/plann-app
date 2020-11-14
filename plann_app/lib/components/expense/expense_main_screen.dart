@@ -16,6 +16,7 @@ import 'package:plann_app/components/expense/expense_main_bloc.dart';
 import 'package:plann_app/components/expense/expense_month_panel_bloc.dart';
 import 'package:plann_app/components/expense/expense_month_panel_view.dart';
 import 'package:plann_app/components/widgets/chart_widget.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
@@ -104,7 +105,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             }
           }
 
-          return AppViews.buildProgressIndicator(context);
+          return AppProgressIndicator();
         });
   }
 
@@ -148,7 +149,7 @@ class _ExpenseMainState extends State<ExpenseMainScreen>
             Provider<ExpenseMonthPanelBloc>(
                 create: (context) => bloc.expenseMonthPanelBloc,
                 child: ExpenseMonthPanelView()),
-            Chart(height, 60, bars, state.monthList.currentMonthOffset,
+            ChartWidget(height, 60, bars, state.monthList.currentMonthOffset,
                 (context, column) {
               bloc.expenseMonthPanelBloc.setMonthByIndex(column);
             }),

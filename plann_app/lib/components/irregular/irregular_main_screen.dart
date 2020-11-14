@@ -15,6 +15,7 @@ import 'package:plann_app/components/irregular/irregular_main_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_bloc.dart';
 import 'package:plann_app/components/irregular/irregular_month_panel_view.dart';
 import 'package:plann_app/components/widgets/chart_widget.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/analytics/analytics_data.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
@@ -99,7 +100,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             }
           }
 
-          return AppViews.buildProgressIndicator(context);
+          return AppProgressIndicator();
         });
   }
 
@@ -151,7 +152,7 @@ class _IrregularMainState extends State<IrregularMainScreen>
             Provider<IrregularMonthPanelBloc>(
                 create: (context) => bloc.monthPanelBloc,
                 child: IrregularMonthPanelView()),
-            Chart(
+            ChartWidget(
                 height, 60, bars, state.analytics.monthList.currentMonthOffset,
                 (context, column) {
               bloc.monthPanelBloc.setMonthByIndex(column);

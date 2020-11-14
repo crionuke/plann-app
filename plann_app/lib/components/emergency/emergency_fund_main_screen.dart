@@ -7,6 +7,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/emergency/add_emergency_fund_screen.dart';
 import 'package:plann_app/components/emergency/edit_emergency_fund_screen.dart';
 import 'package:plann_app/components/emergency/emergency_fund_main_bloc.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:plann_app/services/db/models/emergency_fund_model.dart';
 import 'package:provider/provider.dart';
 
@@ -75,7 +76,7 @@ class _EmergencyFundMainState extends State<EmergencyFundMainScreen>
             }
           }
 
-          return AppViews.buildProgressIndicator(context);
+          return AppProgressIndicator();
         });
   }
 

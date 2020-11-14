@@ -5,6 +5,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/main/about_app_screen.dart';
 import 'package:plann_app/components/main/settings_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_screen.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
 class SettingsView extends StatelessWidget {
@@ -23,7 +24,7 @@ class SettingsView extends StatelessWidget {
             }
           }
 
-          return AppViews.buildProgressIndicator(context);
+          return AppProgressIndicator();
         });
   }
 

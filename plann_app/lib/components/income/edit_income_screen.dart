@@ -4,6 +4,7 @@ import 'package:plann_app/components/app_views.dart';
 import 'package:plann_app/components/income/edit_income_bloc.dart';
 import 'package:plann_app/components/income/income_item_bloc.dart';
 import 'package:plann_app/components/income/income_item_view.dart';
+import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
 class EditIncomeScreen extends StatelessWidget {
@@ -91,7 +92,7 @@ class EditIncomeScreen extends StatelessWidget {
         builder: (context, snapshot) {
           bool progress = snapshot.data;
           if (progress) {
-            return AppViews.buildProgressIndicator(context);
+            return AppProgressIndicator();
           } else {
             return SafeArea(
                 child: Provider<IncomeItemBloc>(
