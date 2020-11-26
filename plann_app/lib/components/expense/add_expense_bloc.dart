@@ -6,6 +6,7 @@ import 'package:plann_app/components/expense/expense_item_bloc.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
+import 'package:plann_app/services/db/models/expense_to_tag_model.dart';
 import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 class AddExpenseBloc {
@@ -13,15 +14,16 @@ class AddExpenseBloc {
 
   Stream get stream => _controller.stream;
 
-  final ExpenseItemBloc itemBloc = ExpenseItemBloc();
-
   final DbService dbService;
   final AnalyticsService analyticsService;
   final TrackingService trackingService;
 
-  AddExpenseBloc(this.dbService, this.analyticsService, this.trackingService);
+  ExpenseItemBloc itemBloc;
 
-  @override
+  AddExpenseBloc(this.dbService, this.analyticsService, this.trackingService) {
+    itemBloc = ExpenseItemBloc(dbService);
+  }
+
   void dispose() {
     _controller.close();
     itemBloc.dispose();
@@ -29,15 +31,22 @@ class AddExpenseBloc {
 
   void done(BuildContext context) async {
     if (itemBloc.done()) {
-      ExpenseItemViewState state = itemBloc.currentState;
       _controller.sink.add(true);
-      await dbService.addExpense(ExpenseModel(
+      int expenseId = await dbService.addExpense(ExpenseModel(
           null,
-          num.parse(AppTexts.prepareToParse(state.value)),
-          state.currency,
-          state.date,
-          state.category,
-          AppTexts.upFirstLetter(state.comment)));
+          num.parse(AppTexts.prepareToParse(itemBloc.value)),
+          itemBloc.currency,
+          itemBloc.date,
+          itemBloc.category,
+          AppTexts.upFirstLetter(itemBloc.comment)));
+      // Selected tags
+      for (int tagId in itemBloc.tagsBloc.selectedTags.keys) {
+        ExpenseToTagModel expenseToTagModel = new ExpenseToTagModel(
+            null, expenseId, tagId);
+        if (!(await dbService.hasExpenseTag(expenseToTagModel))) {
+          await dbService.addTagToExpense(expenseToTagModel);
+        }
+      }
       await analyticsService.analyze();
       trackingService.expenseAdded();
       Navigator.pop(context, true);

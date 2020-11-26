@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 class IncomeItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final IncomeItemBloc bloc = Provider.of<IncomeItemBloc>(context);
+
     return GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -20,7 +22,7 @@ class IncomeItemView extends StatelessWidget {
               child: SingleChildScrollView(
                   padding: EdgeInsets.all(8),
                   child: Form(
-                    child: IncomeItemForm(),
+                    child: IncomeItemForm(bloc),
                   )))
         ]));
   }
@@ -28,9 +30,12 @@ class IncomeItemView extends StatelessWidget {
 
 class IncomeItemForm extends StatelessWidget {
 
+  final IncomeItemBloc bloc;
+
+  IncomeItemForm(this.bloc);
+
   @override
   Widget build(BuildContext context) {
-    final IncomeItemBloc bloc = Provider.of<IncomeItemBloc>(context);
     const _sizedBox = SizedBox(height: 10);
     return StreamBuilder(
         stream: bloc.stream,

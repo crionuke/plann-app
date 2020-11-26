@@ -10,6 +10,8 @@ import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
+import 'package:plann_app/services/db/models/tag_model.dart';
+import 'package:plann_app/services/db/models/tag_type_model.dart';
 
 class DbTestDataSet {
   // Test dataset
@@ -203,7 +205,12 @@ class DbTestDataSet {
       }
     }
 
-    // Плановые нерегулярные расходы
+    await database.insert(TagModel.TABLE,
+        TagModel(null, "Отпуск2020", DateTime.now(), TagType.expense).toMap());
+    await database.insert(TagModel.TABLE,
+        TagModel(null, "НГ2020", DateTime.now(), TagType.expense).toMap());
+
+    // Planned irregular
     await database.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,
         PlannedIrregularModel(null, DateTime(2020, 1, 13), 25000,
@@ -225,7 +232,7 @@ class DbTestDataSet {
                 CurrencyType.rubles, "Компьютер", DateTime(2020, 9, 1))
             .toMap());
 
-    // Нерегулярные расходы
+    // Actual Irregular
     await database.insert(
         IrregularModel.IRREGULAR_TABLE,
         IrregularModel(null, 24990, CurrencyType.rubles, "Кофе-машина",

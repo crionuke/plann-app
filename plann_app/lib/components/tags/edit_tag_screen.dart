@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:plann_app/components/app_dialogs.dart';
-import 'package:plann_app/components/expense/edit_expense_bloc.dart';
-import 'package:plann_app/components/expense/expense_item_bloc.dart';
-import 'package:plann_app/components/expense/expense_item_view.dart';
+import 'package:plann_app/components/tags/edit_tag_bloc.dart';
+import 'package:plann_app/components/tags/tag_item_bloc.dart';
+import 'package:plann_app/components/tags/tag_item_view.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
-class EditExpenseScreen extends StatelessWidget {
-  static const routeName = '/expense/edit';
+class EditTagScreen extends StatelessWidget {
+  static const routeName = '/tag/edit';
 
   @override
   Widget build(BuildContext context) {
-    final EditExpenseBloc bloc = Provider.of<EditExpenseBloc>(context);
+    final EditTagBloc bloc = Provider.of<EditTagBloc>(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "texts.expense")),
+          title: Text(FlutterI18n.translate(context, "texts.tag")),
           elevation: 0,
           flexibleSpace: GradientContainerWidget(),
           actions: <Widget>[
             PopupMenuButton<int>(
-              onSelected: (index) {
+              onSelected: (index) async {
                 switch (index) {
                   case 0:
-                    bloc.done(context);
+                    if (await bloc.done()) {
+                      Navigator.pop(context);
+                    }
                     break;
                   case 1:
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AppDialogs.buildConfirmDeletionDialog(
-                              context, () =>
-                              Navigator.of(context).pop(), () async {
+                              context, () => Navigator.of(context).pop(),
+                              () async {
                             // Hide AlertDialog
                             Navigator.pop(context);
                             await bloc.delete();
@@ -64,7 +66,7 @@ class EditExpenseScreen extends StatelessWidget {
         body: _buildBody(bloc));
   }
 
-  Widget _buildBody(EditExpenseBloc bloc) {
+  Widget _buildBody(EditTagBloc bloc) {
     return StreamBuilder(
         stream: bloc.stream,
         initialData: false,
@@ -73,10 +75,11 @@ class EditExpenseScreen extends StatelessWidget {
           if (progress) {
             return ProgressIndicatorWidget();
           } else {
-            return Provider<ExpenseItemBloc>(
+            return SafeArea(
+                child: Provider<TagItemBloc>(
                     create: (context) => bloc.itemBloc,
                     dispose: (context, bloc) => bloc.dispose(),
-                child: ExpenseItemView());
+                    child: TagItemView()));
           }
         });
   }

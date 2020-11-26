@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/widgets/tags/tags_bloc.dart';
+import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
@@ -10,96 +12,139 @@ class ExpenseItemBloc {
 
   Stream get stream => _controller.stream;
 
-  bool _valueAutoFocus;
+  final DbService dbService;
+
+  TagsBloc tagsBloc;
 
   String _value;
+  bool _valueAutoFocus;
   CurrencyType _currency;
   DateTime _date;
   ExpenseCategoryType _category;
   String _comment = "";
 
-  ExpenseItemBloc() {
+  String valueErrorKey;
+  String currencyErrorKey;
+  String dateErrorKey;
+  String categoryErrorKey;
+
+  ExpenseItemBloc(this.dbService) {
     _valueAutoFocus = true;
     // Setup default values
     _currency = CurrencyType.rubles;
     _date = DateTime.now();
+    tagsBloc = TagsBloc(dbService);
   }
 
-  ExpenseItemBloc.from(ExpenseModel model) {
+  ExpenseItemBloc.from(this.dbService, ExpenseModel model) {
     _valueAutoFocus = false;
     _value = AppTexts.prepareToDisplay(model.value);
     _currency = model.currency;
     _date = model.date;
     _category = model.category;
     _comment = model.comment;
+    tagsBloc = TagsBloc.from(dbService, model.id);
   }
 
-  @override
+  String get value => _value;
+
+  bool get valueAutoFocus => _valueAutoFocus;
+
+  CurrencyType get currency => _currency;
+
+  DateTime get date => _date;
+
+  ExpenseCategoryType get category => _category;
+
+  String get comment => _comment;
+
   void dispose() {
     _controller.close();
   }
 
-  ExpenseItemViewState get currentState {
-    return ExpenseItemViewState(
-        _valueAutoFocus, _value, _currency, _date, _category, _comment);
+  Future<void> requestState() async {
+    _controller.sink.add(ExpenseItemViewState.loading());
+    // Detect tags
+    if (!_controller.isClosed) {
+      _controller.sink.add(ExpenseItemViewState.loaded(
+          _value,
+          _valueAutoFocus,
+          _currency,
+          _date,
+          _category,
+          _comment,
+          valueErrorKey: valueErrorKey,
+          dateErrorKey: dateErrorKey,
+          currencyErrorKey: currencyErrorKey,
+          categoryErrorKey: categoryErrorKey));
+    }
   }
 
   void valueChanged(String value) {
     _value = value;
-    _controller.sink.add(currentState);
+    requestState();
   }
 
   void currencyChanged(CurrencyType currency) {
     _currency = currency;
-    _controller.sink.add(currentState);
+    requestState();
   }
 
   void dateChanged(DateTime date) {
     _date = date;
-    _controller.sink.add(currentState);
+    requestState();
   }
 
   void categoryChanged(ExpenseCategoryType category) {
     _category = category;
-    _controller.sink.add(currentState);
+    requestState();
   }
 
   void commentChanged(String comment) {
     _comment = comment;
-    _controller.sink.add(currentState);
+    requestState();
   }
 
   bool done() {
-    String valueErrorKey;
+    _resetErrors();
+
     if (_value == null || _value.trim() == "") {
       valueErrorKey = "texts.field_empty";
     } else if (num.tryParse(AppTexts.prepareToParse(_value)) == null) {
       valueErrorKey = "texts.field_invalid";
     }
-    String currencyErrorKey = _currency == null ? "texts.field_empty" : null;
-    String dateErrorKey = _date == null ? "texts.field_empty" : null;
-    String categoryErrorKey = _category == null ? "texts.field_empty" : null;
+    currencyErrorKey = _currency == null ? "texts.field_empty" : null;
+    dateErrorKey = _date == null ? "texts.field_empty" : null;
+    categoryErrorKey = _category == null ? "texts.field_empty" : null;
 
-    ExpenseItemViewState state = ExpenseItemViewState(
-        _valueAutoFocus, _value, _currency, _date, _category, _comment,
-        valueErrorKey: valueErrorKey,
-        dateErrorKey: dateErrorKey,
-        currencyErrorKey: currencyErrorKey,
-        categoryErrorKey: categoryErrorKey);
-
-    if (state.hasErrors()) {
-      _controller.sink.add(state);
+    if (_hasErrors()) {
+      requestState();
       return false;
     } else {
       return true;
     }
   }
+
+  void _resetErrors() {
+    valueErrorKey = null;
+    currencyErrorKey = null;
+    dateErrorKey = null;
+    categoryErrorKey = null;
+  }
+
+  bool _hasErrors() {
+    return valueErrorKey != null ||
+        dateErrorKey != null ||
+        currencyErrorKey != null ||
+        categoryErrorKey != null;
+  }
 }
 
 class ExpenseItemViewState {
-  final bool valueAutofocus;
+  final bool loaded;
 
   final String value;
+  final bool valueAutofocus;
   final CurrencyType currency;
   final DateTime date;
   final ExpenseCategoryType category;
@@ -109,17 +154,23 @@ class ExpenseItemViewState {
   final String dateErrorKey;
   final String categoryErrorKey;
 
-  ExpenseItemViewState(this.valueAutofocus, this.value, this.currency,
+  ExpenseItemViewState.loading()
+      : loaded = false,
+        value = null,
+        valueAutofocus = null,
+        currency = null,
+        date = null,
+        category = null,
+        comment = null,
+        valueErrorKey = null,
+        currencyErrorKey = null,
+        dateErrorKey = null,
+        categoryErrorKey = null;
+
+  ExpenseItemViewState.loaded(this.value, this.valueAutofocus, this.currency,
       this.date, this.category, this.comment,
       {this.valueErrorKey,
-      this.currencyErrorKey,
-      this.dateErrorKey,
-      this.categoryErrorKey});
-
-  bool hasErrors() {
-    return valueErrorKey != null ||
-        dateErrorKey != null ||
-        currencyErrorKey != null ||
-        categoryErrorKey != null;
-  }
+        this.currencyErrorKey,
+        this.dateErrorKey,
+        this.categoryErrorKey}) : loaded = true;
 }

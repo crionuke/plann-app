@@ -5,7 +5,7 @@ class ValueModel {
   static const VALUE_KEY_V1 = "value_key";
   static const VALUE_VALUE_V1 = "value_value";
 
-  static const String createTableSql = "CREATE TABLE $VALUE_TABLE ("
+  static const String createTableSql = "CREATE TABLE IF NOT EXISTS $VALUE_TABLE ("
       "$VALUE_ID_V1 INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
       "$VALUE_KEY_V1 TEXT NOT NULL, "
       "$VALUE_VALUE_V1 TEXT NOT NULL)";

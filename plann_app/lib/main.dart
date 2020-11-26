@@ -52,6 +52,12 @@ import 'package:plann_app/components/subscriptions/block_bloc.dart';
 import 'package:plann_app/components/subscriptions/block_screen.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_bloc.dart';
 import 'package:plann_app/components/subscriptions/subscriptions_screen.dart';
+import 'package:plann_app/components/tags/add_tag_bloc.dart';
+import 'package:plann_app/components/tags/add_tag_screen.dart';
+import 'package:plann_app/components/tags/edit_tag_bloc.dart';
+import 'package:plann_app/components/tags/edit_tag_screen.dart';
+import 'package:plann_app/components/tags/tag_selection_bloc.dart';
+import 'package:plann_app/components/tags/tag_selection_screen.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
@@ -61,6 +67,7 @@ import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
+import 'package:plann_app/services/db/models/tag_model.dart';
 import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 import 'package:provider/provider.dart';
 
@@ -157,7 +164,14 @@ class App extends StatelessWidget {
               return _buildBlockPageRoute();
 
             case AboutAppScreen.routeName:
-              return _buildAppScreenPageRoute(route.arguments);
+              return _buildAboutAppPageRoute(route.arguments);
+
+            case TagSelectionScreen.routeName:
+              return _buildTagSelectionRoute(route.arguments);
+            case AddTagScreen.routeName:
+              return _buildAddTagPageRoute();
+            case EditTagScreen.routeName:
+              return _buildEditTagPageRoute(route.arguments);
 
             case IncomeMainScreen.routeName:
               return _buildIncomeListPageRoute();
@@ -237,14 +251,53 @@ class App extends StatelessWidget {
     });
   }
 
-  MaterialPageRoute _buildAppScreenPageRoute(bool startup) {
-    return MaterialPageRoute(builder: (context) {
+  MaterialPageRoute _buildAboutAppPageRoute(bool startup) {
+    return MaterialPageRoute<bool>(builder: (context) {
 //      return AboutAppScreen(pageIndex);
       return Provider<AboutAppBloc>(
           create: (context) => AboutAppBloc(
               Provider.of<ValuesService>(context, listen: false),
               Provider.of<TrackingService>(context, listen: false)),
           child: AboutAppScreen(startup));
+    });
+  }
+
+  // Tags routes
+
+  MaterialPageRoute _buildTagSelectionRoute(TagSelectionArguments arguments) {
+    return MaterialPageRoute<int>(builder: (context) {
+      return Provider<TagSelectionBloc>(
+          create: (context) =>
+              TagSelectionBloc(
+                  Provider.of<DbService>(context, listen: false),
+                  Provider.of<AnalyticsService>(context, listen: false),
+                  arguments.excludeTags),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: TagSelectionScreen());
+    });
+  }
+
+  MaterialPageRoute _buildAddTagPageRoute() {
+    return MaterialPageRoute<bool>(builder: (context) {
+      return Provider<AddTagBloc>(
+          create: (context) =>
+              AddTagBloc(
+                  Provider.of<DbService>(context, listen: false)),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: AddTagScreen());
+    });
+  }
+
+  MaterialPageRoute _buildEditTagPageRoute(TagModel model) {
+    return MaterialPageRoute<bool>(builder: (context) {
+      return Provider<EditTagBloc>(
+          create: (context) =>
+              EditTagBloc(
+                  Provider.of<DbService>(context, listen: false),
+                  Provider.of<AnalyticsService>(context, listen: false),
+                  model),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: EditTagScreen());
     });
   }
 

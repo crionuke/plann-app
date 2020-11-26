@@ -1,5 +1,6 @@
 {
   "texts": {
+    "edit": "Изменить",
     "income": "Доход",
     "add_actual_income": "Добавить",
     "add_planned_income": "Запланировать",
@@ -7,6 +8,7 @@
     "add_template_expense": "Шаблон",
     "add_actual_irregular": "Добавить",
     "add_planned_irregular": "Запланировать",
+    "add_tag": "Добавить",
     "income_s": "Доходы",
     "no_income": "Записывайте доходы, чтобы знать сколько вы зарабатываете.",
     "no_planned_income": "Доходы не запланированы.",
@@ -21,6 +23,10 @@
     "irregular": "Крупные покупки",
     "irregular_short": "Покупки",
     "irregular_s": "КП",
+    "tags": "Метки",
+    "tag": "Метка",
+    "tag_selection": "Выбор",
+    "no_tags": "Меток нет",
     "delta_info_header": "Дельта = Доходы - Расходы",
     "delta_info_positive": "{value}% заработанных средств в этом месяце осталось после вычета ежемесячных расходов.",
     "delta_info_negative": "В этом месяце расходы превысили доходы на {value}%, рекумендуем выполнить анализ отчета о расходах.",

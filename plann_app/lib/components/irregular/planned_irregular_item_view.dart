@@ -45,7 +45,8 @@ class PlannedIrregularItemView extends StatelessWidget {
                 state.currency, (value) => bloc.currencyChanged(value)),
             _sizedBox,
             StringTextFieldWidget(state.title, "texts.title",
-                state.titleErrorKey, (value) => bloc.titleChanged(value)),
+                state.titleErrorKey, (value) => bloc.titleChanged(value),
+                false),
             _sizedBox,
             AppDateFields.buildFromDateTextField(
                 context,

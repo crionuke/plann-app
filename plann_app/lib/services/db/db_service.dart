@@ -4,11 +4,14 @@ import 'package:path/path.dart';
 import 'package:plann_app/services/db/db_test_data_set.dart';
 import 'package:plann_app/services/db/models/emergency_fund_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
+import 'package:plann_app/services/db/models/expense_to_tag_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
+import 'package:plann_app/services/db/models/tag_model.dart';
+import 'package:plann_app/services/db/models/tag_type_model.dart';
 import 'package:plann_app/services/db/models/value_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,16 +20,17 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-//    String path = join(await getDatabasesPath(), "plann_133.db");
-    String path = join(await getDatabasesPath(), "plann.db");
+    String path = join(await getDatabasesPath(), "plann_148.db");
+//    String path = join(await getDatabasesPath(), "plann.db");
     database =
-        await openDatabase(path, version: 2, onConfigure: (database) async {
+    await openDatabase(path, version: 3,
+        onConfigure: (database) async {
       await database.execute("PRAGMA foreign_keys = ON");
     }, onOpen: (database) async {
       database = database;
       print("[DbService] opened");
     }, onCreate: (database, version) async {
-      // Version 1
+          // Version 1 - initial
       if (version >= 1) {
         await database.execute(IncomeModel.createTableSql);
         await database.execute(PlannedIncomeModel.createTableSql);
@@ -35,16 +39,27 @@ class DbService {
         await database.execute(IrregularModel.createTableSql);
         await database.execute(PlannedIrregularModel.createTableSql);
       }
+      // Version 2 - vsalues
       if (version >= 2) {
         await database.execute(ValueModel.createTableSql);
       }
+      // Version 3 - tags
+      if (version >= 3) {
+        await database.execute(TagModel.createTableSql);
+        await database.execute(ExpenseToTagModel.createTableSql);
+      }
       // Test data set
-//      await DbTestDataSet.fill(database);
+      await DbTestDataSet.fill(database);
       print("[DbService] version $version created");
     }, onUpgrade: (database, oldVersion, newVersion) async {
       if (oldVersion < 2 && newVersion >= 2) {
         print("[DbService] upgrade from 1 to 2");
         await database.execute(ValueModel.createTableSql);
+      }
+      if (oldVersion < 3 && newVersion >= 3) {
+        print("[DbService] upgrade from 2 to 3");
+        await database.execute(TagModel.createTableSql);
+        await database.execute(ExpenseToTagModel.createTableSql);
       }
     });
   }
@@ -199,6 +214,70 @@ class DbService {
         orderBy: "${PlannedIrregularModel.PLANNED_IRREGULAR_DATE_TS_V1} ASC");
     return results.isNotEmpty
         ? results.map((map) => PlannedIrregularModel.fromMap(map)).toList()
+        : [];
+  }
+
+  // Tag CRUD operations
+
+  Future<int> addTag(TagModel model) async {
+    return database.insert(TagModel.TABLE, model.toMap());
+  }
+
+  Future<void> editTag(int id, TagModel model) async {
+    database.update(TagModel.TABLE, model.toMap(),
+        where: '${TagModel.TAG_ID_V1}=?', whereArgs: [id]);
+  }
+
+  Future<void> deleteTag(int tagId) async {
+    await database.transaction((transaction) async {
+      await transaction.delete(ExpenseToTagModel.TABLE,
+          where: "${ExpenseToTagModel.TAG_ID_V1}=?",
+          whereArgs: [tagId]);
+      await transaction.delete(TagModel.TABLE,
+          where: '${TagModel.TAG_ID_V1}=?', whereArgs: [tagId]);
+    });
+  }
+
+  Future<List<TagModel>> getTagList(TagType type) async {
+    List<Map<String, dynamic>> results = await database.query(
+        TagModel.TABLE,
+        where: '${TagModel.TAG_TYPE_V1}=?',
+        whereArgs: [TAG_TYPE_TO_DB_MAPPING[type]],
+        orderBy: "${TagModel.TAG_TS_V1} DESC");
+    return results.isNotEmpty
+        ? results.map((map) => TagModel.fromMap(map)).toList()
+        : [];
+  }
+
+  Future<int> addTagToExpense(ExpenseToTagModel model) async {
+    return database.insert(ExpenseToTagModel.TABLE, model.toMap());
+  }
+
+  Future<bool> hasExpenseTag(ExpenseToTagModel model) async {
+    List<Map<String, dynamic>> results = await database.query(
+        ExpenseToTagModel.TABLE,
+        where: "${ExpenseToTagModel.EXPENSE_ID_V1}=? AND ${ExpenseToTagModel
+            .TAG_ID_V1}=?",
+        whereArgs: [model.expenseId, model.tagId]
+    );
+    return results.isNotEmpty;
+  }
+
+  Future<void> deleteTagFromExpense(int expenseId, int tagId) async {
+    database.delete(ExpenseToTagModel.TABLE,
+        where: "${ExpenseToTagModel.EXPENSE_ID_V1}=? AND ${ExpenseToTagModel
+            .TAG_ID_V1}=?",
+        whereArgs: [expenseId, tagId]);
+  }
+
+  Future<List<ExpenseToTagModel>> getExpenseTags(int expenseId) async {
+    List<Map<String, dynamic>> results = await database.query(
+        ExpenseToTagModel.TABLE,
+        where: "${ExpenseToTagModel.EXPENSE_ID_V1}=?",
+        whereArgs: [expenseId]
+    );
+    return results.isNotEmpty
+        ? results.map((map) => ExpenseToTagModel.fromMap(map)).toList()
         : [];
   }
 
