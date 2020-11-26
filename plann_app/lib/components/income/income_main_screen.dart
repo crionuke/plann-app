@@ -235,7 +235,7 @@ class _IncomeMainState extends State<IncomeMainScreen>
             child: ListTile(
               leading:
                   ColorRoundedBoxWidget(colorsMap.getColor(model.category)),
-              title: Text("+" + itemValue),
+              title: Text(itemValue),
               subtitle: Text(
                   "$itemDate, $itemCategory. ${model.comment != null ? model.comment : ""}"),
               trailing: Icon(Icons.navigate_next),

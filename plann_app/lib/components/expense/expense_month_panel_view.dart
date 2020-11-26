@@ -35,8 +35,7 @@ class ExpenseMonthPanelView extends StatelessWidget {
               ":"),
           subtitle: Text(FlutterI18n.translate(context, "texts.expense") +
               ": " +
-              AppTexts.formatCurrencyMap(context, month.actualExpenseValues,
-                  prefix: "-")),
+              AppTexts.formatCurrencyMap(context, month.actualExpenseValues)),
         ),
       ),
     );

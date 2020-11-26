@@ -35,8 +35,7 @@ class IncomeMonthPanelView extends StatelessWidget {
               ":"),
           subtitle: Text(FlutterI18n.translate(context, "texts.income") +
               ": " +
-              AppTexts.formatCurrencyMap(context, month.actualIncomeValues,
-                  prefix: "+")),
+              AppTexts.formatCurrencyMap(context, month.actualIncomeValues)),
         ),
       ),
     );
