@@ -5,6 +5,8 @@ import 'package:plann_app/components/widgets/comment_text_field_widget.dart';
 import 'package:plann_app/components/widgets/currency_drop_down_widget.dart';
 import 'package:plann_app/components/widgets/decimal_text_field_widget.dart';
 import 'package:plann_app/components/widgets/enum_drop_down_widget.dart';
+import 'package:plann_app/components/widgets/tags/tags_bloc.dart';
+import 'package:plann_app/components/widgets/tags/tags_widget.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:provider/provider.dart';
 
@@ -68,6 +70,10 @@ class IncomeItemForm extends StatelessWidget {
             _sizedBox,
             CommentTextFieldWidget(
                 state.comment, (value) => bloc.commentChanged(value)),
+            Provider<TagsBloc>(
+                create: (context) => bloc.tagsBloc,
+                dispose: (context, bloc) => bloc.dispose(),
+                child: TagsWidget())
           ]);
         });
   }

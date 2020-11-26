@@ -13,9 +13,11 @@ class TagSelectionBloc {
 
   final DbService dbService;
   final AnalyticsService analyticsService;
+  final TagType tagsType;
   final Map<int, Tag> excludeTags;
 
-  TagSelectionBloc(this.dbService, this.analyticsService, this.excludeTags);
+  TagSelectionBloc(this.dbService, this.analyticsService, this.tagsType,
+      this.excludeTags);
 
   void dispose() {
     _controller.close();
@@ -24,7 +26,7 @@ class TagSelectionBloc {
   Future<void> requestState() async {
     _controller.sink.add(TagSelectionViewState.loading());
     if (!_controller.isClosed) {
-      List<TagModel> tags = (await dbService.getTagList(TagType.expense));
+      List<TagModel> tags = (await dbService.getTagList(tagsType));
       tags.removeWhere((model) => excludeTags.containsKey(model.id));
       _controller.sink.add(TagSelectionViewState.loaded(tags));
     }
@@ -38,9 +40,10 @@ class TagSelectionBloc {
 }
 
 class TagSelectionArguments {
+  final TagType tagsType;
   final Map<int, Tag> excludeTags;
 
-  TagSelectionArguments(this.excludeTags);
+  TagSelectionArguments(this.tagsType, this.excludeTags);
 }
 
 class TagSelectionViewState {

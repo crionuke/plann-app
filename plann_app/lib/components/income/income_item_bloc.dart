@@ -1,14 +1,21 @@
 import 'dart:async';
 
 import 'package:plann_app/components/app_texts.dart';
+import 'package:plann_app/components/widgets/tags/tags_bloc.dart';
+import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/income_category_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
+import 'package:plann_app/services/db/models/tag_type_model.dart';
 
 class IncomeItemBloc {
   final _controller = StreamController();
 
   Stream get stream => _controller.stream;
+
+  final DbService dbService;
+
+  TagsBloc tagsBloc;
 
   String _value;
   CurrencyType _currency;
@@ -16,18 +23,20 @@ class IncomeItemBloc {
   IncomeCategoryType _category;
   String _comment = "";
 
-  IncomeItemBloc() {
+  IncomeItemBloc(this.dbService) {
     // Setup default values
     _currency = CurrencyType.rubles;
     _dateTime = DateTime.now();
+    tagsBloc = TagsBloc(dbService, TagType.income);
   }
 
-  IncomeItemBloc.from(IncomeModel model) {
+  IncomeItemBloc.from(this.dbService, IncomeModel model) {
     _value = AppTexts.prepareToDisplay(model.value);
     _currency = model.currency;
     _dateTime = model.date;
     _category = model.category;
     _comment = model.comment;
+    tagsBloc = TagsBloc.from(dbService, TagType.income, model.id);
   }
 
   @override

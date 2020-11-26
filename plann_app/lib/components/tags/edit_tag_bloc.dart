@@ -37,7 +37,7 @@ class EditTagBloc {
       _controller.sink.add(true);
       TagItemViewState state = itemBloc.currentState;
       await dbService.editTag(model.id,
-          TagModel(null, state.name, DateTime.now(), TagType.expense));
+          TagModel(null, state.name, DateTime.now(), model.type));
       return true;
     } else {
       return false;

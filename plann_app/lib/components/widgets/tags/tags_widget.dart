@@ -39,7 +39,7 @@ class TagsWidget extends StatelessWidget {
                 onPressed: () async {
                   int tagId = await Navigator.pushNamed<int>(
                       context, TagSelectionScreen.routeName,
-                      arguments: TagSelectionArguments(state.tags));
+                      arguments: TagSelectionArguments(bloc.tagsType, state.tags));
                   if (tagId != null) {
                     bloc.tagSelected(tagId);
                   }

@@ -210,6 +210,12 @@ class DbTestDataSet {
     await database.insert(TagModel.TABLE,
         TagModel(null, "НГ2020", DateTime.now(), TagType.expense).toMap());
 
+    await database.insert(TagModel.TABLE,
+        TagModel(null, "Сайты", DateTime.now(), TagType.income).toMap());
+    await database.insert(TagModel.TABLE,
+        TagModel(null, "Телеграм-каналы", DateTime.now(), TagType.income)
+            .toMap());
+
     // Planned irregular
     await database.insert(
         PlannedIrregularModel.PLANNED_IRREGULAR_TABLE,

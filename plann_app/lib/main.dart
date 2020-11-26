@@ -68,6 +68,7 @@ import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/db/models/tag_model.dart';
+import 'package:plann_app/services/db/models/tag_type_model.dart';
 import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 import 'package:provider/provider.dart';
 
@@ -169,7 +170,7 @@ class App extends StatelessWidget {
             case TagSelectionScreen.routeName:
               return _buildTagSelectionRoute(route.arguments);
             case AddTagScreen.routeName:
-              return _buildAddTagPageRoute();
+              return _buildAddTagPageRoute(route.arguments);
             case EditTagScreen.routeName:
               return _buildEditTagPageRoute(route.arguments);
 
@@ -271,18 +272,20 @@ class App extends StatelessWidget {
               TagSelectionBloc(
                   Provider.of<DbService>(context, listen: false),
                   Provider.of<AnalyticsService>(context, listen: false),
+                  arguments.tagsType,
                   arguments.excludeTags),
           dispose: (context, bloc) => bloc.dispose(),
           child: TagSelectionScreen());
     });
   }
 
-  MaterialPageRoute _buildAddTagPageRoute() {
+  MaterialPageRoute _buildAddTagPageRoute(TagType tagType) {
     return MaterialPageRoute<bool>(builder: (context) {
       return Provider<AddTagBloc>(
           create: (context) =>
               AddTagBloc(
-                  Provider.of<DbService>(context, listen: false)),
+                  Provider.of<DbService>(context, listen: false),
+                  tagType),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddTagScreen());
     });

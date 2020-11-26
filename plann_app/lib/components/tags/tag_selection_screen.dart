@@ -12,7 +12,7 @@ import 'package:plann_app/services/db/models/tag_model.dart';
 import 'package:provider/provider.dart';
 
 class TagSelectionScreen extends StatelessWidget {
-  static const routeName = '/tags/select';
+  static const routeName = '/tag/select';
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,8 @@ class TagSelectionScreen extends StatelessWidget {
                 icon: Icon(Icons.add),
                 onPressed: () async {
                   bool added = await Navigator.pushNamed<bool>(
-                      context, AddTagScreen.routeName);
+                      context, AddTagScreen.routeName,
+                      arguments: bloc.tagsType);
                   if (added != null && added) {
                     bloc.requestState();
                   }

@@ -14,8 +14,9 @@ class AddTagBloc {
   TagItemBloc itemBloc = TagItemBloc();
 
   final DbService dbService;
+  final TagType tagType;
 
-  AddTagBloc(this.dbService);
+  AddTagBloc(this.dbService, this.tagType);
 
   @override
   void dispose() {
@@ -28,7 +29,7 @@ class AddTagBloc {
       TagItemViewState state = itemBloc.currentState;
       _controller.sink.add(true);
       await dbService
-          .addTag(TagModel(null, state.name, DateTime.now(), TagType.expense));
+          .addTag(TagModel(null, state.name, DateTime.now(), tagType));
       return true;
     } else {
       return false;

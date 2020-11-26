@@ -6,6 +6,7 @@ import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
 import 'package:plann_app/services/db/models/expense_category_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
+import 'package:plann_app/services/db/models/tag_type_model.dart';
 
 class ExpenseItemBloc {
   final _controller = StreamController();
@@ -33,7 +34,7 @@ class ExpenseItemBloc {
     // Setup default values
     _currency = CurrencyType.rubles;
     _date = DateTime.now();
-    tagsBloc = TagsBloc(dbService);
+    tagsBloc = TagsBloc(dbService, TagType.expense);
   }
 
   ExpenseItemBloc.from(this.dbService, ExpenseModel model) {
@@ -43,7 +44,7 @@ class ExpenseItemBloc {
     _date = model.date;
     _category = model.category;
     _comment = model.comment;
-    tagsBloc = TagsBloc.from(dbService, model.id);
+    tagsBloc = TagsBloc.from(dbService, TagType.expense, model.id);
   }
 
   String get value => _value;

@@ -69,10 +69,10 @@ class ExpenseItem extends StatelessWidget {
                       CommentTextFieldWidget(
                           state.comment, (value) =>
                           bloc.commentChanged(value)),
-                        Provider<TagsBloc>(
-                            create: (context) => bloc.tagsBloc,
-                            dispose: (context, bloc) => bloc.dispose(),
-                            child: TagsWidget())
+                      Provider<TagsBloc>(
+                          create: (context) => bloc.tagsBloc,
+                          dispose: (context, bloc) => bloc.dispose(),
+                          child: TagsWidget())
                     ])),
                   ));
             }

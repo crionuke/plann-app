@@ -6,6 +6,7 @@ import 'package:plann_app/services/db/models/emergency_fund_model.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
 import 'package:plann_app/services/db/models/expense_to_tag_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
+import 'package:plann_app/services/db/models/income_to_tag_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
@@ -20,7 +21,7 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-    String path = join(await getDatabasesPath(), "plann_148.db");
+    String path = join(await getDatabasesPath(), "plann_150.db");
 //    String path = join(await getDatabasesPath(), "plann.db");
     database =
     await openDatabase(path, version: 3,
@@ -47,6 +48,7 @@ class DbService {
       if (version >= 3) {
         await database.execute(TagModel.createTableSql);
         await database.execute(ExpenseToTagModel.createTableSql);
+        await database.execute(IncomeToTagModel.createTableSql);
       }
       // Test data set
       await DbTestDataSet.fill(database);
@@ -60,6 +62,7 @@ class DbService {
         print("[DbService] upgrade from 2 to 3");
         await database.execute(TagModel.createTableSql);
         await database.execute(ExpenseToTagModel.createTableSql);
+        await database.execute(IncomeToTagModel.createTableSql);
       }
     });
   }
@@ -233,6 +236,9 @@ class DbService {
       await transaction.delete(ExpenseToTagModel.TABLE,
           where: "${ExpenseToTagModel.TAG_ID_V1}=?",
           whereArgs: [tagId]);
+      await transaction.delete(IncomeToTagModel.TABLE,
+          where: "${IncomeToTagModel.TAG_ID_V1}=?",
+          whereArgs: [tagId]);
       await transaction.delete(TagModel.TABLE,
           where: '${TagModel.TAG_ID_V1}=?', whereArgs: [tagId]);
     });
@@ -253,12 +259,26 @@ class DbService {
     return database.insert(ExpenseToTagModel.TABLE, model.toMap());
   }
 
+  Future<int> addTagToIncome(IncomeToTagModel model) async {
+    return database.insert(IncomeToTagModel.TABLE, model.toMap());
+  }
+
   Future<bool> hasExpenseTag(ExpenseToTagModel model) async {
     List<Map<String, dynamic>> results = await database.query(
         ExpenseToTagModel.TABLE,
         where: "${ExpenseToTagModel.EXPENSE_ID_V1}=? AND ${ExpenseToTagModel
             .TAG_ID_V1}=?",
         whereArgs: [model.expenseId, model.tagId]
+    );
+    return results.isNotEmpty;
+  }
+
+  Future<bool> hasIncomeTag(IncomeToTagModel model) async {
+    List<Map<String, dynamic>> results = await database.query(
+        IncomeToTagModel.TABLE,
+        where: "${IncomeToTagModel.INCOME_ID_V1}=? AND ${IncomeToTagModel
+            .TAG_ID_V1}=?",
+        whereArgs: [model.incomeId, model.tagId]
     );
     return results.isNotEmpty;
   }
@@ -270,6 +290,13 @@ class DbService {
         whereArgs: [expenseId, tagId]);
   }
 
+  Future<void> deleteTagFromIncome(int incomeId, int tagId) async {
+    database.delete(IncomeToTagModel.TABLE,
+        where: "${IncomeToTagModel.INCOME_ID_V1}=? AND ${IncomeToTagModel
+            .TAG_ID_V1}=?",
+        whereArgs: [incomeId, tagId]);
+  }
+
   Future<List<ExpenseToTagModel>> getExpenseTags(int expenseId) async {
     List<Map<String, dynamic>> results = await database.query(
         ExpenseToTagModel.TABLE,
@@ -278,6 +305,17 @@ class DbService {
     );
     return results.isNotEmpty
         ? results.map((map) => ExpenseToTagModel.fromMap(map)).toList()
+        : [];
+  }
+
+  Future<List<IncomeToTagModel>> getIncomeTags(int incomeId) async {
+    List<Map<String, dynamic>> results = await database.query(
+        IncomeToTagModel.TABLE,
+        where: "${IncomeToTagModel.INCOME_ID_V1}=?",
+        whereArgs: [incomeId]
+    );
+    return results.isNotEmpty
+        ? results.map((map) => IncomeToTagModel.fromMap(map)).toList()
         : [];
   }
 

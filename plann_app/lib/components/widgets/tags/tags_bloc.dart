@@ -10,14 +10,15 @@ class TagsBloc {
   Stream get stream => _controller.stream;
 
   final DbService dbService;
-  final int expenseId;
+  final TagType tagsType;
+  final int modelId;
 
   Map<int, Tag> _originalTags;
   Map<int, Tag> _selectedTags;
 
-  TagsBloc(this.dbService) : expenseId = null;
+  TagsBloc(this.dbService, this.tagsType) : modelId = null;
 
-  TagsBloc.from(this.dbService, this.expenseId);
+  TagsBloc.from(this.dbService, this.tagsType, this.modelId);
 
   Map<int, Tag> get originalTags => _originalTags;
   Map<int, Tag> get selectedTags => _selectedTags;
@@ -32,20 +33,31 @@ class TagsBloc {
       _originalTags = Map();
       _selectedTags = Map();
 
-      if (expenseId != null) {
+      if (modelId != null) {
         Map<int, TagModel> tags = Map();
-        (await dbService.getTagList(TagType.expense)).forEach((model) {
+        (await dbService.getTagList(tagsType)).forEach((model) {
           tags[model.id] = model;
         });
 
-        (await dbService.getExpenseTags(expenseId)).forEach((expenseToTag) {
-          if (tags.containsKey(expenseToTag.tagId)) {
-            TagModel tagModel = tags[expenseToTag.tagId];
-            Tag tag = Tag(tagModel.id, tagModel.name);
-            _originalTags[tagModel.id] = tag;
-            _selectedTags[tagModel.id] = tag;
-          }
-        });
+        if (tagsType == TagType.expense) {
+          (await dbService.getExpenseTags(modelId)).forEach((expenseToTag) {
+            if (tags.containsKey(expenseToTag.tagId)) {
+              TagModel tagModel = tags[expenseToTag.tagId];
+              Tag tag = Tag(tagModel.id, tagModel.name);
+              _originalTags[tagModel.id] = tag;
+              _selectedTags[tagModel.id] = tag;
+            }
+          });
+        } else if (tagsType == TagType.income) {
+          (await dbService.getIncomeTags(modelId)).forEach((incomeToTag) {
+            if (tags.containsKey(incomeToTag.tagId)) {
+              TagModel tagModel = tags[incomeToTag.tagId];
+              Tag tag = Tag(tagModel.id, tagModel.name);
+              _originalTags[tagModel.id] = tag;
+              _selectedTags[tagModel.id] = tag;
+            }
+          });
+        }
       }
 
       _controller.sink.add(TagsViewState.loaded(_selectedTags));
@@ -57,7 +69,7 @@ class TagsBloc {
   }
 
   void tagSelected(int tagId) async {
-    List<TagModel> tags = await dbService.getTagList(TagType.expense);
+    List<TagModel> tags = await dbService.getTagList(tagsType);
     tags.where((model) => model.id == tagId).forEach((model) {
       _selectedTags[model.id] = Tag(model.id, model.name);
     });
