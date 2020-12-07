@@ -26,7 +26,7 @@ class TagSelectionBloc {
   Future<void> requestState() async {
     _controller.sink.add(TagSelectionViewState.loading());
     if (!_controller.isClosed) {
-      List<TagModel> tags = (await dbService.getTagList(tagsType));
+      List<TagModel> tags = (await dbService.getTagsByType(tagsType));
       tags.removeWhere((model) => excludeTags.containsKey(model.id));
       _controller.sink.add(TagSelectionViewState.loaded(tags));
     }

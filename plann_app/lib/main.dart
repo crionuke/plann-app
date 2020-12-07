@@ -21,6 +21,8 @@ import 'package:plann_app/components/expense/month_category_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_category_expense_screen.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_expense_screen.dart';
+import 'package:plann_app/components/expense/month_tag_expense_bloc.dart';
+import 'package:plann_app/components/expense/month_tag_expense_screen.dart';
 import 'package:plann_app/components/income/add_income_bloc.dart';
 import 'package:plann_app/components/income/add_income_screen.dart';
 import 'package:plann_app/components/income/add_planned_income_bloc.dart';
@@ -33,6 +35,8 @@ import 'package:plann_app/components/income/income_main_bloc.dart';
 import 'package:plann_app/components/income/income_main_screen.dart';
 import 'package:plann_app/components/income/month_category_income_bloc.dart';
 import 'package:plann_app/components/income/month_category_income_screen.dart';
+import 'package:plann_app/components/income/month_tag_income_bloc.dart';
+import 'package:plann_app/components/income/month_tag_income_screen.dart';
 import 'package:plann_app/components/irregular/add_irregular_bloc.dart';
 import 'package:plann_app/components/irregular/add_irregular_screen.dart';
 import 'package:plann_app/components/irregular/add_planned_irregular_bloc.dart';
@@ -188,6 +192,8 @@ class App extends StatelessWidget {
               return _buildMonthIncomePageRoute(route.arguments);
             case MonthCategoryIncomeScreen.routeName:
               return _buildMonthCategoryIncomePageRoute(route.arguments);
+            case MonthTagIncomeScreen.routeName:
+              return _buildMonthTagIncomePageRoute(route.arguments);
 
             case ExpenseMainScreen.routeName:
               return _buildExpenseListPageRoute();
@@ -203,6 +209,8 @@ class App extends StatelessWidget {
               return _buildMonthExpensePageRoute(route.arguments);
             case MonthCategoryExpenseScreen.routeName:
               return _buildMonthCategoryExpensePageRoute(route.arguments);
+            case MonthTagExpenseScreen.routeName:
+              return _buildMonthTagExpensePageRoute(route.arguments);
 
             case IrregularMainScreen.routeName:
               return _buildIrregularMainScreenPageRoute();
@@ -285,6 +293,8 @@ class App extends StatelessWidget {
           create: (context) =>
               AddTagBloc(
                   Provider.of<DbService>(context, listen: false),
+                  Provider.of<AnalyticsService>(context, listen: false),
+                  Provider.of<TrackingService>(context, listen: false),
                   tagType),
           dispose: (context, bloc) => bloc.dispose(),
           child: AddTagScreen());
@@ -396,6 +406,22 @@ class App extends StatelessWidget {
     });
   }
 
+  MaterialPageRoute _buildMonthTagIncomePageRoute(
+      MonthTagIncomeArguments arguments) {
+    return MaterialPageRoute(builder: (context) {
+      return Provider<MonthTagIncomeBloc>(
+          create: (context) =>
+              MonthTagIncomeBloc(
+                  Provider.of<DbService>(context, listen: false),
+                  Provider.of<AnalyticsService>(context, listen: false),
+                  arguments.currency,
+                  arguments.month,
+                  arguments.tagId),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: MonthTagIncomeScreen());
+    });
+  }
+
   // Expense routes
 
   MaterialPageRoute _buildExpenseListPageRoute() {
@@ -486,6 +512,22 @@ class App extends StatelessWidget {
               arguments.category),
           dispose: (context, bloc) => bloc.dispose(),
           child: MonthCategoryExpenseScreen());
+    });
+  }
+
+  MaterialPageRoute _buildMonthTagExpensePageRoute(
+      MonthTagExpenseArguments arguments) {
+    return MaterialPageRoute(builder: (context) {
+      return Provider<MonthTagExpenseBloc>(
+          create: (context) =>
+              MonthTagExpenseBloc(
+                  Provider.of<DbService>(context, listen: false),
+                  Provider.of<AnalyticsService>(context, listen: false),
+                  arguments.currency,
+                  arguments.month,
+                  arguments.tagId),
+          dispose: (context, bloc) => bloc.dispose(),
+          child: MonthTagExpenseScreen());
     });
   }
 

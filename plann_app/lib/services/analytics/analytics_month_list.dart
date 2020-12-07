@@ -1,5 +1,6 @@
 import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/analytics/analytics_tags.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
@@ -19,6 +20,7 @@ class AnalyticsMonthList {
   final List<AnalyticsItem<IrregularModel>> analyticsActualIrregularList;
   final List<AnalyticsItem<PlannedIrregularModel>>
       analyticsPlannedIrregularList;
+  final AnalyticsTags analyticsTags;
 
   List<AnalyticsMonth> _monthList;
   int _currentMonthIndex;
@@ -33,7 +35,8 @@ class AnalyticsMonthList {
       this.analyticsActualExpenseList,
       this.analyticsPlannedExpenseList,
       this.analyticsActualIrregularList,
-      this.analyticsPlannedIrregularList) {
+      this.analyticsPlannedIrregularList,
+      this.analyticsTags) {
     _perMonthValues = Map();
     _monthList = List();
     DateTime now = DateTime.now();
@@ -70,7 +73,8 @@ class AnalyticsMonthList {
         monthIndex <= _lastMonthIndex;
         monthIndex++) {
       List yearMonth = AnalyticsUtils.toHuman(monthIndex);
-      _monthList.add(AnalyticsMonth(monthIndex, yearMonth[0], yearMonth[1]));
+      _monthList.add(AnalyticsMonth(
+          monthIndex, yearMonth[0], yearMonth[1], analyticsTags));
     }
   }
 

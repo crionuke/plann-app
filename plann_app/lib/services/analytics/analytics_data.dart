@@ -1,6 +1,7 @@
 import 'package:plann_app/services/analytics/analytics_month.dart';
 import 'package:plann_app/services/analytics/analytics_month_list.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/analytics/analytics_tags.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
@@ -11,6 +12,7 @@ import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
 import 'package:plann_app/services/db/models/subject_mode_model.dart';
+import 'package:plann_app/services/db/models/tag_model.dart';
 
 class AnalyticsData {
   final List<AnalyticsItem<IncomeModel>> analyticsActualIncomeList;
@@ -20,6 +22,7 @@ class AnalyticsData {
   final List<AnalyticsItem<IrregularModel>> analyticsActualIrregularList;
   final List<AnalyticsItem<PlannedIrregularModel>>
       analyticsPlannedIrregularList;
+  final AnalyticsTags analyticsTags;
 
   AnalyticsMonthList _monthList;
 
@@ -31,14 +34,16 @@ class AnalyticsData {
       this.analyticsActualExpenseList,
       this.analyticsPlannedExpenseList,
       this.analyticsActualIrregularList,
-      this.analyticsPlannedIrregularList) {
+      this.analyticsPlannedIrregularList,
+      this.analyticsTags) {
     _monthList = AnalyticsMonthList(
         analyticsActualIncomeList,
         analyticsPlannedIncomeList,
         analyticsActualExpenseList,
         analyticsPlannedExpenseList,
         analyticsActualIrregularList,
-        analyticsPlannedIrregularList);
+        analyticsPlannedIrregularList,
+        analyticsTags);
     _perDayExpenses = Map();
   }
 

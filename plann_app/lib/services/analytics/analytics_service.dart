@@ -1,12 +1,16 @@
 import 'package:plann_app/services/analytics/analytics_data.dart';
+import 'package:plann_app/services/analytics/analytics_tags.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/db_service.dart';
 import 'package:plann_app/services/db/models/expense_model.dart';
+import 'package:plann_app/services/db/models/expense_to_tag_model.dart';
 import 'package:plann_app/services/db/models/income_model.dart';
+import 'package:plann_app/services/db/models/income_to_tag_model.dart';
 import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
+import 'package:plann_app/services/db/models/tag_model.dart';
 import 'package:plann_app/services/tracking/tracking_service_appmetrica.dart';
 
 class AnalyticsService {
@@ -14,6 +18,7 @@ class AnalyticsService {
   final TrackingService trackingService;
   final CurrencyService currencyService;
 
+  AnalyticsTags _analyticsTags;
   AnalyticsData _analytics;
 
   AnalyticsService(this.dbService, this.trackingService, this.currencyService);
@@ -38,13 +43,19 @@ class AnalyticsService {
     List<PlannedIrregularModel> plannedIrregularList =
         await dbService.getPlannedIrregularList();
 
+    List<TagModel> tagList = await dbService.getTagList();
+    List<ExpenseToTagModel> expenseTags = await dbService.getAllExpenseTags();
+    List<IncomeToTagModel> incomeTags = await dbService.getAllIncomeTags();
+    _analyticsTags = AnalyticsTags(tagList, expenseTags, incomeTags);
+
     trackingService.setStats(
         actualIncomeCount: incomeList.length,
         plannedIncomeCount: plannedIncomeList.length,
         actualExpenseCount: expenseList.length,
         plannedExpenseCount: plannedExpenseList.length,
         actualIrregularCount: irregularList.length,
-        plannedIrregularCount: plannedIrregularList.length);
+        plannedIrregularCount: plannedIrregularList.length,
+        tagCount: tagList.length);
 
     List<AnalyticsItem<IncomeModel>> analyticsActualIncomeList = List();
     List<AnalyticsItem<PlannedIncomeModel>> analyticsPlannedIncomeList = List();
@@ -91,7 +102,8 @@ class AnalyticsService {
         analyticsActualExpenseList,
         analyticsPlannedExpenseList,
         analyticsActualIrregularList,
-        analyticsPlannedIrregularList);
+        analyticsPlannedIrregularList,
+        _analyticsTags);
     await analytics.analyze();
 
     _analytics = analytics;

@@ -5,6 +5,8 @@ import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/income/month_category_income_bloc.dart';
 import 'package:plann_app/components/income/month_category_income_screen.dart';
 import 'package:plann_app/components/income/month_income_bloc.dart';
+import 'package:plann_app/components/income/month_tag_income_bloc.dart';
+import 'package:plann_app/components/income/month_tag_income_screen.dart';
 import 'package:plann_app/components/widgets/color_rounded_box_widget.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
@@ -20,9 +22,13 @@ class MonthIncomeScreen extends StatefulWidget {
 
 class _MonthIncomeState extends State<MonthIncomeScreen>
     with SingleTickerProviderStateMixin {
+
+  TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: 2);
   }
 
   @override
@@ -61,6 +67,10 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
       centerTitle: true,
       elevation: 0,
       flexibleSpace: GradientContainerWidget(),
+      bottom: TabBar(controller: _tabController, tabs: [
+        Tab(text: FlutterI18n.translate(context, "texts.categories")),
+        Tab(text: FlutterI18n.translate(context, "texts.tags")),
+      ]),
     );
   }
 
@@ -73,19 +83,31 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
           } else {
             var state = snapshot.data;
             if (state.loaded) {
-              return _buildListView(context, bloc, state);
+              return TabBarView(controller: _tabController, children: [
+                _buildCategoryListView(context, bloc, state),
+                _buildTagListView(context, bloc, state)
+              ]);
             }
           }
           return ProgressIndicatorWidget();
         });
   }
 
-  Widget _buildListView(
-      BuildContext context, MonthIncomeBloc bloc, MonthIncomeViewState state) {
+  Widget _buildCategoryListView(BuildContext context, MonthIncomeBloc bloc,
+      MonthIncomeViewState state) {
     if (state.values.isEmpty) {
       return _buildNoIncome(context);
     } else {
-      return _buildMonthIncomeView(context, bloc, state);
+      return _buildMonthCategoryView(context, bloc, state);
+    }
+  }
+
+  Widget _buildTagListView(BuildContext context, MonthIncomeBloc bloc,
+      MonthIncomeViewState state) {
+    if (state.values.isEmpty) {
+      return _buildNoIncome(context);
+    } else {
+      return _buildMonthTagView(context, bloc, state);
     }
   }
 
@@ -93,27 +115,41 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_income")),
-      ))
+            child: Text(FlutterI18n.translate(context, "texts.no_income")),
+          ))
     ]);
   }
 
-  Widget _buildMonthIncomeView(
-      BuildContext context, MonthIncomeBloc bloc, MonthIncomeViewState state) {
+  Widget _buildMonthCategoryView(BuildContext context, MonthIncomeBloc bloc,
+      MonthIncomeViewState state) {
     ColorsMap<IncomeCategoryType> colorsMap =
-        ColorsMap.fromValues(IncomeCategoryType.values);
+    ColorsMap.fromValues(IncomeCategoryType.values);
 
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Column(
-        children: [
-          Expanded(child: _buildIncomeList(context, bloc, state, colorsMap)),
-        ],
-      ))
+            children: [
+              Expanded(
+                  child: _buildCategoryList(context, bloc, state, colorsMap)),
+            ],
+          ))
     ]);
   }
 
-  Widget _buildIncomeList(BuildContext context, MonthIncomeBloc bloc,
+  Widget _buildMonthTagView(BuildContext context, MonthIncomeBloc bloc,
+      MonthIncomeViewState state) {
+    return CustomScrollView(slivers: <Widget>[
+      SliverFillRemaining(
+          child: Column(
+            children: [
+              Expanded(
+                  child: _buildTagList(context, bloc, state)),
+            ],
+          ))
+    ]);
+  }
+
+  Widget _buildCategoryList(BuildContext context, MonthIncomeBloc bloc,
       MonthIncomeViewState state, ColorsMap<IncomeCategoryType> colorsMap) {
     // Make list
     return ListView.separated(
@@ -125,13 +161,13 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
           IncomeCategoryType category = state.sortedCategories[index];
 
           String categoryText =
-              AppTexts.formatIncomeCategoryType(context, category);
+          AppTexts.formatIncomeCategoryType(context, category);
           String valueText = AppTexts.formatCurrencyValue(
               context, bloc.currency, state.values[category].value,
               shorten: true);
 
           String percentsPerCatetgory =
-              AppTexts.prepareToDisplay(state.percents[category], fixed: 1);
+          AppTexts.prepareToDisplay(state.percents[category], fixed: 1);
 
           return ListTile(
               onTap: () {
@@ -147,6 +183,41 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(percentsPerCatetgory + "%"),
+                  Icon(Icons.navigate_next)
+                ],
+              ));
+        });
+  }
+
+  Widget _buildTagList(BuildContext context, MonthIncomeBloc bloc,
+      MonthIncomeViewState state) {
+    // Make list
+    return ListView.separated(
+        separatorBuilder: (context, index) {
+          return Divider(height: 1);
+        },
+        itemCount: state.sortedTags.length,
+        itemBuilder: (context, index) {
+          int tagId = state.sortedTags[index];
+
+          String tagName = state.tagNames[tagId];
+          String tagValue = AppTexts.formatCurrencyValue(
+              context, bloc.currency, state.tags[tagId].value,
+              shorten: true);
+
+          return ListTile(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, MonthTagIncomeScreen.routeName,
+                    arguments: MonthTagIncomeArguments(
+                        bloc.currency, bloc.month, tagId));
+              },
+              title: Text(tagName),
+              subtitle: Text(tagValue),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.tagItemCount[tagId].toString()),
                   Icon(Icons.navigate_next)
                 ],
               ));

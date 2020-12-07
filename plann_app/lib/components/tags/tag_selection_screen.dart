@@ -103,8 +103,7 @@ class TagSelectionScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context, model.id);
                   },
-                  title: Text(model.name),
-                  trailing: Icon(Icons.navigate_next)),
+                  title: Text(model.name)),
               actionPane: SlidableDrawerActionPane(),
               dismissal: SlidableDismissal(
                   closeOnCanceled: true,

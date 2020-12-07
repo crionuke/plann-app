@@ -17,7 +17,8 @@ class TrackingService {
       int actualExpenseCount,
       int plannedExpenseCount,
       int actualIrregularCount,
-      int plannedIrregularCount}) {
+        int plannedIrregularCount,
+        int tagCount}) {
     AppmetricaSdk().reportUserProfileCustomNumber(
         key: "actual_income_count", value: actualIncomeCount.toDouble());
     AppmetricaSdk().reportUserProfileCustomNumber(
@@ -31,6 +32,8 @@ class TrackingService {
     AppmetricaSdk().reportUserProfileCustomNumber(
         key: "planned_irregular_count",
         value: plannedIrregularCount.toDouble());
+    AppmetricaSdk().reportUserProfileCustomNumber(
+        key: "tag_count", value: tagCount.toDouble());
     print("[TrackingService] report user profile");
   }
 
@@ -80,6 +83,11 @@ class TrackingService {
   void irregularPlanned() {
     AppmetricaSdk().reportEvent(name: "irregular_planned");
     print("[TrackingService] report event irregular_planned");
+  }
+
+  void tagAdded() {
+    AppmetricaSdk().reportEvent(name: "tag_added");
+    print("[TrackingService] report event tag_added");
   }
 
   void telegramOpened() {

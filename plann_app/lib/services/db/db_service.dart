@@ -21,7 +21,7 @@ class DbService {
 
   Future<void> start() async {
     print("[DbService] starting");
-    String path = join(await getDatabasesPath(), "plann_150.db");
+    String path = join(await getDatabasesPath(), "plann_151.db");
 //    String path = join(await getDatabasesPath(), "plann.db");
     database =
     await openDatabase(path, version: 3,
@@ -40,7 +40,7 @@ class DbService {
         await database.execute(IrregularModel.createTableSql);
         await database.execute(PlannedIrregularModel.createTableSql);
       }
-      // Version 2 - vsalues
+      // Version 2 - values
       if (version >= 2) {
         await database.execute(ValueModel.createTableSql);
       }
@@ -244,7 +244,16 @@ class DbService {
     });
   }
 
-  Future<List<TagModel>> getTagList(TagType type) async {
+  Future<List<TagModel>> getTagList() async {
+    List<Map<String, dynamic>> results = await database.query(
+        TagModel.TABLE,
+        orderBy: "${TagModel.TAG_TS_V1} DESC");
+    return results.isNotEmpty
+        ? results.map((map) => TagModel.fromMap(map)).toList()
+        : [];
+  }
+
+  Future<List<TagModel>> getTagsByType(TagType type) async {
     List<Map<String, dynamic>> results = await database.query(
         TagModel.TABLE,
         where: '${TagModel.TAG_TYPE_V1}=?',
@@ -297,6 +306,15 @@ class DbService {
         whereArgs: [incomeId, tagId]);
   }
 
+  Future<List<ExpenseToTagModel>> getAllExpenseTags() async {
+    List<Map<String, dynamic>> results = await database.query(
+        ExpenseToTagModel.TABLE
+    );
+    return results.isNotEmpty
+        ? results.map((map) => ExpenseToTagModel.fromMap(map)).toList()
+        : [];
+  }
+
   Future<List<ExpenseToTagModel>> getExpenseTags(int expenseId) async {
     List<Map<String, dynamic>> results = await database.query(
         ExpenseToTagModel.TABLE,
@@ -305,6 +323,15 @@ class DbService {
     );
     return results.isNotEmpty
         ? results.map((map) => ExpenseToTagModel.fromMap(map)).toList()
+        : [];
+  }
+
+  Future<List<IncomeToTagModel>> getAllIncomeTags() async {
+    List<Map<String, dynamic>> results = await database.query(
+        IncomeToTagModel.TABLE
+    );
+    return results.isNotEmpty
+        ? results.map((map) => IncomeToTagModel.fromMap(map)).toList()
         : [];
   }
 

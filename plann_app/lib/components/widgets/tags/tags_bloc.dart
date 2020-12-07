@@ -35,7 +35,7 @@ class TagsBloc {
 
       if (modelId != null) {
         Map<int, TagModel> tags = Map();
-        (await dbService.getTagList(tagsType)).forEach((model) {
+        (await dbService.getTagsByType(tagsType)).forEach((model) {
           tags[model.id] = model;
         });
 
@@ -69,7 +69,7 @@ class TagsBloc {
   }
 
   void tagSelected(int tagId) async {
-    List<TagModel> tags = await dbService.getTagList(tagsType);
+    List<TagModel> tags = await dbService.getTagsByType(tagsType);
     tags.where((model) => model.id == tagId).forEach((model) {
       _selectedTags[model.id] = Tag(model.id, model.name);
     });

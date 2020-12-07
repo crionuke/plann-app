@@ -5,6 +5,8 @@ import 'package:plann_app/components/app_texts.dart';
 import 'package:plann_app/components/expense/month_category_expense_bloc.dart';
 import 'package:plann_app/components/expense/month_category_expense_screen.dart';
 import 'package:plann_app/components/expense/month_expense_bloc.dart';
+import 'package:plann_app/components/expense/month_tag_expense_bloc.dart';
+import 'package:plann_app/components/expense/month_tag_expense_screen.dart';
 import 'package:plann_app/components/widgets/color_rounded_box_widget.dart';
 import 'package:plann_app/components/widgets/gradient_container_widget.dart';
 import 'package:plann_app/components/widgets/progress_indicator_widget.dart';
@@ -20,9 +22,13 @@ class MonthExpenseScreen extends StatefulWidget {
 
 class _MonthExpenseState extends State<MonthExpenseScreen>
     with SingleTickerProviderStateMixin {
+
+  TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: 2);
   }
 
   @override
@@ -61,6 +67,10 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
       centerTitle: true,
       elevation: 0,
       flexibleSpace: GradientContainerWidget(),
+      bottom: TabBar(controller: _tabController, tabs: [
+        Tab(text: FlutterI18n.translate(context, "texts.categories")),
+        Tab(text: FlutterI18n.translate(context, "texts.tags")),
+      ]),
     );
   }
 
@@ -73,43 +83,69 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
           } else {
             var state = snapshot.data;
             if (state.loaded) {
-              return _buildListView(context, bloc, state);
+              return TabBarView(controller: _tabController, children: [
+                _buildCategoryListView(context, bloc, state),
+                _buildTagListView(context, bloc, state)
+              ]);
             }
           }
           return ProgressIndicatorWidget();
         });
   }
 
-  Widget _buildListView(BuildContext context, MonthExpenseBloc bloc,
+  Widget _buildCategoryListView(BuildContext context, MonthExpenseBloc bloc,
       MonthExpenseViewState state) {
     if (state.values.isEmpty) {
-      return _buildNoIncome(context);
+      return _buildNoExpense(context);
     } else {
-      return _buildMonthExpenseView(context, bloc, state);
+      return _buildMonthCategoryView(context, bloc, state);
     }
   }
 
-  Widget _buildNoIncome(BuildContext context) {
+  Widget _buildTagListView(BuildContext context, MonthExpenseBloc bloc,
+      MonthExpenseViewState state) {
+    if (state.values.isEmpty) {
+      return _buildNoExpense(context);
+    } else {
+      return _buildMonthTagView(context, bloc, state);
+    }
+  }
+
+  Widget _buildNoExpense(BuildContext context) {
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-        child: Text(FlutterI18n.translate(context, "texts.no_expense")),
-      ))
+            child: Text(FlutterI18n.translate(context, "texts.no_expense")),
+          ))
     ]);
   }
 
-  Widget _buildMonthExpenseView(BuildContext context, MonthExpenseBloc bloc,
+  Widget _buildMonthCategoryView(BuildContext context, MonthExpenseBloc bloc,
       MonthExpenseViewState state) {
     ColorsMap<ExpenseCategoryType> colorsMap =
-        ColorsMap.fromValues(ExpenseCategoryType.values);
+    ColorsMap.fromValues(ExpenseCategoryType.values);
 
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Column(
-        children: [
-          Expanded(child: _buildExpenseList(context, bloc, state, colorsMap)),
-        ],
-      ))
+            children: [
+              Expanded(
+                  child: _buildExpenseList(context, bloc, state, colorsMap)),
+            ],
+          ))
+    ]);
+  }
+
+  Widget _buildMonthTagView(BuildContext context, MonthExpenseBloc bloc,
+      MonthExpenseViewState state) {
+    return CustomScrollView(slivers: <Widget>[
+      SliverFillRemaining(
+          child: Column(
+            children: [
+              Expanded(
+                  child: _buildTagList(context, bloc, state)),
+            ],
+          ))
     ]);
   }
 
@@ -125,13 +161,13 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
           ExpenseCategoryType category = state.sortedCategories[index];
 
           String categoryText =
-              AppTexts.formatExpenseCategoryType(context, category);
+          AppTexts.formatExpenseCategoryType(context, category);
           String valueText = AppTexts.formatCurrencyValue(
               context, bloc.currency, state.values[category].value,
               shorten: true);
 
           String percentsPerCatetgory =
-              AppTexts.prepareToDisplay(state.percents[category], fixed: 1);
+          AppTexts.prepareToDisplay(state.percents[category], fixed: 1);
 
           return ListTile(
               onTap: () {
@@ -147,6 +183,41 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(percentsPerCatetgory + "%"),
+                  Icon(Icons.navigate_next)
+                ],
+              ));
+        });
+  }
+
+  Widget _buildTagList(BuildContext context, MonthExpenseBloc bloc,
+      MonthExpenseViewState state) {
+    // Make list
+    return ListView.separated(
+        separatorBuilder: (context, index) {
+          return Divider(height: 1);
+        },
+        itemCount: state.sortedTags.length,
+        itemBuilder: (context, index) {
+          int tagId = state.sortedTags[index];
+
+          String tagName = state.tagNames[tagId];
+          String tagValue = AppTexts.formatCurrencyValue(
+              context, bloc.currency, state.tags[tagId].value,
+              shorten: true);
+
+          return ListTile(
+              onTap: () {
+                Navigator.pushNamed(
+                    context, MonthTagExpenseScreen.routeName,
+                    arguments: MonthTagExpenseArguments(
+                        bloc.currency, bloc.month, tagId));
+              },
+              title: Text(tagName),
+              subtitle: Text(tagValue),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(state.tagItemCount[tagId].toString()),
                   Icon(Icons.navigate_next)
                 ],
               ));

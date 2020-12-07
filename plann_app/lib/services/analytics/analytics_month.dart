@@ -1,5 +1,6 @@
 import 'package:plann_app/services/analytics/analytics_account.dart';
 import 'package:plann_app/services/analytics/analytics_service.dart';
+import 'package:plann_app/services/analytics/analytics_tags.dart';
 import 'package:plann_app/services/analytics/analytics_utils.dart';
 import 'package:plann_app/services/currency/currency_service.dart';
 import 'package:plann_app/services/db/models/currency_model.dart';
@@ -11,18 +12,22 @@ import 'package:plann_app/services/db/models/irregular_model.dart';
 import 'package:plann_app/services/db/models/planned_expense_model.dart';
 import 'package:plann_app/services/db/models/planned_income_model.dart';
 import 'package:plann_app/services/db/models/planned_irregular_model.dart';
+import 'package:plann_app/services/db/models/tag_model.dart';
 
 class AnalyticsMonth {
   final int index;
   final int year;
   final int month;
   final DateTime date;
+  final AnalyticsTags analyticsTags;
 
   Map<CurrencyType, CurrencyValue> actualIncomeValues;
   Map<IncomeCategoryType, Map<CurrencyType, CurrencyValue>>
       actualIncomePerCategory;
   Map<IncomeCategoryType, List<AnalyticsItem<IncomeModel>>>
       actualIncomeItemsPerCategory;
+  Map<int, Map<CurrencyType, CurrencyValue>> actualIncomePerTag;
+  Map<int, List<AnalyticsItem<IncomeModel>>> actualIncomeItemsPerTag;
   Map<CurrencyType, CurrencyValue> plannedIncomeValues;
   Map<CurrencyType, CurrencyValue> actualExpenseValues;
   Map<ExpenseCategoryType, Map<CurrencyType, CurrencyValue>>
@@ -30,6 +35,8 @@ class AnalyticsMonth {
   Map<ExpenseCategoryType, double> actualExpensePercentsPerCategory;
   Map<ExpenseCategoryType, List<AnalyticsItem<ExpenseModel>>>
       actualExpenseItemsPerCategory;
+  Map<int, Map<CurrencyType, CurrencyValue>> actualExpensePerTag;
+  Map<int, List<AnalyticsItem<ExpenseModel>>> actualExpenseItemsPerTag;
   Map<CurrencyType, CurrencyValue> plannedExpenseValues;
   Map<CurrencyType, CurrencyValue> deltaValues;
   Map<CurrencyType, CurrencyValue> actualIrregularValues;
@@ -42,15 +49,19 @@ class AnalyticsMonth {
   AnalyticsAccount<AnalyticsItem<PlannedIrregularModel>>
       plannedIrregularAccount;
 
-  AnalyticsMonth(this.index, this.year, this.month)
+  AnalyticsMonth(this.index, this.year, this.month, this.analyticsTags)
       : date = DateTime(year, month) {
     actualIncomeValues = Map();
     actualIncomePerCategory = Map();
     actualIncomeItemsPerCategory = Map();
+    actualIncomePerTag = Map();
+    actualIncomeItemsPerTag = Map();
     plannedIncomeValues = Map();
     actualExpenseValues = Map();
     actualExpensePerCategory = Map();
     actualExpenseItemsPerCategory = Map();
+    actualExpensePerTag = Map();
+    actualExpenseItemsPerTag = Map();
     plannedExpenseValues = Map();
     actualIrregularValues = Map();
     plannedIrregularValues = Map();
@@ -79,6 +90,21 @@ class AnalyticsMonth {
       actualIncomeItemsPerCategory[category] = List();
     }
     actualIncomeItemsPerCategory[category].add(item);
+    // Tag
+    TagModel tagModel = analyticsTags.getIncomeTag(item.model.id);
+    if (tagModel != null) {
+      if (actualIncomePerTag[tagModel.id] == null) {
+        actualIncomePerTag[tagModel.id] =
+            AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+      } else {
+        AnalyticsUtils.addValueToCurrencyMap(
+            actualIncomePerTag[tagModel.id], item.currencyValue);
+      }
+      if (actualIncomeItemsPerTag[tagModel.id] == null) {
+        actualIncomeItemsPerTag[tagModel.id] = List();
+      }
+      actualIncomeItemsPerTag[tagModel.id].add(item);
+    }
   }
 
   void addPlannedIncomeValue(AnalyticsItem<PlannedIncomeModel> item) {
@@ -103,6 +129,21 @@ class AnalyticsMonth {
       actualExpenseItemsPerCategory[category] = List();
     }
     actualExpenseItemsPerCategory[category].add(item);
+    // Tag
+    TagModel tagModel = analyticsTags.getExpenseTag(item.model.id);
+    if (tagModel != null) {
+      if (actualExpensePerTag[tagModel.id] == null) {
+        actualExpensePerTag[tagModel.id] =
+            AnalyticsUtils.addValueToCurrencyMap(Map(), item.currencyValue);
+      } else {
+        AnalyticsUtils.addValueToCurrencyMap(
+            actualExpensePerTag[tagModel.id], item.currencyValue);
+      }
+      if (actualExpenseItemsPerTag[tagModel.id] == null) {
+        actualExpenseItemsPerTag[tagModel.id] = List();
+      }
+      actualExpenseItemsPerTag[tagModel.id].add(item);
+    }
   }
 
   void addPlannedExpenseValue(AnalyticsItem<PlannedExpenseModel> item) {

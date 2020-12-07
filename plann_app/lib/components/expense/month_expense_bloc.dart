@@ -27,6 +27,7 @@ class MonthExpenseBloc {
   Future<void> requestState() async {
     _controller.sink.add(MonthExpenseViewState.loading());
     if (!_controller.isClosed) {
+      // CATEGORIES
       // Filter by currency
       Map<ExpenseCategoryType, CurrencyValue> values = Map();
       month.actualExpensePerCategory.forEach((category, currencyMap) {
@@ -47,9 +48,42 @@ class MonthExpenseBloc {
       values.forEach((category, currencyValue) {
         percents[category] = currencyValue.value / total * 100;
       });
+      // TAGS
+      // Filter by currency
+      Map<int, CurrencyValue> tags = Map();
+      month.actualExpensePerTag.forEach((tagId, currencyMap) {
+        if (currencyMap.containsKey(currency)) {
+          tags[tagId] = currencyMap[currency];
+        }
+      });
+      // TAGS
+      // Sort tags
+      List<int> sortedTags = List();
+      sortedTags.addAll(tags.keys);
+      sortedTags.sort((t1, t2) {
+        return month.actualExpenseItemsPerTag[t2].length.compareTo(
+            month.actualExpenseItemsPerTag[t1].length);
+      });
+      // Tag values
+      Map<int, CurrencyValue> tagValues = Map();
+      // Tag names
+      Map<int, String> tagNames = Map();
+      sortedTags.forEach((tagid) =>
+      tagNames[tagid] = month.analyticsTags.getTagName(tagid));
+      // Tag item count
+      Map<int, int> tagItemCount = Map();
+      sortedTags.forEach((tagId) =>
+      tagItemCount[tagId] = month.actualExpenseItemsPerTag[tagId].length);
 
       _controller.sink.add(
-          MonthExpenseViewState.loaded(sortedCategories, values, percents));
+          MonthExpenseViewState.loaded(
+              sortedCategories,
+              values,
+              percents,
+              sortedTags,
+              tags,
+              tagNames,
+              tagItemCount));
     }
   }
 }
@@ -67,13 +101,22 @@ class MonthExpenseViewState {
   final Map<ExpenseCategoryType, CurrencyValue> values;
   final Map<ExpenseCategoryType, double> percents;
 
+  final List<int> sortedTags;
+  final Map<int, CurrencyValue> tags;
+  final Map<int, String> tagNames;
+  final Map<int, int> tagItemCount;
+
   MonthExpenseViewState.loading()
       : loaded = false,
         sortedCategories = null,
         values = null,
-        percents = null;
+        percents = null,
+        sortedTags = null,
+        tags = null,
+        tagNames = null,
+        tagItemCount = null;
 
-  MonthExpenseViewState.loaded(
-      this.sortedCategories, this.values, this.percents)
-      : loaded = true;
+  MonthExpenseViewState.loaded(this.sortedCategories, this.values,
+      this.percents, this.sortedTags, this.tags, this.tagNames,
+      this.tagItemCount) : loaded = true;
 }
