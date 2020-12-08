@@ -95,27 +95,28 @@ class _MonthIncomeState extends State<MonthIncomeScreen>
 
   Widget _buildCategoryListView(BuildContext context, MonthIncomeBloc bloc,
       MonthIncomeViewState state) {
-    if (state.values.isEmpty) {
-      return _buildNoIncome(context);
-    } else {
-      return _buildMonthCategoryView(context, bloc, state);
-    }
+    return _buildMonthCategoryView(context, bloc, state);
   }
 
   Widget _buildTagListView(BuildContext context, MonthIncomeBloc bloc,
       MonthIncomeViewState state) {
-    if (state.values.isEmpty) {
-      return _buildNoIncome(context);
+    if (state.sortedTags.isEmpty) {
+      return _buildNoTags(context);
     } else {
       return _buildMonthTagView(context, bloc, state);
     }
   }
 
-  Widget _buildNoIncome(BuildContext context) {
+  Widget _buildNoTags(BuildContext context) {
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-            child: Text(FlutterI18n.translate(context, "texts.no_income")),
+            child: Container(
+                width: 300,
+                child: Text(
+                  FlutterI18n.translate(context, "texts.no_tags"),
+                  textAlign: TextAlign.center,
+                )),
           ))
     ]);
   }

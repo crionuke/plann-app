@@ -95,27 +95,28 @@ class _MonthExpenseState extends State<MonthExpenseScreen>
 
   Widget _buildCategoryListView(BuildContext context, MonthExpenseBloc bloc,
       MonthExpenseViewState state) {
-    if (state.values.isEmpty) {
-      return _buildNoExpense(context);
-    } else {
-      return _buildMonthCategoryView(context, bloc, state);
-    }
+    return _buildMonthCategoryView(context, bloc, state);
   }
 
   Widget _buildTagListView(BuildContext context, MonthExpenseBloc bloc,
       MonthExpenseViewState state) {
-    if (state.values.isEmpty) {
-      return _buildNoExpense(context);
+    if (state.sortedTags.isEmpty) {
+      return _buildNoTags(context);
     } else {
       return _buildMonthTagView(context, bloc, state);
     }
   }
 
-  Widget _buildNoExpense(BuildContext context) {
+  Widget _buildNoTags(BuildContext context) {
     return CustomScrollView(slivers: <Widget>[
       SliverFillRemaining(
           child: Center(
-            child: Text(FlutterI18n.translate(context, "texts.no_expense")),
+            child: Container(
+                width: 300,
+                child: Text(
+                  FlutterI18n.translate(context, "texts.no_tags"),
+                  textAlign: TextAlign.center,
+                )),
           ))
     ]);
   }
